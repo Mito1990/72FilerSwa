@@ -1,9 +1,8 @@
 package com.swa.filter.Services;
 
-import com.swa.filter.Domain.Role;
 import com.swa.filter.Interface.RoleServiceInterface;
 import com.swa.filter.Repository.RoleRepository;
-import jakarta.servlet.ServletException;
+import com.swa.filter.mySQLTables.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

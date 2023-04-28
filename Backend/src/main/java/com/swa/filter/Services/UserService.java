@@ -1,14 +1,16 @@
 package com.swa.filter.Services;
-import com.swa.filter.Domain.User;
-import com.swa.filter.Domain.Role;
+
 import com.swa.filter.Interface.UserServiceInterface;
 import com.swa.filter.Repository.UserRepository;
+import com.swa.filter.mySQLTables.Role;
+import com.swa.filter.mySQLTables.User;
 import com.swa.filter.Repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+
 
 @Service @RequiredArgsConstructor @Transactional @Slf4j
 public class UserService implements UserServiceInterface {

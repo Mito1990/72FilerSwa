@@ -7,8 +7,8 @@ import com.swa.filter.mySQLTables.User;
 
 public interface MyGroupServiceInterface {
     List<MyGroups>getAllGroups();
-    MyGroups addUserToGroup(User user);
+    void addUserToGroup(String groupName,User user);
     MyGroups getGroup(String groupName);
-    void deleteGroup(String groupName);
-    MyGroups createGroup(String groupName);
+    void deleteMemberFromGroup(User user,String groupName);
+    MyGroups createGroup(MyGroups mygroup);
 }
