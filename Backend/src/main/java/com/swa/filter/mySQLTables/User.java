@@ -1,4 +1,4 @@
-package com.swa.filter.Domain;
+package com.swa.filter.mySQLTables;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
