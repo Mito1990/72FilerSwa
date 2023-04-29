@@ -18,8 +18,8 @@ public class MyGroups {
     private int group_id;
     private String groupName;
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "group_user",
+    @JoinTable(name = "info",
             joinColumns = @JoinColumn(name = "group_id"),
-            inverseJoinColumns = @JoinColumn(name="user_id"))
-    private List<User>users = new ArrayList<>();
+            inverseJoinColumns = @JoinColumn(name="info_id"))
+    private List<UserGroupInfo>info = new ArrayList<>();
 }

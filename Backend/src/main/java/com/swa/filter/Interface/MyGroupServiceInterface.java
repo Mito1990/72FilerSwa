@@ -3,12 +3,12 @@ package com.swa.filter.Interface;
 import java.util.List;
 
 import com.swa.filter.mySQLTables.MyGroups;
-import com.swa.filter.mySQLTables.User;
+import com.swa.filter.mySQLTables.UserGroupInfo;
 
 public interface MyGroupServiceInterface {
     List<MyGroups>getAllGroups();
-    void addUserToGroup(String groupName,User user);
     MyGroups getGroup(String groupName);
-    void deleteMemberFromGroup(User user,String groupName);
+    MyGroups deleteMemberFromGroup(UserGroupInfo userGroupInfo);
     MyGroups createGroup(MyGroups mygroup);
+    MyGroups addUserToGroup(UserGroupInfo userGroupInfo);
 }
