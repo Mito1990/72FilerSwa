@@ -20,7 +20,7 @@ public class User {
   @NonNull
   private String name;
   @NonNull
-  private String username;
+  private String userName;
   @NonNull
   private String password;
   @OneToMany(cascade = CascadeType.ALL)
