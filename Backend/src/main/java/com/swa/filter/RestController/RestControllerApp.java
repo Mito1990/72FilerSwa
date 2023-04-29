@@ -29,18 +29,19 @@ public class RestControllerApp {
     return ResponseEntity.ok().body(userService.getAllUsers());
   }
   @GetMapping(path = "/users/get/user" )
-  public ResponseEntity<User>getUsers(String user){
-    return ResponseEntity.ok().body(userService.getUser(user));
+  public ResponseEntity<?>getUsers(String userName){
+    if(!userService.checkIfUserExists(userName))return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User with username:{"+userName+"} doesn't exists!");
+    else return ResponseEntity.ok().body(userService.getUser(userName));
   }
 
   @PostMapping(path = "/users/add/user")
   public ResponseEntity<?> addUser(@RequestBody User user) {
     URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/add/user").toUriString());
     if(user.getName().isEmpty())return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Field name is empty!");
-    else if(user.getUsername().isEmpty())return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Field username is empty!");
+    else if(user.getUserName().isEmpty())return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Field username is empty!");
     else if(user.getPassword().isEmpty())return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Field password is empty!");
     else if(user.getPassword().length()<8)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Password is to short enter at least 8 character");
-    else if(userService.getUser(user.getUsername())!=null)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User with username:{"+user.getUsername()+"} exists already in table:{"+userService.getUser(user.getUsername())+"}");
+    else if(userService.getUser(user.getUserName())!=null)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User with username:{"+user.getUserName()+"} exists already in table:{"+userService.getUser(user.getUserName())+"}");
     else if(ResponseEntity.created(uri).body(userService.addUser(user))==null);
     return ResponseEntity.created(uri).body(userService.addUser(user));
   }
@@ -70,7 +71,7 @@ public class RestControllerApp {
   public ResponseEntity<?>getGroup(String groupName){
     MyGroups group = myGroupService.getGroup(groupName);
     if(group  == null)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+groupName+"} doesn't exists!");
-    return ResponseEntity.ok().body(myGroupService.getGroup(groupName));
+    return ResponseEntity.ok().body(group);
   }
   @GetMapping(path = "/groups/get/all")
   public ResponseEntity<List<MyGroups>>getAllGroups(){
@@ -78,40 +79,23 @@ public class RestControllerApp {
   }
   @PostMapping(path = "/groups/delete/user")
   public ResponseEntity<?> deleteMemberFromGroup(@RequestBody UserGroupInfo userGroupInfo){
-    MyGroups mygroup = myGroupService.getGroup(userGroupInfo.getGroupName());
-    if(!mygroup.getGroupName().equalsIgnoreCase(userGroupInfo.getGroupName()))return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+userGroupInfo.getGroupName()+"} doesn't exists!");
-    List<UserGroupInfo>getinfo = mygroup.getInfo();
-    for (UserGroupInfo item : getinfo) {
-        if(item.getUserName().equalsIgnoreCase(userGroupInfo.getUserName())){
-          mygroup.getInfo().remove(getinfo.indexOf(item));
-          return ResponseEntity.ok().body(myGroupService.deleteMemberFromGroup(userGroupInfo));
-        };
-    }
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+userGroupInfo.getUserName()+"} exists already in Group:{"+userGroupInfo.getGroupName()+"}");
+    if(!myGroupService.checkIfGroupExists(userGroupInfo.getGroupName()))return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+userGroupInfo.getGroupName()+"} doesn't exists!");
+    if(ResponseEntity.ok().body(myGroupService.deleteMemberFromGroup(userGroupInfo))==null)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User:{"+userGroupInfo.getUserName()+"} in Group:{"+userGroupInfo.getGroupName()+"} doesn't exists!");
+    else return ResponseEntity.ok().body(myGroupService.deleteMemberFromGroup(userGroupInfo));
   }
   
   @PostMapping(path = "/groups/create/group")
   public ResponseEntity<?> createGroup(@RequestBody MyGroups newgroup){
     if(newgroup.getGroupName().isEmpty()) return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group Field is empty!");
-    List<MyGroups>mygroups = myGroupService.getAllGroups();
-    for (MyGroups group : mygroups) {
-        if(group.getGroupName().equalsIgnoreCase(newgroup.getGroupName()))return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+group.getGroupName()+"} exists already!");
-    }
-    return ResponseEntity.ok().body(myGroupService.createGroup(newgroup));
+    if(!myGroupService.checkIfGroupExists(newgroup.getGroupName()))return ResponseEntity.ok().body(myGroupService.createGroup(newgroup));
+    else return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+newgroup.getGroupName()+"} exists already!");
   }  
   @PostMapping(path = "/groups/add/user/to/group")
   public ResponseEntity<?> addUserToGroup(@RequestBody UserGroupInfo userGroupInfo){
-    MyGroups mygroup = myGroupService.getGroup(userGroupInfo.getGroupName());
-    User user = userService.getUser(userGroupInfo.getUserName());
-    if(!mygroup.getGroupName().equalsIgnoreCase(userGroupInfo.getGroupName()))return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+userGroupInfo.getGroupName()+"} doesn't exists!");
-    List<UserGroupInfo>getinfo = mygroup.getInfo();
-    for (UserGroupInfo item : getinfo) {
-        System.out.println(item);
-        if(item.getUserName().equalsIgnoreCase(userGroupInfo.getUserName())){
-          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+userGroupInfo.getUserName()+"} exists already in Group:{"+userGroupInfo.getGroupName()+"}");
-        };
-    }
-    return ResponseEntity.ok().body(myGroupService.addUserToGroup(userGroupInfo));
+    if(!userService.checkIfUserExists(userGroupInfo.getUserName()))return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User:{"+userGroupInfo.getUserName()+"} doesn't exists!");
+    if(!myGroupService.checkIfGroupExists(userGroupInfo.getGroupName()))return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+userGroupInfo.getGroupName()+"} doesn't exists!");
+    if(myGroupService.checkIfUserExistsInGroup(userGroupInfo))return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User:{"+userGroupInfo.getUserName()+"} exists already in Group:{"+userGroupInfo.getGroupName()+"}");
+    else return ResponseEntity.ok().body(myGroupService.addUserToGroup(userGroupInfo));
   }
 }
 

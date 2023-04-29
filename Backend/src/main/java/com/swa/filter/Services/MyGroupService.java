@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MyGroupService implements MyGroupServiceInterface{
     private final MyGroupRepository myGroupRepository;
+    private final UserService userService;
     @Override
     public MyGroups createGroup(MyGroups mygroups) {
         log.info("Creating Group:{}",mygroups.getGroupName());
@@ -26,7 +27,14 @@ public class MyGroupService implements MyGroupServiceInterface{
     public MyGroups deleteMemberFromGroup(UserGroupInfo userGroupInfo) {
         log.info("Deleting user:{} from Group{}",userGroupInfo.getUserName(),myGroupRepository.findByGroupName(userGroupInfo.getGroupName()));
         MyGroups mygroup=myGroupRepository.findByGroupName(userGroupInfo.getGroupName());
-        return myGroupRepository.save(mygroup);
+        List<UserGroupInfo>getinfo = mygroup.getInfo();
+        for (UserGroupInfo item : getinfo) {
+            if(item.getUserName().equalsIgnoreCase(userGroupInfo.getUserName())){
+                mygroup.getInfo().remove(getinfo.indexOf(item));
+                return myGroupRepository.save(mygroup);
+            };
+        }
+        return null;
     }
     @Override
     public List<MyGroups> getAllGroups() {
@@ -44,10 +52,30 @@ public class MyGroupService implements MyGroupServiceInterface{
         }
         return null;
     }
+    public boolean checkIfGroupExists(String groupName){
+        List<MyGroups> groups = getAllGroups();
+        for (MyGroups group : groups) {
+            if(group.getGroupName().equalsIgnoreCase(groupName)){
+                return true;
+            }
+        }
+        return false;
+    }
     @Override
     public MyGroups addUserToGroup(UserGroupInfo userGroupInfo) {
         MyGroups mygroup = getGroup(userGroupInfo.getGroupName());
         mygroup.getInfo().add(userGroupInfo);
         return myGroupRepository.save(mygroup);
+    }
+    @Override
+    public boolean checkIfUserExistsInGroup(UserGroupInfo userGroupInfo) {
+        MyGroups mygroup = getGroup(userGroupInfo.getGroupName());
+        List<UserGroupInfo>getinfo = mygroup.getInfo();
+        for (UserGroupInfo item : getinfo) {
+            if(item.getUserName().equalsIgnoreCase(userGroupInfo.getUserName())){
+                return true;
+            };
+        }
+        return false;
     }
 }

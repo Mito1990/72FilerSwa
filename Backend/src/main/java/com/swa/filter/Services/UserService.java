@@ -25,7 +25,7 @@ public class UserService implements UserServiceInterface {
     @Override
     public void addRoleToUser(String username, String name) {
         log.info("Add role:{} to user:{}",name,username);
-        User user = userRepository.findUserByUsername(username);
+        User user = userRepository.findUserByUserName(username);
         Role userRole = userRoleRepository.findByName(name);
         user.getRole().add(userRole);
     }
@@ -33,12 +33,21 @@ public class UserService implements UserServiceInterface {
     @Override
     public User getUser(String username) {
         log.info("Fetching user:{} from Database",username);
-        return userRepository.findUserByUsername(username);
+        return userRepository.findUserByUserName(username);
     }
 
     @Override
     public List<User> getAllUsers() {
         log.info("Fetching all users from Database");
         return userRepository.findAll();
+    }
+
+    @Override
+    public boolean checkIfUserExists(String userName) {
+        List<User>list = getAllUsers();
+        for (User user : list) {
+            if(user.getUserName().equalsIgnoreCase(userName))return true;
+        }
+        return false;
     }
 }

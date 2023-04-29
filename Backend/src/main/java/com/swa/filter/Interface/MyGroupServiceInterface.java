@@ -11,4 +11,6 @@ public interface MyGroupServiceInterface {
     MyGroups deleteMemberFromGroup(UserGroupInfo userGroupInfo);
     MyGroups createGroup(MyGroups mygroup);
     MyGroups addUserToGroup(UserGroupInfo userGroupInfo);
+    boolean checkIfGroupExists(String groupName);
+    boolean checkIfUserExistsInGroup(UserGroupInfo userGroupInfo);
 }
