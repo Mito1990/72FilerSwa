@@ -5,8 +5,8 @@ import com.swa.filter.mySQLTables.User;
 
 public interface UserServiceInterface {
     User addUser(User user) throws Exception;
-    void addRoleToUser(String userName,String role);
-    User getUser(String userName);
+    void addRoleToUser(String username,String role);
+    User getUser(String username);
     List<User>getAllUsers();
-    boolean checkIfUserExists(String userName);
+    boolean checkIfUserExists(String username);
 }

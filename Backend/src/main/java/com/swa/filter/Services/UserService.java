@@ -7,9 +7,11 @@ import com.swa.filter.mySQLTables.User;
 import com.swa.filter.Repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
 
 @Service @RequiredArgsConstructor @Transactional @Slf4j
@@ -46,7 +48,7 @@ public class UserService implements UserServiceInterface {
     public boolean checkIfUserExists(String userName) {
         List<User>list = getAllUsers();
         for (User user : list) {
-            if(user.getUserName().equalsIgnoreCase(userName))return true;
+            if(user.getUsername().equalsIgnoreCase(userName))return true;
         }
         return false;
     }
