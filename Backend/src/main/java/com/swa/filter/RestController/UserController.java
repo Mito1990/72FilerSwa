@@ -30,10 +30,10 @@ public class UserController {
   public ResponseEntity<?> addUser(@RequestBody User user) {
     URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/add/user").toUriString());
     if(user.getName().isEmpty())return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Field name is empty!");
-    else if(user.getUserName().isEmpty())return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Field username is empty!");
+    else if(user.getUsername().isEmpty())return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Field username is empty!");
     else if(user.getPassword().isEmpty())return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Field password is empty!");
     else if(user.getPassword().length()<8)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Password is to short enter at least 8 character");
-    else if(userService.getUser(user.getUserName())!=null)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User with username:{"+user.getUserName()+"} exists already in table:{"+userService.getUser(user.getUserName())+"}");
+    else if(userService.getUser(user.getUsername())!=null)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User with username:{"+user.getUsername()+"} exists already in table:{"+userService.getUser(user.getUsername())+"}");
     else if(ResponseEntity.created(uri).body(userService.addUser(user))==null);
     return ResponseEntity.created(uri).body(userService.addUser(user));
   }
