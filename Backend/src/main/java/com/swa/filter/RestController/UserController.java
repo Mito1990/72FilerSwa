@@ -16,6 +16,10 @@ import java.util.List;
 public class UserController {
   private final UserService userService;
 
+  @GetMapping(path = "/hello")
+  public ResponseEntity<String>hello(){
+    return ResponseEntity.ok().body("Hello world this is a test");
+  }
   @GetMapping(path = "/users/get/all" )
   public ResponseEntity<List<User>>getAllUsers(){
     return ResponseEntity.ok().body(userService.getAllUsers());
