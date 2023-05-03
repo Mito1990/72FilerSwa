@@ -2,6 +2,7 @@ package com.swa.filter.mySQLTables;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -13,8 +14,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+
 @Data
 @Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 public class User implements UserDetails {
