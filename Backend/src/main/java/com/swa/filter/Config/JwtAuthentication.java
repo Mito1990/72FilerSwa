@@ -1,6 +1,10 @@
 package com.swa.filter.Config;
 
 import java.io.IOException;
+
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -17,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class JwtAuthentication extends OncePerRequestFilter{
 
     private final JwtService jwtService;
+    private final UserDetailsService userDetailsService;
     @Override
     protected void doFilterInternal(
         HttpServletRequest request, 
@@ -30,6 +35,9 @@ public class JwtAuthentication extends OncePerRequestFilter{
             return;
         }
         jwtToken = authHeader.substring(7);
-        username = jwtToken.extractUsername(jwtToken);
+        username = jwtService.extractUsername(jwtToken);
+        if( username != null && SecurityContextHolder.getContext().getAuthentication() == null){
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+        }
     }
 }

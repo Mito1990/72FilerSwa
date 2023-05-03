@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,13 +28,13 @@ public class UserService implements UserServiceInterface {
     @Override
     public void addRoleToUser(String username, String name) {
         log.info("Add role:{} to user:{}",name,username);
-        User user = userRepository.findUserByUsername(username);
+        Optional<User> user = userRepository.findUserByUsername(username);
         Role userRole = userRoleRepository.findByName(name);
-        user.getRole().add(userRole);
+        user.get().getRole().add(userRole);
     }
 
     @Override
-    public User getUser(String username) {
+    public Optional<User> getUser(String username) {
         log.info("Fetching user:{} from Database",username);
         return userRepository.findUserByUsername(username);
     }
