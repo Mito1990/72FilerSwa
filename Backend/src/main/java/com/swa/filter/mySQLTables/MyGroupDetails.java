@@ -16,7 +16,7 @@ public class MyGroupDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int info_id;
-    private String groupName;
-    private String userName;
+    private String groupname;
+    private String username;
     private String role;
 }

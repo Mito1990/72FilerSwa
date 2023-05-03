@@ -16,7 +16,7 @@ public class MyGroups {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int group_id;
-    private String groupName;
+    private String groupname;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "info",
             joinColumns = @JoinColumn(name = "group_id"),

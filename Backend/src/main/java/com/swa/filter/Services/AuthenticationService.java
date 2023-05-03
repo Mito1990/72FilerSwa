@@ -33,16 +33,16 @@ public class AuthenticationService {
         if(userService.checkIfUserExists(registerRequest.getUsername())==false){
             userRepository.save(user);
             var jwtToken = jwtService.generateToken(user);
-            return AuthenticationResponse.builder().token(jwtToken).build();
+            return AuthenticationResponse.builder().message(jwtToken).build();
         }
-        else return null;
+        else return AuthenticationResponse.builder().message("User Exits already!").build();
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
         var user = userRepository.findUserByUsername(authenticationRequest.getUsername()).orElseThrow();
         var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        return AuthenticationResponse.builder().message(jwtToken).build();
     }
     
 }
