@@ -4,13 +4,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.swa.filter.Authentication.AuthenticationRequest;
 import com.swa.filter.Authentication.AuthenticationResponse;
 import com.swa.filter.Authentication.RegisterRequest;
 import com.swa.filter.Repository.UserRepository;
+import com.swa.filter.mySQLTables.Role;
 import com.swa.filter.mySQLTables.User;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -21,6 +20,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final UserService userService;
         
     
     public AuthenticationResponse register(RegisterRequest registerRequest) {
@@ -28,10 +28,14 @@ public class AuthenticationService {
                        .name(registerRequest.getName())
                        .username(registerRequest.getUsername())
                        .password(passwordEncoder.encode(registerRequest.getPassword()))
+                       .role(Role.ADMIN)
                        .build();
-        userRepository.save(user);
-        var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        if(userService.checkIfUserExists(registerRequest.getUsername())==false){
+            userRepository.save(user);
+            var jwtToken = jwtService.generateToken(user);
+            return AuthenticationResponse.builder().token(jwtToken).build();
+        }
+        else return null;
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {

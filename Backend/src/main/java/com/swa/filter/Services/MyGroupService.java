@@ -3,11 +3,9 @@ package com.swa.filter.Services;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.swa.filter.Interface.MyGroupServiceInterface;
 import com.swa.filter.Repository.MyGroupRepository;
 import com.swa.filter.mySQLTables.MyGroups;
-import com.swa.filter.mySQLTables.UserGroupInfo;
-
+import com.swa.filter.mySQLTables.MyGroupDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,20 +13,19 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class MyGroupService implements MyGroupServiceInterface{
+public class MyGroupService{
     private final MyGroupRepository myGroupRepository;
-    private final UserService userService;
-    @Override
+ 
     public MyGroups createGroup(MyGroups mygroups) {
         log.info("Creating Group:{}",mygroups.getGroupName());
         return myGroupRepository.save(mygroups);
     }
-    @Override
-    public MyGroups deleteMemberFromGroup(UserGroupInfo userGroupInfo) {
+  
+    public MyGroups deleteMemberFromGroup(MyGroupDetails userGroupInfo) {
         log.info("Deleting user:{} from Group{}",userGroupInfo.getUserName(),myGroupRepository.findByGroupName(userGroupInfo.getGroupName()));
         MyGroups mygroup=myGroupRepository.findByGroupName(userGroupInfo.getGroupName());
-        List<UserGroupInfo>getinfo = mygroup.getInfo();
-        for (UserGroupInfo item : getinfo) {
+        List<MyGroupDetails>getinfo = mygroup.getInfo();
+        for (MyGroupDetails item : getinfo) {
             if(item.getUserName().equalsIgnoreCase(userGroupInfo.getUserName())){
                 mygroup.getInfo().remove(getinfo.indexOf(item));
                 return myGroupRepository.save(mygroup);
@@ -36,12 +33,12 @@ public class MyGroupService implements MyGroupServiceInterface{
         }
         return null;
     }
-    @Override
+  
     public List<MyGroups> getAllGroups() {
         log.info("Get all groups");
         return myGroupRepository.findAll();
     }
-    @Override
+  
     public MyGroups getGroup(String groupName) {
         log.info("Get Group:{} ",groupName);
         List<MyGroups> groups = getAllGroups();
@@ -61,17 +58,17 @@ public class MyGroupService implements MyGroupServiceInterface{
         }
         return false;
     }
-    @Override
-    public MyGroups addUserToGroup(UserGroupInfo userGroupInfo) {
+   
+    public MyGroups addUserToGroup(MyGroupDetails userGroupInfo) {
         MyGroups mygroup = getGroup(userGroupInfo.getGroupName());
         mygroup.getInfo().add(userGroupInfo);
         return myGroupRepository.save(mygroup);
     }
-    @Override
-    public boolean checkIfUserExistsInGroup(UserGroupInfo userGroupInfo) {
+  
+    public boolean checkIfUserExistsInGroup(MyGroupDetails userGroupInfo) {
         MyGroups mygroup = getGroup(userGroupInfo.getGroupName());
-        List<UserGroupInfo>getinfo = mygroup.getInfo();
-        for (UserGroupInfo item : getinfo) {
+        List<MyGroupDetails>getinfo = mygroup.getInfo();
+        for (MyGroupDetails item : getinfo) {
             if(item.getUserName().equalsIgnoreCase(userGroupInfo.getUserName())){
                 return true;
             };

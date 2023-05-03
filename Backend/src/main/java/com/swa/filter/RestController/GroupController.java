@@ -3,7 +3,7 @@ package com.swa.filter.RestController;
 import com.swa.filter.Services.MyGroupService;
 import com.swa.filter.Services.UserService;
 import com.swa.filter.mySQLTables.MyGroups;
-import com.swa.filter.mySQLTables.UserGroupInfo;
+import com.swa.filter.mySQLTables.MyGroupDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,7 @@ public class GroupController{
     return ResponseEntity.ok().body(myGroupService.getAllGroups());
   }
   @PostMapping(path = "/groups/delete/user")
-  public ResponseEntity<?> deleteMemberFromGroup(@RequestBody UserGroupInfo userGroupInfo){
+  public ResponseEntity<?> deleteMemberFromGroup(@RequestBody MyGroupDetails userGroupInfo){
     if(!myGroupService.checkIfGroupExists(userGroupInfo.getGroupName()))return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+userGroupInfo.getGroupName()+"} doesn't exists!");
     if(ResponseEntity.ok().body(myGroupService.deleteMemberFromGroup(userGroupInfo))==null)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User:{"+userGroupInfo.getUserName()+"} in Group:{"+userGroupInfo.getGroupName()+"} doesn't exists!");
     else return ResponseEntity.ok().body(myGroupService.deleteMemberFromGroup(userGroupInfo));
@@ -41,7 +41,7 @@ public class GroupController{
     else return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+newgroup.getGroupName()+"} exists already!");
   }  
   @PostMapping(path = "/groups/add/user/to/group")
-  public ResponseEntity<?> addUserToGroup(@RequestBody UserGroupInfo userGroupInfo){
+  public ResponseEntity<?> addUserToGroup(@RequestBody MyGroupDetails userGroupInfo){
     if(!userService.checkIfUserExists(userGroupInfo.getUserName()))return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User:{"+userGroupInfo.getUserName()+"} doesn't exists!");
     if(!myGroupService.checkIfGroupExists(userGroupInfo.getGroupName()))return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+userGroupInfo.getGroupName()+"} doesn't exists!");
     if(myGroupService.checkIfUserExistsInGroup(userGroupInfo))return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User:{"+userGroupInfo.getUserName()+"} exists already in Group:{"+userGroupInfo.getGroupName()+"}");

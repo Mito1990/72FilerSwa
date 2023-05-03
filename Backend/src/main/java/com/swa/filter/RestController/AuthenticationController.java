@@ -10,19 +10,24 @@ import com.swa.filter.Authentication.AuthenticationRequest;
 import com.swa.filter.Authentication.AuthenticationResponse;
 import com.swa.filter.Authentication.RegisterRequest;
 import com.swa.filter.Services.AuthenticationService;
+import com.swa.filter.Services.UserService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/auth")
+@RequestMapping("/api/login")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse>register(@RequestBody RegisterRequest registerRequest){
-        return ResponseEntity.ok(authenticationService.register(registerRequest));
+    public ResponseEntity<?>register(@RequestBody RegisterRequest registerRequest){
+        if(authenticationService.register(registerRequest)==null){
+            return ResponseEntity.badRequest().body("User exists already!");
+        }else{
+            return ResponseEntity.ok(authenticationService.register(registerRequest));
+        }
     }
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse>authenticate(@RequestBody AuthenticationRequest authenticationRequest){

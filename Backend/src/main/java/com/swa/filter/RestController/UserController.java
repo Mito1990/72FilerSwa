@@ -6,20 +6,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/")
+@RequestMapping(path = "/api")
 public class UserController {
   private final UserService userService;
 
-  @GetMapping(path = "/hello")
-  public ResponseEntity<String>hello(){
-    return ResponseEntity.ok().body("Hello world this is a test");
-  }
   @GetMapping(path = "/users/get/all" )
   public ResponseEntity<List<User>>getAllUsers(){
     return ResponseEntity.ok().body(userService.getAllUsers());
@@ -30,17 +24,6 @@ public class UserController {
     else return ResponseEntity.ok().body(userService.getUser(userName));
   }
 
-  @PostMapping(path = "/users/add/user")
-  public ResponseEntity<?> addUser(@RequestBody User user) {
-    URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/add/user").toUriString());
-    if(user.getName().isEmpty())return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Field name is empty!");
-    else if(user.getUsername().isEmpty())return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Field username is empty!");
-    else if(user.getPassword().isEmpty())return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Field password is empty!");
-    else if(user.getPassword().length()<8)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Password is to short enter at least 8 character");
-    else if(userService.getUser(user.getUsername())!=null)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User with username:{"+user.getUsername()+"} exists already in table:{"+userService.getUser(user.getUsername())+"}");
-    else if(ResponseEntity.created(uri).body(userService.addUser(user))==null);
-    return ResponseEntity.created(uri).body(userService.addUser(user));
-  }
 }
 
 

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
-public class UserGroupInfo {
+public class MyGroupDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int info_id;
