@@ -10,18 +10,18 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api")
+@RequestMapping(path = "/api/users")
 public class UserController {
   private final UserService userService;
 
-  @GetMapping(path = "/users/get/all" )
+  @GetMapping(path = "/get/all" )
   public ResponseEntity<List<User>>getAllUsers(){
     return ResponseEntity.ok().body(userService.getAllUsers());
   }
-  @GetMapping(path = "/users/get/user" )
-  public ResponseEntity<?>getUsers(String userName){
-    if(!userService.checkIfUserExists(userName))return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User with username:{"+userName+"} doesn't exists!");
-    else return ResponseEntity.ok().body(userService.getUser(userName));
+  @GetMapping(path = "/get/user" )
+  public ResponseEntity<?>getUsers(@RequestParam String username){
+    if(!userService.checkIfUserExists(username))return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User with username:{"+username+"} doesn't exists!");
+    else return ResponseEntity.ok().body(userService.getUser(username));
   }
 
 }

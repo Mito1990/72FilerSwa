@@ -28,7 +28,7 @@ public class AuthenticationService {
                        .name(registerRequest.getName())
                        .username(registerRequest.getUsername())
                        .password(passwordEncoder.encode(registerRequest.getPassword()))
-                       .role(Role.ADMIN)
+                       .role(Role.USER)
                        .build();
         if(userService.checkIfUserExists(registerRequest.getUsername())==false){
             userRepository.save(user);

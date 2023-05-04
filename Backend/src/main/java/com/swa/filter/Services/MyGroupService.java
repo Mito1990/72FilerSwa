@@ -17,9 +17,10 @@ public class MyGroupService{
  
     public String createGroup(String groupname) {
         if(!checkIfGroupExists(groupname)){
-            MyGroups my = new MyGroups();
-            my.setGroupname(groupname);
-            myGroupRepository.save(my);
+            MyGroups myGroup = new MyGroups();
+            myGroup.setInfo(null);
+            myGroup.setGroupname(groupname);
+            myGroupRepository.save(myGroup);
             return "Group succsessful created";
         }else{
             return "Group with name "+groupname+" exists aleady!";

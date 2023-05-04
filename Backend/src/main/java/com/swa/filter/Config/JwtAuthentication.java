@@ -33,19 +33,14 @@ public class JwtAuthentication extends OncePerRequestFilter{
         final String jwtToken;
         final String username;
         if(authHeader==null || !authHeader.startsWith("Bearer ")){
-            System.out.println("Test from authheader");
             filterChain.doFilter(request, response);
             return;
         }
         jwtToken = authHeader.substring(7);
         username = jwtService.extractUsername(jwtToken);
         if( username != null && SecurityContextHolder.getContext().getAuthentication() == null){
-            System.out.println("Test from contextholder");
-
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
             if(jwtService.isTokenValid(jwtToken, userDetails)){
-                System.out.println("Test from jwt");
-
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
