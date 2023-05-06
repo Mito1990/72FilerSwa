@@ -1,12 +1,5 @@
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
-  return (
-    <div className="App">
-       <p>hello world!</p>
-    </div>
-  );
+import { Register } from "./Components/Register"
+export const App = () =>{
+    return(<Register></Register> )
 }
-
 export default App;
