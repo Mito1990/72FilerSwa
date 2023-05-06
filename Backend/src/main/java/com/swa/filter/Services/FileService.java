@@ -18,6 +18,8 @@ public class FileService {
     public void createPathAndFile(String username, Long id){
         try {
             Path path = Paths.get("../UserWorkSpace/"+username);
+            Files.createDirectories(path);
+            System.out.println("Directory is created!");
             try {
                 File file = new File("../UserWorkSpace/"+username+"/"+username+".txt");
                 if (file.createNewFile()) {
@@ -30,12 +32,11 @@ public class FileService {
                 e.printStackTrace();
               }
             
-            Files.createDirectories(path);
-            System.out.println("Directory is created!");
+      
         } catch (IOException e) {
             System.err.println("Failed to create directory!" + e.getMessage());
         }
-        writeToFile(username,id);
+        // writeToFile(username,id);
     }
     public void writeToFile(String username,Long id) {
         try {
