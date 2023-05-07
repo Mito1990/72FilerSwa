@@ -37,6 +37,7 @@ public class AuthenticationService {
             userRepository.save(user);
             fileService.createPathAndFile(registerRequest.getUsername(), user.getUser_id());
             System.out.println(user.getUser_id());
+
             // var jwtToken = jwtService.generateToken(user);
             return AuthenticationResponse.builder().message("User succsesfull registered!").build();
         }
