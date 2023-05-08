@@ -4,11 +4,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.swa.filter.Authentication.AuthenticationRequest;
-import com.swa.filter.Authentication.AuthenticationResponse;
-import com.swa.filter.Authentication.RegisterRequest;
+
+import com.swa.filter.ObjectModel.AuthenticationRequest;
+import com.swa.filter.ObjectModel.AuthenticationResponse;
+import com.swa.filter.ObjectModel.RegisterRequest;
+import com.swa.filter.ObjectModel.Role;
 import com.swa.filter.Repository.UserRepository;
-import com.swa.filter.mySQLTables.Role;
 import com.swa.filter.mySQLTables.User;
 import lombok.RequiredArgsConstructor;
 

@@ -3,9 +3,15 @@ package com.swa.filter.Services;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.swa.filter.ObjectModel.MemberGroupRequest;
+import com.swa.filter.ObjectModel.Role;
+import com.swa.filter.ObjectModel.GroupRequest;
 import com.swa.filter.Repository.MyGroupRepository;
+// import com.swa.filter.Repository.MyGroupMembersRepository;
 import com.swa.filter.mySQLTables.MyGroups;
-import com.swa.filter.mySQLTables.MyGroupDetails;
+import com.swa.filter.mySQLTables.MyGroupMembers;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -13,78 +19,97 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class MyGroupService{
     private final MyGroupRepository myGroupRepository;
+    // private final MyGroupMembersRepository myGroupMembersRepository;
     private final UserService userService;
+    private final JwtService jwtService;
  
-    public String createGroup(String groupname) {
-        if(!checkIfGroupExists(groupname)){
+    public String createGroup(GroupRequest createGroupRequest) {
+        String username = jwtService.extractUsername(createGroupRequest.getToken());
+        if(!checkIfGroupExists(createGroupRequest.getGroupname(),username)){
             MyGroups myGroup = new MyGroups();
-            myGroup.setInfo(null);
-            myGroup.setGroupname(groupname);
+            myGroup.setMembers(null);
+            myGroup.setGroupname(createGroupRequest.getGroupname());
+            myGroup.setAdmin(username);
+            myGroup.setRole(Role.ADMIN);
             myGroupRepository.save(myGroup);
             return "Group succsessful created";
         }else{
-            return "Group with name "+groupname+" exists aleady!";
+            return "Group with name "+createGroupRequest.getGroupname()+" exists aleady!";
         }
     }
   
-    public String deleteMemberFromGroup(MyGroupDetails userGroupInfo) {
-        if(checkIfGroupExists(userGroupInfo.getGroupname())){
-            if(checkIfUserExistsInGroup(userGroupInfo)){
-                MyGroups mygroup=myGroupRepository.findByGroupname(userGroupInfo.getGroupname());
-                List<MyGroupDetails>getinfo = mygroup.getInfo();
-                for (MyGroupDetails item : getinfo) {
-                    if(item.getUsername().equalsIgnoreCase(userGroupInfo.getUsername())){
-                        mygroup.getInfo().remove(getinfo.indexOf(item));
+    public String deleteMemberFromGroup(MemberGroupRequest memberGroupRequest) {
+        String owner = jwtService.extractUsername(memberGroupRequest.getGroupRequest().getToken());
+        if(checkIfGroupExists(memberGroupRequest.getGroupRequest().getGroupname(),owner)){
+            if(checkIfUserExistsInGroup(memberGroupRequest.getGroupRequest().getGroupname(),owner,memberGroupRequest.getMemberRequest().getUsername())){
+                MyGroups mygroup=myGroupRepository.findByGroupnameAndAdmin(memberGroupRequest.getGroupRequest().getGroupname(),owner);
+                List<MyGroupMembers>members = mygroup.getMembers();
+                for (MyGroupMembers member : members) {
+                    if(member.getUsername().equalsIgnoreCase(memberGroupRequest.getMemberRequest().getUsername())){
+                        mygroup.getMembers().remove(members.indexOf(member));
                         myGroupRepository.save(mygroup);
-                        return userGroupInfo.getUsername()+" succsessful deleted form "+userGroupInfo.getGroupname();
+                        return memberGroupRequest.getMemberRequest().getUsername()+" succsessful deleted form "+memberGroupRequest.getGroupRequest().getGroupname();
                     };
                 }
             }
         }
-        return userGroupInfo.getUsername()+" or "+userGroupInfo.getGroupname()+" doesn't exists!";
+        return memberGroupRequest.getMemberRequest().getUsername()+" or "+memberGroupRequest.getGroupRequest().getGroupname()+" doesn't exists!";
     }
   
     public List<MyGroups> getAllGroups() {
+        // List
         return myGroupRepository.findAll();
     }
   
-    public MyGroups getGroup(String groupname) {
-        List<MyGroups> groups = getAllGroups();
-        System.out.println(groups);
-        for (MyGroups group : groups) {
-            if(group.getGroupname().equalsIgnoreCase(groupname)){
-                return myGroupRepository.findByGroupname(groupname);
+    public MyGroups getGroup(GroupRequest groupRequest) {
+        String username = jwtService.extractUsername(groupRequest.getToken());
+        if(checkIfGroupExists(groupRequest.getGroupname(),username)){
+            List<MyGroups> groups = getAllGroups();
+            for (MyGroups group : groups) {
+                if(group.getGroupname().equalsIgnoreCase(groupRequest.getGroupname())){
+                    return myGroupRepository.findByGroupnameAndAdmin(groupRequest.getGroupname(),username);
+                }
             }
-        }
+        };
         return null;
     }
-    public boolean checkIfGroupExists(String groupname){
+    public boolean checkIfGroupExists(String groupname,String username){
         List<MyGroups> groups = getAllGroups();
         for (MyGroups group : groups) {
-            if(group.getGroupname().equalsIgnoreCase(groupname)){
+            if(group.getGroupname().equalsIgnoreCase(groupname) && group.getAdmin().equalsIgnoreCase(username)){
                 return true;
             }
         }
         return false;
     }
    
-    public String addUserToGroup(MyGroupDetails userGroupInfo) {
-        if(!checkIfGroupExists(userGroupInfo.getGroupname()))return "Group with name "+userGroupInfo.getGroupname()+" doesn't exists!";
-        if(!userService.checkIfUserExists(userGroupInfo.getUsername()))return userGroupInfo.getUsername()+" doesn't exists!";
-        if(checkIfUserExistsInGroup(userGroupInfo))return userGroupInfo.getUsername()+" exists already in "+userGroupInfo.getGroupname();
-        MyGroups mygroup = getGroup(userGroupInfo.getGroupname());
-        mygroup.getInfo().add(userGroupInfo);
+    public String addUserToGroup(MemberGroupRequest memberGroupRequest) {
+        String owner = jwtService.extractUsername(memberGroupRequest.getGroupRequest().getToken());
+        System.out.println("Test from Service owner: "+owner);
+        if(!checkIfGroupExists(memberGroupRequest.getGroupRequest().getGroupname(),owner)){
+            System.out.println("Test from Service CheckIfGroupExists: ");
+            return "Group with name "+memberGroupRequest.getGroupRequest().getGroupname()+" doesn't exists!";
+        }
+        if(!userService.checkIfUserExists(memberGroupRequest.getMemberRequest().getUsername())){
+            System.out.println("Test from Service checkIfUserExists: ");
+            return memberGroupRequest.getMemberRequest().getUsername()+" doesn't exists!";
+        }
+        if(checkIfUserExistsInGroup(memberGroupRequest.getGroupRequest().getGroupname(),owner,memberGroupRequest.getMemberRequest().getUsername())){
+            System.out.println("Test from Service checkifUserExistsIngroup: ");
+            return memberGroupRequest.getMemberRequest().getUsername()+" exists already in "+memberGroupRequest.getGroupRequest().getGroupname();
+        }
+        MyGroups mygroup = myGroupRepository.findByGroupnameAndAdmin(memberGroupRequest.getGroupRequest().getGroupname(), owner);
+        var newGroupMembers = MyGroupMembers.builder().username(memberGroupRequest.getMemberRequest().getUsername()).role(Role.USER).build();
+        mygroup.getMembers().add(newGroupMembers);
         myGroupRepository.save(mygroup);
-        return userGroupInfo.getUsername()+" succsesfull added to "+userGroupInfo.getGroupname();
-    
-    
+        return memberGroupRequest.getMemberRequest().getUsername()+" succsesfull added to "+memberGroupRequest.getGroupRequest().getGroupname();
     }
   
-    public boolean checkIfUserExistsInGroup(MyGroupDetails userGroupInfo) {
-        MyGroups mygroup = getGroup(userGroupInfo.getGroupname());
-        List<MyGroupDetails>getinfo = mygroup.getInfo();
-        for (MyGroupDetails item : getinfo) {
-            if(item.getUsername().equalsIgnoreCase(userGroupInfo.getUsername())){
+    public boolean checkIfUserExistsInGroup(String groupname,String owner,String username) {
+        MyGroups mygroup = myGroupRepository.findByGroupnameAndAdmin(groupname,owner);
+        List<MyGroupMembers>members = mygroup.getMembers();
+        for (MyGroupMembers member: members) {
+            if(member.getUsername().equalsIgnoreCase(username)){
                 return true;
             };
         }

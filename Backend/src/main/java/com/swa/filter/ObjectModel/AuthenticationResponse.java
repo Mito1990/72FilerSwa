@@ -1,4 +1,4 @@
-package com.swa.filter.Authentication;
+package com.swa.filter.ObjectModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

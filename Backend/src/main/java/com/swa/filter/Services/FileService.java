@@ -21,7 +21,7 @@ public class FileService {
             Files.createDirectories(path);
             System.out.println("Directory is created!");
             try {
-                File file = new File("../UserWorkSpace/"+username+"/"+username+".txt");
+                File file = new File("../UserWorkSpace/"+username+"/"+username);
                 if (file.createNewFile()) {
                   System.out.println("File created: " + file.getName());
                 } else {

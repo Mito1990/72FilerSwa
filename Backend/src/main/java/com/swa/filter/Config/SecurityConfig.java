@@ -23,7 +23,7 @@ public class SecurityConfig {
             .disable()
             .authorizeHttpRequests() 
             .requestMatchers("/api/login/**").permitAll()
-            .requestMatchers("/api/groups/**").hasAuthority("ADMIN")
+            .requestMatchers("/api/groups/**").hasAuthority("USER")
             .requestMatchers("/api/users/**").permitAll()
             .anyRequest().authenticated() 
             .and()
