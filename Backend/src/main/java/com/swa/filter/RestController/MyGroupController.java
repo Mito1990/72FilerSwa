@@ -4,7 +4,6 @@ import com.swa.filter.ObjectModel.MemberGroupRequest;
 import com.swa.filter.ObjectModel.GroupRequest;
 import com.swa.filter.Services.MyGroupService;
 import com.swa.filter.mySQLTables.MyGroups;
-import com.swa.filter.mySQLTables.MyGroupMembers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +23,7 @@ public class MyGroupController{
     if(group  == null)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+groupRequest.getGroupname()+"} doesn't exists!");
     return ResponseEntity.ok().body(group);
   }
+  // @CrossOrigin(origins = "http://localhost:3000")
   @GetMapping(path = "/get/all")
   public ResponseEntity<List<MyGroups>>getAllGroups(){
     return ResponseEntity.ok().body(myGroupService.getAllGroups());
@@ -32,7 +32,7 @@ public class MyGroupController{
   public ResponseEntity<?> deleteMemberFromGroup(@RequestBody MemberGroupRequest memberGroupRequest){
     return ResponseEntity.ok().body(myGroupService.deleteMemberFromGroup(memberGroupRequest));
   }
-  
+  // @CrossOrigin(origins = "*", allowedHeaders = "*", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE })
   @PostMapping(path = "/create/group")
   public ResponseEntity<?> createGroup(@RequestBody GroupRequest groupRequest){
     return ResponseEntity.ok().body(myGroupService.createGroup(groupRequest));
