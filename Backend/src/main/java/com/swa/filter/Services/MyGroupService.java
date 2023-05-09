@@ -5,12 +5,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.swa.filter.ObjectModel.MemberGroupRequest;
+import com.swa.filter.mySQLTables.MyGroupMembers;
 import com.swa.filter.ObjectModel.Role;
 import com.swa.filter.ObjectModel.GroupRequest;
 import com.swa.filter.Repository.MyGroupRepository;
-// import com.swa.filter.Repository.MyGroupMembersRepository;
 import com.swa.filter.mySQLTables.MyGroups;
-import com.swa.filter.mySQLTables.MyGroupMembers;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class MyGroupService{
     private final MyGroupRepository myGroupRepository;
-    // private final MyGroupMembersRepository myGroupMembersRepository;
     private final UserService userService;
     private final JwtService jwtService;
  

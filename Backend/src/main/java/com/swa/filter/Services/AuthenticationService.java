@@ -27,7 +27,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final HomeDirRepository homeDirRepository;
-    // private final FileService fileService;
+    private final FileService fileService;
     
     public AuthenticationResponse register(RegisterRequest registerRequest) {
         if(userService.checkIfUserExists(registerRequest.getUsername())){
@@ -50,7 +50,7 @@ public class AuthenticationService {
                         .build();
             userRepository.save(user);
        
-            // fileService.createUserFolder(registerRequest.getUsername());
+            fileService.createUserFolder(user.getUser_id(),homeS.getPath());
             System.out.println(user.getUser_id());
 
             // var jwtToken = jwtService.generateToken(user);

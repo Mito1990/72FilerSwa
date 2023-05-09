@@ -23,10 +23,7 @@ public class HomeDir {
     String path;
     Long size;
     Date date;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "folder",
-            joinColumns = @JoinColumn(name = "home_id"),
-            inverseJoinColumns = @JoinColumn(name="folder_id"))
+    @OneToMany(mappedBy = "home", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FolderDir>folder = new ArrayList<>();
     @OneToOne(mappedBy = "home", cascade = CascadeType.ALL, orphanRemoval = true)
     private User user;
