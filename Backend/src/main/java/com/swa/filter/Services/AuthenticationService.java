@@ -1,5 +1,7 @@
 package com.swa.filter.Services;
 
+import java.util.Date;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,7 +11,9 @@ import com.swa.filter.ObjectModel.AuthenticationRequest;
 import com.swa.filter.ObjectModel.AuthenticationResponse;
 import com.swa.filter.ObjectModel.RegisterRequest;
 import com.swa.filter.ObjectModel.Role;
+import com.swa.filter.Repository.HomeDirRepository;
 import com.swa.filter.Repository.UserRepository;
+import com.swa.filter.mySQLTables.HomeDir;
 import com.swa.filter.mySQLTables.User;
 import lombok.RequiredArgsConstructor;
 
@@ -22,21 +26,31 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
-    private final FileService fileService;
+    private final HomeDirRepository homeDirRepository;
+    // private final FileService fileService;
     
     public AuthenticationResponse register(RegisterRequest registerRequest) {
         if(userService.checkIfUserExists(registerRequest.getUsername())){
             return AuthenticationResponse.builder().message("User Exits already!").build();
         }
         else{
+            var homeS = HomeDir.builder()
+                              .name("root")
+                              .date(new Date())
+                              .path("../userWorkSpace/"+registerRequest.getUsername())
+                              .build();
+            homeDirRepository.save(homeS);
+
             var user = User.builder()
                         .name(registerRequest.getName())
                         .username(registerRequest.getUsername())
                         .password(passwordEncoder.encode(registerRequest.getPassword()))
                         .role(Role.USER)
+                        .home(homeS)
                         .build();
             userRepository.save(user);
-            fileService.createPathAndFile(registerRequest.getUsername(), user.getUser_id());
+       
+            // fileService.createUserFolder(registerRequest.getUsername());
             System.out.println(user.getUser_id());
 
             // var jwtToken = jwtService.generateToken(user);

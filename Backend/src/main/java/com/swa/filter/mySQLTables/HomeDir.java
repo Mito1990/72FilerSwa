@@ -1,13 +1,12 @@
 package com.swa.filter.mySQLTables;
 
+import java.util.ArrayList;
 import java.util.Date;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import java.util.List;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+// import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,13 +15,19 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
-
 public class HomeDir {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id_file;
+    Long home_id;
     String name;
     String path;
     Long size;
     Date date;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "folder",
+            joinColumns = @JoinColumn(name = "home_id"),
+            inverseJoinColumns = @JoinColumn(name="folder_id"))
+    private List<FolderDir>folder = new ArrayList<>();
+    @OneToOne(mappedBy = "home", cascade = CascadeType.ALL, orphanRemoval = true)
+    private User user;
 }

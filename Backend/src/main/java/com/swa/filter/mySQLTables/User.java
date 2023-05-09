@@ -32,6 +32,9 @@ public class User implements UserDetails {
   private String password;
   @Enumerated(EnumType.STRING)
   private Role role;
+  @OneToOne
+  @JoinColumn(name = "home_id")
+  HomeDir home;
 
   @Override 
   public Collection<? extends GrantedAuthority> getAuthorities() {
