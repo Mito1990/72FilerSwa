@@ -33,7 +33,7 @@ public class User implements UserDetails {
   @Enumerated(EnumType.STRING)
   private Role role;
   @OneToOne
-  @JoinColumn(name = "home_id")
+  // @JoinColumn(name = "home_id")
   HomeDir home;
 
   @Override 

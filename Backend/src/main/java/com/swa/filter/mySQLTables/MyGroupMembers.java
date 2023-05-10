@@ -25,7 +25,4 @@ public class MyGroupMembers {
     private int member_id;
     private String username;
     private Role role;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id")
-    private MyGroups group;
 }

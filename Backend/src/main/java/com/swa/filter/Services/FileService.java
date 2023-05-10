@@ -1,32 +1,29 @@
 package com.swa.filter.Services;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.swa.filter.mySQLTables.FolderDir;
-import com.swa.filter.mySQLTables.User;
+// import com.swa.filter.mySQLTables.User;
 import com.swa.filter.ObjectModel.GetFolderRequest;
 import com.swa.filter.ObjectModel.NewFolderRequest;
 import com.swa.filter.Repository.FolderDirRepository;
-import com.swa.filter.Repository.HomeDirRepository;
+// import com.swa.filter.Repository.HomeDirRepository;
 import com.swa.filter.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
 public class FileService {
-    private final HomeDirRepository homeDirRepository;
-    private final String rootPath = "../UserWorkSpace/";
-    private final UserRepository userRepository;
+    // private final HomeDirRepository homeDirRepository;
+    // private final String rootPath = "../UserWorkSpace/";
+    // private final UserRepository userRepository;
     private final JwtService jwtService;
     private final FolderDirRepository folderDirRepository;
     public void createUserFolder(Long long1,String path){
@@ -41,13 +38,13 @@ public class FileService {
     }
     public String newFolder(NewFolderRequest newFolderRequest){
       String Username = jwtService.extractUsername(newFolderRequest.getToken());
-      Optional<User> user = userRepository.findUserByUsername(Username);
-      List<FolderDir> folders = user.get().getHome().getFolder();
-      for(FolderDir folder : folders){
-        if(folder.getName().equalsIgnoreCase(newFolderRequest.getName())){
-          return "Folder with name "+newFolderRequest.getName()+" exists already";
-        }
-      }
+      // Optional<User> user = userRepository.findUserByUsername(Username);
+      // List<FolderDir> folders = user.get().getHome().getFolder();
+      // for(FolderDir folder : folders){
+      //   if(folder.getName().equalsIgnoreCase(newFolderRequest.getName())){
+      //     return "Folder with name "+newFolderRequest.getName()+" exists already";
+      //   }
+      // }
       FolderDir folderDir = new FolderDir();
       folderDir.setName(newFolderRequest.getName());
       folderDir.setPath(newFolderRequest.getPath()+"/"+newFolderRequest.getName());
