@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.swa.filter.ObjectModel.GetFolderRequest;
+import com.swa.filter.ObjectModel.GetFolderResponse;
 import com.swa.filter.ObjectModel.NewFolderRequest;
 import com.swa.filter.Services.FileService;
 import com.swa.filter.mySQLTables.FolderDir;
@@ -19,14 +21,17 @@ public class FileController {
     private final FileService fileService;
 
     @GetMapping("/get")
-    public FolderDir getFolder(@RequestBody GetFolderRequest getFolderRequest){
+    public FolderDir getFolder(@RequestBody GetFolderResponse getFolderRequest){
         return fileService.getFolder(getFolderRequest);
     }
     @PostMapping("/new")
     public ResponseEntity<?> newFolder(@RequestBody NewFolderRequest newFolderRequest){
         return ResponseEntity.ok().body(fileService.newFolder(newFolderRequest));
     }
-
+    @GetMapping("/get/all")
+    public ResponseEntity<?> getAll(@RequestBody GetFolderRequest getFolderRequest){
+        return ResponseEntity.ok().body(fileService.getALLFoldersUser(getFolderRequest));
+    }
     // @PostMapping(path = "/create/group")
     // public  createGroup(@RequestBody GroupRequest groupRequest){
     //   return ResponseEntity.ok().body(myGroupService.createGroup(groupRequest));

@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor 
 public class GetFolderRequest {
-    String name;
     String path;
     String token;
 }

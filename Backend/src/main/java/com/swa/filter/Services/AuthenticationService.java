@@ -37,7 +37,7 @@ public class AuthenticationService {
             var homeS = HomeDir.builder()
                               .name("root")
                               .date(new Date())
-                              .path("../userWorkSpace/"+registerRequest.getUsername())
+                              .path(fileService.createUserFolder(registerRequest.getUsername()))
                               .build();
             homeDirRepository.save(homeS);
 
@@ -49,11 +49,6 @@ public class AuthenticationService {
                         .home(homeS)
                         .build();
             userRepository.save(user);
-       
-            fileService.createUserFolder(user.getUser_id(),homeS.getPath());
-            System.out.println(user.getUser_id());
-
-            // var jwtToken = jwtService.generateToken(user);
             return AuthenticationResponse.builder().message("User succsesfull registered!").build();
         }
     }
