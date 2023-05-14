@@ -42,7 +42,6 @@ public class AuthenticationService {
                               .path(fileService.createUserFolder(registerRequest.getUsername()))
                               .build();
             homeDirRepository.save(homeS);
-
             var user = User.builder()
                         .name(registerRequest.getName())
                         .username(registerRequest.getUsername())
@@ -51,11 +50,10 @@ public class AuthenticationService {
                         .home(homeS)
                         .build();
             userRepository.save(user);
-            Optional<User> addHome = userRepository.findUserByUsername(registerRequest.getUsername());
-            var homeFOlder = FolderDir.builder().name("/").date(new Date()).parent(0).build();
-            addHome.get().getHome().getFolders().add(0, homeFOlder);
             return AuthenticationResponse.builder().message("User succsesfull registered!").build();
+
         }
+
     }
     
 
