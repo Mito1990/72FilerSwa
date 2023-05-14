@@ -22,7 +22,7 @@ public class FolderDir {
     int folder_id;
     String name;
     String path;
-    String parent;
+    int parent;
     Long size;
     Date date;
 }

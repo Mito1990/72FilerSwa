@@ -1,6 +1,7 @@
 package com.swa.filter.Services;
 
 import java.util.Date;
+import java.util.Optional;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +14,7 @@ import com.swa.filter.ObjectModel.RegisterRequest;
 import com.swa.filter.ObjectModel.Role;
 import com.swa.filter.Repository.HomeDirRepository;
 import com.swa.filter.Repository.UserRepository;
+import com.swa.filter.mySQLTables.FolderDir;
 import com.swa.filter.mySQLTables.HomeDir;
 import com.swa.filter.mySQLTables.User;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +51,9 @@ public class AuthenticationService {
                         .home(homeS)
                         .build();
             userRepository.save(user);
+            Optional<User> addHome = userRepository.findUserByUsername(registerRequest.getUsername());
+            var homeFOlder = FolderDir.builder().name("/").date(new Date()).parent(0).build();
+            addHome.get().getHome().getFolders().add(0, homeFOlder);
             return AuthenticationResponse.builder().message("User succsesfull registered!").build();
         }
     }

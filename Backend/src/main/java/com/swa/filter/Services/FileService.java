@@ -1,5 +1,6 @@
 package com.swa.filter.Services;
 
+import java.io.Console;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,21 +9,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.stereotype.Service;
-
 import com.swa.filter.mySQLTables.FolderDir;
 import com.swa.filter.mySQLTables.User;
-
 import jakarta.transaction.Transactional;
-
 import com.swa.filter.ObjectModel.GetFolderRequest;
 import com.swa.filter.ObjectModel.GetFolderResponse;
 import com.swa.filter.ObjectModel.NewFolderRequest;
 import com.swa.filter.Repository.FolderDirRepository;
-import com.swa.filter.Repository.HomeDirRepository;
 import com.swa.filter.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import com.swa.filter.ObjectModel.AddFolderResponse;
+
 @Transactional
 @RequiredArgsConstructor
 @Service
@@ -32,7 +30,8 @@ public class FileService {
     private final JwtService jwtService;
     private final FolderDirRepository folderDirRepository;
     public String createUserFolder(String path){
-          Path userpath = Paths.get(rootPath+path+"/home/");
+          Path userpath = Paths.get(rootPath+path);
+          
           System.out.println(userpath.toString());
           try {
             Files.createDirectories(userpath);
@@ -43,22 +42,22 @@ public class FileService {
           return userpath.toString();
     }
 
-    public String newFolder(NewFolderRequest newFolderRequest){
+    public AddFolderResponse newFolder(NewFolderRequest newFolderRequest){
       String Username = jwtService.extractUsername(newFolderRequest.getToken());
       Optional<User> user = userRepository.findUserByUsername(Username);
-      String userRepo = user.get().getHome().getPath()+"/"+newFolderRequest.getPath();
+      String userRepo = user.get().getHome().getPath()+newFolderRequest.getPath();
+      System.out.println(userRepo+"\n\n\n");
       Path newpath  = Paths.get(userRepo);
       List<FolderDir> folders = user.get().getHome().getFolders();
       for(FolderDir folder : folders){
         if(folder.getPath().equalsIgnoreCase(newFolderRequest.getPath())){
-          System.out.println("hello");
-          return "Folder with name "+newFolderRequest.getName()+" exists already";
+          return new AddFolderResponse("Folder with name "+newFolderRequest.getName()+" exists already");
         }
       }
       FolderDir newfolderDir = new FolderDir();
       newfolderDir.setName(newFolderRequest.getName());
       newfolderDir.setPath(newFolderRequest.getPath());
-      newfolderDir.setParent(newpath.toString());
+      newfolderDir.setParent(newFolderRequest.getParent());
       newfolderDir.setDate(new Date());
       folders.add(newfolderDir);
       folderDirRepository.save(newfolderDir);
@@ -69,7 +68,7 @@ public class FileService {
       } catch (Exception e) {
         // TODO: handle exception
       }
-      return newpath.toString();
+      return new AddFolderResponse(newpath.toString());
     }
 
 
@@ -98,7 +97,13 @@ public class FileService {
       String Username = jwtService.extractUsername(getFolderRequest.getToken());
       Optional<User> user = userRepository.findUserByUsername(Username);
       List<FolderDir>folders = user.get().getHome().getFolders();
-      return folders;
+      List<FolderDir>list= new ArrayList<>();
+      for(FolderDir folder : folders){
+        if(folder.getParent()==getFolderRequest.getParentID()){
+          list.add(folder);
+        }
+      }
+      return list;
     }
 
 

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor 
 public class NewFolderRequest {
     String name;
+    int parent;
     String path;
     String token;
 }

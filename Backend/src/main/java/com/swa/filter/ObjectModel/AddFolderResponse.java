@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor 
-public class GetFolderRequest {
-    int ParentID;
-    String token;
+public class AddFolderResponse {
+    private String message;
 }

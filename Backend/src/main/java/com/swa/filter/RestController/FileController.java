@@ -28,7 +28,7 @@ public class FileController {
     public ResponseEntity<?> newFolder(@RequestBody NewFolderRequest newFolderRequest){
         return ResponseEntity.ok().body(fileService.newFolder(newFolderRequest));
     }
-    @GetMapping("/get/all")
+    @PostMapping("/get/all")
     public ResponseEntity<?> getAll(@RequestBody GetFolderRequest getFolderRequest){
         return ResponseEntity.ok().body(fileService.getALLFoldersUser(getFolderRequest));
     }
