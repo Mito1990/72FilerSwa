@@ -19,7 +19,7 @@ export const Login = ({ setIsLoggedIn }) =>{
         const data = await response.json();
         Cookies.set('Token', data.message,{expires: 1});
         var date = new Date();
-        date.setTime(date.getTime() + (30 * 1000));
+        date.setTime(date.getTime() + (300 * 1000));
         Cookies.set('status', true,{expires: date});
       }catch (error) {
         console.error('Error:', error);
