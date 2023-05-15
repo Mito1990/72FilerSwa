@@ -1,4 +1,5 @@
-package com.swa.filter.Authentication;
+package com.swa.filter.ObjectModel;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor 
-public class RegisterRequest {
-    private String name;
-    private String username;
-    private String password;
+public class MemberGroupRequest {
+    // String username;
+    GroupRequest groupRequest;
+    MemberRequest memberRequest;
 }

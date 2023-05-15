@@ -37,10 +37,8 @@ public class UserService  {
     }
     
     public boolean checkIfUserExists(String username) {
-        List<String>userList = listOfUsernames();
-        for (String user : userList) {
-            if(user.equalsIgnoreCase(username))return true;
-        }
-        return false;
+        Optional<User> user = userRepository.findUserByUsername(username);
+        if(user.isPresent())return true;
+        else return false;
     }
 }

@@ -4,9 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
 import java.util.List;
+import com.swa.filter.ObjectModel.Role;
 
 @Entity
 @Data
@@ -17,9 +16,8 @@ public class MyGroups {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int group_id;
     private String groupname;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "info",
-            joinColumns = @JoinColumn(name = "group_id"),
-            inverseJoinColumns = @JoinColumn(name="info_id"))
-    private List<MyGroupDetails>info = new ArrayList<>();
+    private String admin;
+    private Role role;
+    @OneToMany
+    private List<MyGroupMembers>members;
 }

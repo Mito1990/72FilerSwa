@@ -12,6 +12,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.swa.filter.ObjectModel.Role;
+
 
 @Data
 @Entity
@@ -30,6 +32,9 @@ public class User implements UserDetails {
   private String password;
   @Enumerated(EnumType.STRING)
   private Role role;
+  @OneToOne
+  // @JoinColumn(name = "home_id")
+  HomeDir home;
 
   @Override 
   public Collection<? extends GrantedAuthority> getAuthorities() {

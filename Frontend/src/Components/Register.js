@@ -8,15 +8,18 @@ export const Register = () =>{
 
    const onSubmit = async(e) =>{
         console.log(e)
-      const requestOptions = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(e)
-      };
-      const response = await fetch('http://localhost:8080/api/login/register', requestOptions);
-      const data = await response.json();
-      console.log(data);
       navigate("/Login");
+      fetch('http://localhost:8080/api/login/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(e)
+      }).then((response) => response.json()).then((data) => {
+        console.log(data);
+      }).catch((error) => {
+        console.error('Error retrieving data:', error);
+      });
    }
 
     return(

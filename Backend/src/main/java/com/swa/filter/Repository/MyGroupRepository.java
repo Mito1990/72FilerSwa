@@ -5,6 +5,7 @@ import com.swa.filter.mySQLTables.MyGroups;
 
 public interface MyGroupRepository extends JpaRepository<MyGroups, Integer> {
     MyGroups findByGroupname(String groupName);
-    MyGroups findByInfo(String info);
-    void deleteByInfo(String userName);
+    MyGroups findByMembers(String info);
+    MyGroups findByGroupnameAndAdmin(String groupname,String username);
+    void deleteByMembers(String userName);
 }

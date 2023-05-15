@@ -1,8 +1,10 @@
 package com.swa.filter.RestController;
 
+import com.swa.filter.ObjectModel.MemberGroupRequest;
+import com.swa.filter.ObjectModel.GroupRequest;
 import com.swa.filter.Services.MyGroupService;
 import com.swa.filter.mySQLTables.MyGroups;
-import com.swa.filter.mySQLTables.MyGroupDetails;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,28 +18,31 @@ public class MyGroupController{
   private final MyGroupService myGroupService;
 
   @GetMapping(path = "/get/group")
-  public ResponseEntity<?>getGroup(@RequestParam String groupname){
-    MyGroups group = myGroupService.getGroup(groupname);
-    if(group  == null)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+groupname+"} doesn't exists!");
+  public ResponseEntity<?>getGroup(@RequestBody GroupRequest groupRequest){
+    MyGroups group = myGroupService.getGroup(groupRequest);
+    if(group  == null)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+groupRequest.getGroupname()+"} doesn't exists!");
     return ResponseEntity.ok().body(group);
   }
+  // @CrossOrigin(origins = "http://localhost:3000")
   @GetMapping(path = "/get/all")
   public ResponseEntity<List<MyGroups>>getAllGroups(){
     return ResponseEntity.ok().body(myGroupService.getAllGroups());
   }
-  @PostMapping(path = "/delete/user")
-  public ResponseEntity<?> deleteMemberFromGroup(@RequestBody MyGroupDetails userGroupInfo){
-    return ResponseEntity.ok().body(myGroupService.deleteMemberFromGroup(userGroupInfo));
+  @DeleteMapping(path = "/delete/user")
+  public ResponseEntity<?> deleteMemberFromGroup(@RequestBody MemberGroupRequest memberGroupRequest){
+    return ResponseEntity.ok().body(myGroupService.deleteMemberFromGroup(memberGroupRequest));
   }
-  
+  // @CrossOrigin(origins = "*", allowedHeaders = "*", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE })
   @PostMapping(path = "/create/group")
-  public ResponseEntity<?> createGroup(@RequestParam String groupname){
-    return ResponseEntity.ok().body(myGroupService.createGroup(groupname));
+  public ResponseEntity<?> createGroup(@RequestBody GroupRequest groupRequest){
+    return ResponseEntity.ok().body(myGroupService.createGroup(groupRequest));
   }  
 
   @PostMapping(path = "/add/user/to/group")
-  public ResponseEntity<?> addUserToGroup(@RequestBody MyGroupDetails userGroupInfo){
-    return ResponseEntity.ok().body(myGroupService.addUserToGroup(userGroupInfo));
+  public ResponseEntity<?> addUserToGroup(@RequestBody MemberGroupRequest memberGroupRequest){
+    System.out.println("Test from Controller");
+    System.out.println(memberGroupRequest);
+    return ResponseEntity.ok().body(myGroupService.addUserToGroup(memberGroupRequest));
   }
 }
 

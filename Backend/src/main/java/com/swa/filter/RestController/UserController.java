@@ -13,7 +13,6 @@ import java.util.List;
 @RequestMapping(path = "/api/users")
 public class UserController {
   private final UserService userService;
-  @CrossOrigin(origins = "http://localhost:3000")
   @GetMapping(path = "/get/all" )
   public ResponseEntity<List<User>>getAllUsers(){
     return ResponseEntity.ok().body(userService.getAllUsers());

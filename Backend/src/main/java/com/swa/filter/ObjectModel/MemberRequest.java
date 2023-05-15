@@ -1,4 +1,4 @@
-package com.swa.filter.Authentication;
+package com.swa.filter.ObjectModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor 
-public class AuthenticationRequest {
-    private String username;
-    private String password;
+public class MemberRequest {
+    String username;
 }
