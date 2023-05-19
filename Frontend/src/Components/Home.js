@@ -63,7 +63,6 @@ export const Home = () => {
 
   const AddFolder = (e) =>{
     console.log(e.NewFolder);
-    const serverToken = Cookies.get('Token');
     const folder = {
       name:e.NewFolder,
       parent:pa,
@@ -88,9 +87,7 @@ export const Home = () => {
 
 
   const OpenFolder = (item) =>{
-    const serverToken = Cookies.get('Token');
     const newUrl = `/home/${item.name}`;
-    // Use history.push to navigate to the new URL
     navigate(newUrl);
     const toSend ={
       parentID:item.folder_id,
@@ -128,13 +125,11 @@ export const Home = () => {
             <button key={index} className='flex flex-col justify-items-center m-2 w-full sm:w-1/2 md:w-1/3 lg:w-3/4 xl:w-1/5 flex-basis-full' onClick={() => OpenFolder(item)} >
               <svg className=' h-9 w-9 bg-slate-500' xmlns="http://www.w3.org /2000/svg" viewBox="0 0 512 512"><path d="M64 480H448c35.3 0 64-28.7 64-64V160c0-35.3-28.7-64-64-64H288c-10.1 0-19.6-4.7-25.6-12.8L243.2 57.6C231.1 41.5 212.1 32 192 32H64C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64z"/></svg>        
               <div className='h-5 w-9' key={index}>
-              {/* {item.name} */}
               {item.name}
               </div>
             </button>
         ))}
       </div>
-        {/* <button onClick={OpenFolder} data={Object.entries(home)}>OpenFolder</button> */}
     </div>
   );
 }

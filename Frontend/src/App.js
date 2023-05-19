@@ -16,7 +16,6 @@ export const App = () =>{
 			<Route exact path="/Register" element={<Register/>}/>
 			<Route exact path="/Home" element={isLoggedIn ? <Home/> : <Navigate replace to="/Login" />}/>
 			<Route exact path="/Home/:name" element={isLoggedIn ? <Home/> : <Navigate replace to="/Login" />}/>
-			{/* <Route path="/AddFolder" element={isLoggedIn ? <OddFolder/> : <Navigate replace to="/Login" />}/> */}
 		</Routes>
 		</BrowserRouter>
 		</>
