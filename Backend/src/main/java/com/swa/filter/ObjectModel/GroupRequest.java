@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor 
 public class GroupRequest {
     String groupname;
+    int folderID;
     String token;    
 }

@@ -23,5 +23,5 @@ public class HomeDir {
     Long size;
     Date date;
     @OneToMany
-    List<FolderDir>folders;
+    private List<FolderDir>folders;
 }

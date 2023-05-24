@@ -35,6 +35,8 @@ public class User implements UserDetails {
   @OneToOne
   // @JoinColumn(name = "home_id")
   HomeDir home;
+  @OneToMany
+  private List<MyGroups>mygroups;
 
   @Override 
   public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor 
 public class MemberGroupRequest {
-    // String username;
+    int folderID;
+    String path;
     GroupRequest groupRequest;
     MemberRequest memberRequest;
 }

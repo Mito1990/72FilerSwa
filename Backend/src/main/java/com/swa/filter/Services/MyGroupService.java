@@ -1,6 +1,8 @@
 package com.swa.filter.Services;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,7 +11,9 @@ import com.swa.filter.mySQLTables.MyGroupMembers;
 import com.swa.filter.ObjectModel.Role;
 import com.swa.filter.ObjectModel.GroupRequest;
 import com.swa.filter.Repository.MyGroupRepository;
+import com.swa.filter.Repository.UserRepository;
 import com.swa.filter.mySQLTables.MyGroups;
+import com.swa.filter.mySQLTables.User;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +24,7 @@ public class MyGroupService{
     private final MyGroupRepository myGroupRepository;
     private final UserService userService;
     private final JwtService jwtService;
+    private final UserRepository userRepository;
  
     public String createGroup(GroupRequest createGroupRequest) {
         String username = jwtService.extractUsername(createGroupRequest.getToken());
@@ -29,7 +34,11 @@ public class MyGroupService{
             myGroup.setGroupname(createGroupRequest.getGroupname());
             myGroup.setAdmin(username);
             myGroup.setRole(Role.ADMIN);
+            myGroup.setFolderID(createGroupRequest.getFolderID());
             myGroupRepository.save(myGroup);
+            Optional<User> user = userRepository.findUserByUsername(username);
+            user.get().getMygroups().add(myGroup);
+            userRepository.save(user.get());
             return "Group succsessful created";
         }else{
             return "Group with name "+createGroupRequest.getGroupname()+" exists aleady!";
@@ -99,6 +108,9 @@ public class MyGroupService{
         MyGroups mygroup = myGroupRepository.findByGroupnameAndAdmin(memberGroupRequest.getGroupRequest().getGroupname(), owner);
         var newGroupMembers = MyGroupMembers.builder().username(memberGroupRequest.getMemberRequest().getUsername()).role(Role.USER).build();
         mygroup.getMembers().add(newGroupMembers);
+        mygroup.setAdmin(owner);
+        mygroup.setPath(memberGroupRequest.getPath());
+        mygroup.setFolderID(memberGroupRequest.getFolderID());
         myGroupRepository.save(mygroup);
         return memberGroupRequest.getMemberRequest().getUsername()+" succsesfull added to "+memberGroupRequest.getGroupRequest().getGroupname();
     }
