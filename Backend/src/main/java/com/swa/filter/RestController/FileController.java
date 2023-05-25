@@ -32,15 +32,8 @@ public class FileController {
     public ResponseEntity<?> getAll(@RequestBody GetFolderRequest getFolderRequest){
         return ResponseEntity.ok().body(fileService.getALLFoldersUser(getFolderRequest));
     }
-    // @PostMapping(path = "/create/group")
-    // public  createGroup(@RequestBody GroupRequest groupRequest){
-    //   return ResponseEntity.ok().body(myGroupService.createGroup(groupRequest));
-    // }  
-    // @Autowired
-    // private HomeDirRepository homeDirRepository;
-    // @GetMapping("/folder/{folderId}")
-    // public Filer getFolder(@PathVariable Long folderId) {
-    //     homeDirRepository.findById(folderId);
-    //     return null;
-    // }
+    @PostMapping("/get/share")
+    public ResponseEntity<?> getSharedFolders(@RequestBody GetFolderRequest getFolderRequest){
+        return ResponseEntity.ok().body(fileService.getListOfSharedFolderID(getFolderRequest));
+    } 
 }

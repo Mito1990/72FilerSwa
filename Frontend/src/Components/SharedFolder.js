@@ -6,7 +6,7 @@ import { MyGroups } from './MyGroups';
 
 
 
-export const Home = () => {
+export const SharedFolder = () => {
   const [count, setCount] = useState(0);
   const [parent, setParent] = useState(0);
   const [Currentfolder, setCurrentFolder] = useState();
@@ -29,7 +29,7 @@ export const Home = () => {
         parentID:currentID,
         token:serverToken
       }
-      fetch('http://localhost:8080/api/folder/get/all', {
+      fetch('http://localhost:8080/api/folder/get/share', {
       method: 'POST',
       headers: {
       'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ export const Home = () => {
       parentID:parent,
       token:serverToken
     } 
-    fetch('http://localhost:8080/api/folder/get/all', {
+    fetch('http://localhost:8080/api/folder/get/share', {
       method: 'POST',
       headers: {
       'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ export const Home = () => {
       parent:parent,
       path:path+e.NewFolder,
       token:serverToken,
-      shared:false
+      shared:true
     }
     fetch('http://localhost:8080/api/folder/new', {
       method: 'POST',
@@ -91,12 +91,12 @@ export const Home = () => {
 
   const OpenFolder = (item) =>{
     setCurrentFolder(item);
-    navigate(`/home/${item.folder_id}`);
+    navigate(`/share/${item.folder_id}`);
     const folderRequest ={
       parentID:item.folder_id,
       token:serverToken
     }
-    fetch('http://localhost:8080/api/folder/get/all', {
+    fetch('http://localhost:8080/api/folder/get/share', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -110,19 +110,17 @@ export const Home = () => {
     console.error('Error retrieving data:', error);
   });
   }
-  const shareFolder = () =>{
-    navigate("/share");
-  }
   return (
     <div className=' h-screen bg-slate-500 flex items-start'>
       <div className='bg-orange-600 m-10'>
         <form className=" bg-orange-300 flex flex-col w-52 h-32 justify-center items-center rounded-md shadow-2xl" onSubmit={handleSubmit(AddFolder)}>
             <input className="mb-2" type="text" placeholder="New Folder:" name="NewFOlder" {...register('NewFolder', { required: true })}/>
           <button className="hover:bg-sky-700 w-24 h-12 border-slate-950 border-2 rounded-xl" type="submit">Submit</button>
-        </form> 
+        </form>
         <div>
-          <button className="hover:bg-sky-700 w-24 h-12 border-slate-950 border-2 rounded-xl" onClick={shareFolder}>SharedFolder</button>
-        </div>
+            <div>{(parent===0)?(<div></div>):(<MyGroups data={Currentfolder}></MyGroups>)}</div>
+        </div> 
+     
       </div>
       <div className=' flex justify-start mt-10 w-2/4 flex-wrap'>
         {data.map((item, index) => (

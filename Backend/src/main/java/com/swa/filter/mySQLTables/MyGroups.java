@@ -19,6 +19,7 @@ public class MyGroups {
     private String groupname;
     private String path;
     private String admin;
+    private String guest;
     private Role role;
     @OneToMany
     private List<MyGroupMembers>members;

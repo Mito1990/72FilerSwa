@@ -14,4 +14,5 @@ public class NewFolderRequest {
     int parent;
     String path;
     String token;
+    boolean shared;
 }

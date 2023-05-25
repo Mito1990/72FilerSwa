@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import com.swa.filter.mySQLTables.FolderDir;
+import com.swa.filter.mySQLTables.MyGroups;
 import com.swa.filter.mySQLTables.User;
 import jakarta.transaction.Transactional;
 import com.swa.filter.ObjectModel.GetFolderRequest;
@@ -59,6 +60,7 @@ public class FileService {
       newfolderDir.setPath(newFolderRequest.getPath());
       newfolderDir.setParent(newFolderRequest.getParent());
       newfolderDir.setDate(new Date());
+      newfolderDir.setShared(newFolderRequest.isShared());
       folders.add(newfolderDir);
       folderDirRepository.save(newfolderDir);
       userRepository.save(user.get());
@@ -99,13 +101,41 @@ public class FileService {
       List<FolderDir>folders = user.get().getHome().getFolders();
       List<FolderDir>list= new ArrayList<>();
       for(FolderDir folder : folders){
-        if(folder.getParent()==getFolderRequest.getParentID()){
+        if(folder.getParent()==getFolderRequest.getParentID()&&folder.isShared()==false){
           list.add(folder);
         }
       }
       return list;
     }
-
+    public List<FolderDir>getListOfSharedFolderID(GetFolderRequest getFolderRequest){
+      System.out.println("getfolderRequets: "+getFolderRequest+"\n\n\n");
+      String Username = jwtService.extractUsername(getFolderRequest.getToken());
+      Optional<User> user = userRepository.findUserByUsername(Username);
+      List<FolderDir>folders = user.get().getHome().getFolders();
+      List<FolderDir>list= new ArrayList<>();
+      List<MyGroups> groups = user.get().getMygroups();
+      if(user.get().getMygroups().isEmpty()){
+        for(FolderDir folder : folders){
+          System.out.println("folder: "+folder);
+          if(folder.getParent()==getFolderRequest.getParentID()&&folder.isShared()==true){
+            list.add(folder);
+          }
+       }
+       return list;
+      }else{
+        for(MyGroups group : groups){
+          if(group.getFolderID()==getFolderRequest.getParentID()){
+            for(FolderDir folder : folders){
+              System.out.println("folder: "+folder);
+              if(folder.getParent()==getFolderRequest.getParentID()&&folder.isShared()==true){
+                list.add(folder);
+              }
+            }
+          }
+        }
+        return list;
+      }
+    }
 
     // public void writeToFile(String username,Long id) {
     //     try {

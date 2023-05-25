@@ -1,5 +1,6 @@
 package com.swa.filter.Services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +15,7 @@ import com.swa.filter.Repository.MyGroupRepository;
 import com.swa.filter.Repository.UserRepository;
 import com.swa.filter.mySQLTables.MyGroups;
 import com.swa.filter.mySQLTables.User;
-
+import com.swa.filter.Repository.MyGroupMembersRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -25,6 +26,7 @@ public class MyGroupService{
     private final UserService userService;
     private final JwtService jwtService;
     private final UserRepository userRepository;
+    private final MyGroupMembersRepository myGroupMembersRepository;
  
     public String createGroup(GroupRequest createGroupRequest) {
         String username = jwtService.extractUsername(createGroupRequest.getToken());
@@ -105,13 +107,30 @@ public class MyGroupService{
             System.out.println("Test from Service checkifUserExistsIngroup: ");
             return memberGroupRequest.getMemberRequest().getUsername()+" exists already in "+memberGroupRequest.getGroupRequest().getGroupname();
         }
-        MyGroups mygroup = myGroupRepository.findByGroupnameAndAdmin(memberGroupRequest.getGroupRequest().getGroupname(), owner);
+        MyGroups myGroupOwner = myGroupRepository.findByGroupnameAndAdmin(memberGroupRequest.getGroupRequest().getGroupname(), owner);
         var newGroupMembers = MyGroupMembers.builder().username(memberGroupRequest.getMemberRequest().getUsername()).role(Role.USER).build();
-        mygroup.getMembers().add(newGroupMembers);
-        mygroup.setAdmin(owner);
-        mygroup.setPath(memberGroupRequest.getPath());
-        mygroup.setFolderID(memberGroupRequest.getFolderID());
-        myGroupRepository.save(mygroup);
+        myGroupMembersRepository.save(newGroupMembers);
+
+        myGroupOwner.getMembers().add(newGroupMembers);
+        myGroupOwner.setAdmin(owner);
+        myGroupOwner.setPath(memberGroupRequest.getPath());
+        myGroupOwner.setFolderID(memberGroupRequest.getFolderID());
+        myGroupRepository.save(myGroupOwner);
+
+        var newGroupOwner = MyGroupMembers.builder().username(owner).role(Role.ADMIN).build();
+        myGroupMembersRepository.save(newGroupOwner);
+        ArrayList<MyGroupMembers> member = new ArrayList<>();
+        member.add(newGroupOwner);
+        MyGroups myGroupMember = new MyGroups();
+        myGroupMember.setMembers(member);
+        myGroupMember.setGroupname(memberGroupRequest.getGroupRequest().getGroupname());
+        myGroupMember.setAdmin(owner);
+        myGroupMember.setRole(Role.USER);
+        myGroupMember.setFolderID(memberGroupRequest.getGroupRequest().getFolderID());
+        myGroupRepository.save(myGroupMember);
+        Optional<User> user = userRepository.findUserByUsername(memberGroupRequest.getMemberRequest().getUsername());
+        user.get().getMygroups().add(myGroupMember);
+        userRepository.save(user.get());
         return memberGroupRequest.getMemberRequest().getUsername()+" succsesfull added to "+memberGroupRequest.getGroupRequest().getGroupname();
     }
   
@@ -125,4 +144,5 @@ public class MyGroupService{
         }
         return false;
     }
+    
 }

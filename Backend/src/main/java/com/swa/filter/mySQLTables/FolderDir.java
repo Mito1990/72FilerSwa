@@ -25,4 +25,5 @@ public class FolderDir {
     int parent;
     Long size;
     Date date;
+    boolean shared;
 }
