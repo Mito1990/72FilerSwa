@@ -8,11 +8,12 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
-public class GroupRequest {
-    private String groupname;
-    private int parent;
-    private String path;
-    private String token;
-    private boolean shared;
+@AllArgsConstructor 
+public class NewFolderGroupRequest {
+    String name;
+    int groupID;
+    int parent;
+    String path;
+    String token;
+    boolean shared;
 }

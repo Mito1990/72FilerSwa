@@ -10,14 +10,14 @@ export const Home = () => {
   const [count, setCount] = useState(0);
   const [parent, setParent] = useState(0);
   const [Currentfolder, setCurrentFolder] = useState();
-  const [path] = useState("/");
+  const [path,setPath] = useState("/");
   const [data, setData] = useState([]);
   const {register, handleSubmit} = useForm();
   const navigate = useNavigate();
   const serverToken = Cookies.get('Token');
 
   useEffect(() => {
-    const handlePopstate = () => {  
+    const handlePopstate = () => {
       let currentID = getCurrentFolderIdFromUrl();
       if(isNaN(currentID)){
         currentID = 0;
@@ -45,7 +45,7 @@ export const Home = () => {
     const folderRequest ={
       parentID:parent,
       token:serverToken
-    } 
+    }
     fetch('http://localhost:8080/api/folder/get/all', {
       method: 'POST',
       headers: {
@@ -71,7 +71,7 @@ export const Home = () => {
     const folder = {
       name:e.NewFolder,
       parent:parent,
-      path:path+e.NewFolder,
+      path:path+"/"+e.NewFolder,
       token:serverToken,
       shared:false
     }
@@ -84,7 +84,7 @@ export const Home = () => {
       body: JSON.stringify(folder)
     }).then((response) => response.json()).then((data) => {
       setCount(count+1);
-   }).catch((error) => {
+    }).catch((error) => {
     console.error('Error retrieving data:', error);
     });
   }
@@ -106,6 +106,7 @@ export const Home = () => {
   }).then((response) => response.json()).then((data) => {
     setData(data);
     setParent(item.folder_id);
+    setPath(item.path);
   }).catch((error) => {
     console.error('Error retrieving data:', error);
   });
@@ -119,7 +120,7 @@ export const Home = () => {
         <form className=" bg-orange-300 flex flex-col w-52 h-32 justify-center items-center rounded-md shadow-2xl" onSubmit={handleSubmit(AddFolder)}>
             <input className="mb-2" type="text" placeholder="New Folder:" name="NewFOlder" {...register('NewFolder', { required: true })}/>
           <button className="hover:bg-sky-700 w-24 h-12 border-slate-950 border-2 rounded-xl" type="submit">Submit</button>
-        </form> 
+        </form>
         <div>
           <button className="hover:bg-sky-700 w-24 h-12 border-slate-950 border-2 rounded-xl" onClick={shareFolder}>SharedFolder</button>
         </div>

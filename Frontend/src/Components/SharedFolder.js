@@ -9,15 +9,16 @@ import { MyGroups } from './MyGroups';
 export const SharedFolder = () => {
   const [count, setCount] = useState(0);
   const [parent, setParent] = useState(0);
-  const [Currentfolder, setCurrentFolder] = useState();
-  const [path] = useState("/");
+  const [childValue, setChildValue] = useState(0);
+  const [Currentfolder, setCurrentFolder] = useState(0);
+  const [path,setPath] = useState("/");
   const [data, setData] = useState([]);
   const {register, handleSubmit} = useForm();
   const navigate = useNavigate();
   const serverToken = Cookies.get('Token');
 
   useEffect(() => {
-    const handlePopstate = () => {  
+    const handlePopstate = () => {
       let currentID = getCurrentFolderIdFromUrl();
       if(isNaN(currentID)){
         currentID = 0;
@@ -45,7 +46,7 @@ export const SharedFolder = () => {
     const folderRequest ={
       parentID:parent,
       token:serverToken
-    } 
+    }
     fetch('http://localhost:8080/api/folder/get/share', {
       method: 'POST',
       headers: {
@@ -65,31 +66,9 @@ export const SharedFolder = () => {
     return () => {
       window.removeEventListener('popstate', handlePopstate);
     };
-  }, [count]);
-
-  const AddFolder = (e) =>{
-    const folder = {
-      name:e.NewFolder,
-      parent:parent,
-      path:path+e.NewFolder,
-      token:serverToken,
-      shared:true
-    }
-    fetch('http://localhost:8080/api/folder/new', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer '+serverToken
-      },
-      body: JSON.stringify(folder)
-    }).then((response) => response.json()).then((data) => {
-      setCount(count+1);
-   }).catch((error) => {
-    console.error('Error retrieving data:', error);
-    });
-  }
-
+  }, [count,childValue]);
   const OpenFolder = (item) =>{
+    console.log(item);
     setCurrentFolder(item);
     navigate(`/share/${item.folder_id}`);
     const folderRequest ={
@@ -105,22 +84,53 @@ export const SharedFolder = () => {
     body: JSON.stringify(folderRequest)
   }).then((response) => response.json()).then((data) => {
     setData(data);
+    setPath(item.path);
     setParent(item.folder_id);
   }).catch((error) => {
     console.error('Error retrieving data:', error);
   });
   }
+  const AddFolder = (e) =>{
+    let currentID = getCurrentFolderIdFromUrl();
+    const folder = {
+        name:e.NewFolder,
+        parent:currentID,
+        path:path+"/"+e.NewFolder,
+        token:serverToken,
+        shared:true
+    }
+    console.log("folder: "+ folder);
+    fetch('http://localhost:8080/api/folder/new/share', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer '+serverToken
+    },
+    body: JSON.stringify(folder)
+    }).then((response) => response.json()).then((data) => {
+        setCount(count+1);
+    }).catch((error) => {
+    console.error('Error retrieving data:', error);
+    });
+  }
+  const handleChildValue = (value) => {
+    setChildValue(value);
+    console.log("third");
+    console.log(value);
+
+
+  };
   return (
     <div className=' h-screen bg-slate-500 flex items-start'>
       <div className='bg-orange-600 m-10'>
-        <form className=" bg-orange-300 flex flex-col w-52 h-32 justify-center items-center rounded-md shadow-2xl" onSubmit={handleSubmit(AddFolder)}>
-            <input className="mb-2" type="text" placeholder="New Folder:" name="NewFOlder" {...register('NewFolder', { required: true })}/>
-          <button className="hover:bg-sky-700 w-24 h-12 border-slate-950 border-2 rounded-xl" type="submit">Submit</button>
-        </form>
         <div>
-            <div>{(parent===0)?(<div></div>):(<MyGroups data={Currentfolder}></MyGroups>)}</div>
-        </div> 
-     
+            <div>{(parent===0)?(<MyGroups onChildValue={handleChildValue}></MyGroups>):(
+                <form className=" bg-orange-300 flex flex-col w-52 h-32 justify-center items-center rounded-md shadow-2xl" onSubmit={handleSubmit(AddFolder)}>
+                  <input className="mb-2" type="text" placeholder="New Folder:" name="NewFOlder" {...register('NewFolder', { required: true })}/>
+                <button className="hover:bg-sky-700 w-24 h-12 border-slate-950 border-2 rounded-xl" type="submit">Submit</button>
+            </form>
+            )}</div>
+        </div>
       </div>
       <div className=' flex justify-start mt-10 w-2/4 flex-wrap'>
         {data.map((item, index) => (

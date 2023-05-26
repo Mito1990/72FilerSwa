@@ -41,7 +41,7 @@ public class MyGroupController{
     // Convert the object to JSON string
     String jsonString = objectMapper.writeValueAsString(myGroupService.createGroup(groupRequest));
     return ResponseEntity.ok().body(jsonString);
-  }  
+  }
 
   @PostMapping(path = "/add/user/to/group")
   public ResponseEntity<?> addUserToGroup(@RequestBody MemberGroupRequest memberGroupRequest){

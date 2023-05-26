@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.swa.filter.ObjectModel.GetFolderRequest;
 import com.swa.filter.ObjectModel.GetFolderResponse;
+import com.swa.filter.ObjectModel.NewFolderGroupRequest;
 import com.swa.filter.ObjectModel.NewFolderRequest;
 import com.swa.filter.Services.FileService;
 import com.swa.filter.mySQLTables.FolderDir;
@@ -27,6 +28,10 @@ public class FileController {
     @PostMapping("/new")
     public ResponseEntity<?> newFolder(@RequestBody NewFolderRequest newFolderRequest){
         return ResponseEntity.ok().body(fileService.newFolder(newFolderRequest));
+    }
+    @PostMapping("/new/share")
+    public ResponseEntity<?> newFolderGroup(@RequestBody NewFolderGroupRequest newFolderRequest){
+        return ResponseEntity.ok().body(fileService.newFolderGroup(newFolderRequest));
     }
     @PostMapping("/get/all")
     public ResponseEntity<?> getAll(@RequestBody GetFolderRequest getFolderRequest){
