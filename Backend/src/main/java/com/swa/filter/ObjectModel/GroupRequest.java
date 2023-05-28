@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GroupRequest {
-    private String groupname;
+    private String name;
+    private int groupID;
     private int parent;
     private String path;
     private String token;

@@ -17,9 +17,7 @@ public class MyGroups {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int group_id;
-    // private int folderID;
-    private String groupname;
-    private String path;
+    private String name;
     private String admin;
     private String guest;
     private Role role;

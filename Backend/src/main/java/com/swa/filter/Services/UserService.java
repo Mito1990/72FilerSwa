@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service @RequiredArgsConstructor @Transactional @Slf4j
 public class UserService  {
     private final UserRepository userRepository;
-    
     public Optional<User> getUser(String username) {
         log.info("Fetching user:{} from Database",username);
         return userRepository.findUserByUsername(username);
@@ -30,12 +29,11 @@ public class UserService  {
     public List<String>listOfUsernames(){
         List<User> listOfAllUsers = userRepository.findAll();
         List<String> listOfUsernames = new ArrayList<>();
-        listOfAllUsers.forEach(e ->{
-            listOfUsernames.add(e.getUsername());
-        });
+        for(User user : listOfAllUsers){
+            listOfUsernames.add(user.getUsername());
+        }
         return listOfUsernames;
     }
-    
     public boolean checkIfUserExists(String username) {
         Optional<User> user = userRepository.findUserByUsername(username);
         if(user.isPresent())return true;

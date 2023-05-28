@@ -3,8 +3,11 @@ package com.swa.filter.RestController;
 import com.swa.filter.ObjectModel.MemberGroupRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.swa.filter.ObjectModel.AddFolderToGroupRequest;
+import com.swa.filter.ObjectModel.GroupFolderRequest;
 import com.swa.filter.ObjectModel.GroupRequest;
 import com.swa.filter.Services.MyGroupService;
+import com.swa.filter.mySQLTables.FolderDir;
 import com.swa.filter.mySQLTables.MyGroups;
 
 import lombok.RequiredArgsConstructor;
@@ -21,11 +24,14 @@ import java.util.List;
 public class MyGroupController{
   private final MyGroupService myGroupService;
 
-  @GetMapping(path = "/get/group")
-  public ResponseEntity<?>getGroup(@RequestBody GroupRequest groupRequest){
-    MyGroups group = myGroupService.getGroup(groupRequest);
-    if(group  == null)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+groupRequest.getGroupname()+"} doesn't exists!");
-    return ResponseEntity.ok().body(group);
+  @PostMapping(path = "/get/group")
+  public ResponseEntity<?>getGroup(@RequestBody GroupRequest groupRequest) throws JsonProcessingException{
+    List<MyGroups> group = myGroupService.getGroup(groupRequest);
+    // if(group  == null)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+groupRequest.getGroupname()+"} doesn't exists!");
+    ObjectMapper objectMapper = new ObjectMapper();
+    // Convert the object to JSON string
+    String jsonString = objectMapper.writeValueAsString(group);
+    return ResponseEntity.ok().body(jsonString);
   }
   @GetMapping(path = "/get/all")
   public ResponseEntity<List<MyGroups>>getAllGroups(){
@@ -44,10 +50,31 @@ public class MyGroupController{
   }
 
   @PostMapping(path = "/add/user/to/group")
-  public ResponseEntity<?> addUserToGroup(@RequestBody MemberGroupRequest memberGroupRequest){
+  public ResponseEntity<?> addUserToGroup(@RequestBody MemberGroupRequest memberGroupRequest) throws JsonProcessingException{
     System.out.println("Test from Controller");
     System.out.println(memberGroupRequest);
-    return ResponseEntity.ok().body(myGroupService.addUserToGroup(memberGroupRequest));
+    ObjectMapper objectMapper = new ObjectMapper();
+    // Convert the object to JSON string
+    String jsonString = objectMapper.writeValueAsString(myGroupService.addUserToGroup(memberGroupRequest));
+    return ResponseEntity.ok().body(jsonString);
+  }
+  @PostMapping(path = "/get/group/folder")
+  public ResponseEntity<?>getFolderFromGroup(@RequestBody GroupFolderRequest groupFolderRequest) throws JsonProcessingException{
+    List<FolderDir> folders = myGroupService.getFolderFromGroup(groupFolderRequest);
+    // if(group  == null)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+groupRequest.getGroupname()+"} doesn't exists!");
+    ObjectMapper objectMapper = new ObjectMapper();
+    // Convert the object to JSON string
+    String jsonString = objectMapper.writeValueAsString(folders);
+    return ResponseEntity.ok().body(jsonString);
+  }
+  @PostMapping(path = "/add/folder/to/group")
+  public ResponseEntity<?>addFoldertoGroup(@RequestBody AddFolderToGroupRequest addFolderToGroupRequest) throws JsonProcessingException{
+    List<FolderDir> folders = myGroupService.addFolderToGroup(addFolderToGroupRequest);
+    // if(group  == null)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+groupRequest.getGroupname()+"} doesn't exists!");
+    ObjectMapper objectMapper = new ObjectMapper();
+    // Convert the object to JSON string
+    String jsonString = objectMapper.writeValueAsString(folders);
+    return ResponseEntity.ok().body(jsonString);
   }
 }
 

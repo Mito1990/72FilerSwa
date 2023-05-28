@@ -11,6 +11,8 @@ import com.swa.filter.ObjectModel.MemberGroupRequest;
 import com.swa.filter.mySQLTables.FolderDir;
 import com.swa.filter.mySQLTables.MyGroupMembers;
 import com.swa.filter.ObjectModel.Role;
+import com.swa.filter.ObjectModel.AddFolderToGroupRequest;
+import com.swa.filter.ObjectModel.GroupFolderRequest;
 import com.swa.filter.ObjectModel.GroupRequest;
 import com.swa.filter.Repository.MyGroupRepository;
 import com.swa.filter.Repository.UserRepository;
@@ -30,20 +32,20 @@ public class MyGroupService{
     private final UserRepository userRepository;
     private final MyGroupMembersRepository myGroupMembersRepository;
     private final FolderDirRepository folderDirRepository;
-    public FolderDir createGroup(GroupRequest createGroupRequest) {
+    public MyGroups createGroup(GroupRequest createGroupRequest) {
         String username = jwtService.extractUsername(createGroupRequest.getToken());
-        if(!checkIfGroupExists(createGroupRequest.getGroupname(),username)){
+        if(!checkIfGroupExists(createGroupRequest.getName(),username)){
             var folder = FolderDir.builder()
                 .parent(createGroupRequest.getParent())
                 .path(createGroupRequest.getPath())
                 .shared(createGroupRequest.isShared())
-                .name(createGroupRequest.getGroupname())
+                .name(createGroupRequest.getName())
                 .build();
             folderDirRepository.save(folder);
             List<FolderDir>list = new ArrayList<>();
             list.add(folder);
             var myGroup = MyGroups.builder()
-                .groupname(createGroupRequest.getGroupname())
+                .name(createGroupRequest.getName())
                 .admin(username)
                 .role(Role.ADMIN)
                 .sharedFolders(list)
@@ -53,7 +55,7 @@ public class MyGroupService{
             user.get().getMygroups().add(myGroup);
             userRepository.save(user.get());
             // return "Group successful created";
-            return folder;
+            return myGroup;
         }
             return null;
         // }else{
@@ -61,70 +63,76 @@ public class MyGroupService{
         // }
     }
     public String deleteMemberFromGroup(MemberGroupRequest memberGroupRequest) {
-        String owner = jwtService.extractUsername(memberGroupRequest.getGroupRequest().getToken());
-        if(checkIfGroupExists(memberGroupRequest.getGroupRequest().getGroupname(),owner)){
-            if(checkIfUserExistsInGroup(memberGroupRequest.getGroupRequest().getGroupname(),owner,memberGroupRequest.getMemberRequest().getUsername())){
-                MyGroups mygroup=myGroupRepository.findByGroupnameAndAdmin(memberGroupRequest.getGroupRequest().getGroupname(),owner);
+        String owner = jwtService.extractUsername(memberGroupRequest.getToken());
+        if(checkIfGroupExists(memberGroupRequest.getGroupname(),owner)){
+            if(checkIfUserExistsInGroup(memberGroupRequest.getGroupname(),owner,memberGroupRequest.getUser())){
+                MyGroups mygroup=myGroupRepository.findByNameAndAdmin(memberGroupRequest.getGroupname(),owner);
                 List<MyGroupMembers>members = mygroup.getMembers();
                 for (MyGroupMembers member : members) {
-                    if(member.getUsername().equalsIgnoreCase(memberGroupRequest.getMemberRequest().getUsername())){
+                    if(member.getUsername().equalsIgnoreCase(memberGroupRequest.getUser())){
                         mygroup.getMembers().remove(members.indexOf(member));
                         myGroupRepository.save(mygroup);
-                        return memberGroupRequest.getMemberRequest().getUsername()+" successful deleted form "+memberGroupRequest.getGroupRequest().getGroupname();
+                        return memberGroupRequest.getUser()+" successful deleted form "+memberGroupRequest.getGroupname();
                     };
                 }
             }
         }
-        return memberGroupRequest.getMemberRequest().getUsername()+" or "+memberGroupRequest.getGroupRequest().getGroupname()+" doesn't exists!";
+        return memberGroupRequest.getUser()+" or "+memberGroupRequest.getGroupname()+" doesn't exists!";
     }
     public List<MyGroups> getAllGroups() {
         // List
         return myGroupRepository.findAll();
     }
-    public MyGroups getGroup(GroupRequest groupRequest) {
+    public List<MyGroups> getGroup(GroupRequest groupRequest) {
+        System.out.println("test\n\n\n");
         String username = jwtService.extractUsername(groupRequest.getToken());
-        if(checkIfGroupExists(groupRequest.getGroupname(),username)){
-            List<MyGroups> groups = getAllGroups();
-            for (MyGroups group : groups) {
-                if(group.getGroupname().equalsIgnoreCase(groupRequest.getGroupname())){
-                    return myGroupRepository.findByGroupnameAndAdmin(groupRequest.getGroupname(),username);
-                }
+        // if(checkIfGroupExists(groupRequest.getGroupname(),username)){
+            Optional<User> user = userRepository.findUserByUsername(username);
+            List<MyGroups> groups = user.get().getMygroups();
+            return groups;
+    }
+    public List<FolderDir>getFolderFromGroup(GroupFolderRequest groupFolderRequest){
+        String username = jwtService.extractUsername(groupFolderRequest.getToken());
+        Optional<User>user = userRepository.findUserByUsername(username);
+        List<MyGroups> groups = user.get().getMygroups();
+        List<FolderDir>folders = new ArrayList<>();
+        for(MyGroups group : groups){
+            if(group.getGroup_id()==groupFolderRequest.getGroupID()){
+                folders=group.getSharedFolders();
             }
-        };
-        return null;
+        }
+        return folders;
     }
     public boolean checkIfGroupExists(String groupname,String username){
         List<MyGroups> groups = getAllGroups();
         for (MyGroups group : groups) {
-            if(group.getGroupname().equalsIgnoreCase(groupname) && group.getAdmin().equalsIgnoreCase(username)){
+            if(group.getName().equalsIgnoreCase(groupname) && group.getAdmin().equalsIgnoreCase(username)){
                 return true;
             }
         }
         return false;
     }
     public String addUserToGroup(MemberGroupRequest memberGroupRequest) {
-        String owner = jwtService.extractUsername(memberGroupRequest.getGroupRequest().getToken());
+        String owner = jwtService.extractUsername(memberGroupRequest.getToken());
         System.out.println("Test from Service owner: "+owner);
-        if(!checkIfGroupExists(memberGroupRequest.getGroupRequest().getGroupname(),owner)){
+        if(!checkIfGroupExists(memberGroupRequest.getGroupname(),owner)){
             System.out.println("Test from Service CheckIfGroupExists: ");
-            return "Group with name "+memberGroupRequest.getGroupRequest().getGroupname()+" doesn't exists!";
+            return "Group with name "+memberGroupRequest.getGroupname()+" doesn't exists!";
         }
-        if(!userService.checkIfUserExists(memberGroupRequest.getMemberRequest().getUsername())){
+        if(!userService.checkIfUserExists(memberGroupRequest.getUser())){
             System.out.println("Test from Service checkIfUserExists: ");
-            return memberGroupRequest.getMemberRequest().getUsername()+" doesn't exists!";
+            return memberGroupRequest.getUser()+" doesn't exists!";
         }
-        if(checkIfUserExistsInGroup(memberGroupRequest.getGroupRequest().getGroupname(),owner,memberGroupRequest.getMemberRequest().getUsername())){
+        if(checkIfUserExistsInGroup(memberGroupRequest.getGroupname(),owner,memberGroupRequest.getUser())){
             System.out.println("Test from Service checkifUserExistsIngroup: ");
-            return memberGroupRequest.getMemberRequest().getUsername()+" exists already in "+memberGroupRequest.getGroupRequest().getGroupname();
+            return memberGroupRequest.getUser()+" exists already in "+memberGroupRequest.getGroupname();
         }
-        MyGroups myGroupOwner = myGroupRepository.findByGroupnameAndAdmin(memberGroupRequest.getGroupRequest().getGroupname(), owner);
-        var newGroupMembers = MyGroupMembers.builder().username(memberGroupRequest.getMemberRequest().getUsername()).role(Role.USER).build();
+        MyGroups myGroupOwner = myGroupRepository.findByNameAndAdmin(memberGroupRequest.getGroupname(), owner);
+        var newGroupMembers = MyGroupMembers.builder().username(memberGroupRequest.getUser()).role(Role.USER).build();
         myGroupMembersRepository.save(newGroupMembers);
 
         myGroupOwner.getMembers().add(newGroupMembers);
         myGroupOwner.setAdmin(owner);
-        myGroupOwner.setPath(memberGroupRequest.getPath());
-        // myGroupOwner.setFolderID(memberGroupRequest.getFolderID());
         myGroupRepository.save(myGroupOwner);
 
         var newGroupOwner = MyGroupMembers.builder().username(owner).role(Role.ADMIN).build();
@@ -133,18 +141,33 @@ public class MyGroupService{
         member.add(newGroupOwner);
         MyGroups myGroupMember = new MyGroups();
         myGroupMember.setMembers(member);
-        myGroupMember.setGroupname(memberGroupRequest.getGroupRequest().getGroupname());
+        myGroupMember.setName(memberGroupRequest.getGroupname());
         myGroupMember.setAdmin(owner);
         myGroupMember.setRole(Role.USER);
-        // myGroupMember.setFolderID(memberGroupRequest.getGroupRequest().getFolderID());
         myGroupRepository.save(myGroupMember);
-        Optional<User> user = userRepository.findUserByUsername(memberGroupRequest.getMemberRequest().getUsername());
+        Optional<User> user = userRepository.findUserByUsername(memberGroupRequest.getUser());
         user.get().getMygroups().add(myGroupMember);
         userRepository.save(user.get());
-        return memberGroupRequest.getMemberRequest().getUsername()+" succsesfull added to "+memberGroupRequest.getGroupRequest().getGroupname();
+        return memberGroupRequest.getUser()+" successful added to "+memberGroupRequest.getGroupname();
+    }
+
+    public List<FolderDir> addFolderToGroup(AddFolderToGroupRequest addFolderToGroupRequest){
+        String username = jwtService.extractUsername(addFolderToGroupRequest.getToken());
+        Optional<User>user = userRepository.findUserByUsername(username);
+        List<MyGroups> groups =user.get().getMygroups();
+        List<FolderDir> folders = new ArrayList<>();
+        var folder = FolderDir.builder().name(addFolderToGroupRequest.getName()).parent(addFolderToGroupRequest.getParentID()).path(addFolderToGroupRequest.getPath()).shared(addFolderToGroupRequest.isShared()).build();
+        folderDirRepository.save(folder);
+        for(MyGroups group : groups){
+            if(group.getGroup_id() == addFolderToGroupRequest.getGroupID()){
+                group.getSharedFolders().add(folder);
+                folders = group.getSharedFolders();
+            }
+        }
+        return folders;
     }
     public boolean checkIfUserExistsInGroup(String groupname,String owner,String username) {
-        MyGroups mygroup = myGroupRepository.findByGroupnameAndAdmin(groupname,owner);
+        MyGroups mygroup = myGroupRepository.findByNameAndAdmin(groupname,owner);
         List<MyGroupMembers>members = mygroup.getMembers();
         for (MyGroupMembers member: members) {
             if(member.getUsername().equalsIgnoreCase(username)){
