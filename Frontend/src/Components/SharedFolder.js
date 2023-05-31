@@ -11,19 +11,17 @@ import { GroupAndFolder } from './GroupAndFolder';
 export const SharedFolder = () => {
   const [currentGroup,setCurrentGroup] = useState([]);
   const [currentFolders,setCurrentFolders] = useState([]);
-  const [count, setCount] = useState(0);
   const [count2,setCount2] = useState(0);
+  const [groupOpen,setGroupOpen] = useState(false);
   const [parent,setParent] = useState(0);
   const [currentURL, setCurrentURL] = useState("share");
   const [path,setPath] = useState("/");
   const {register, handleSubmit} = useForm();
   const navigate = useNavigate();
   const serverToken = Cookies.get('Token');
+
   useEffect(() => {
     const handlePopstate = () => {
-      console.log("handlePopstate");
-      console.log(currentGroup.name);
-      console.log(currentGroup);
       let currentID = getCurrentFolderIdFromUrl();
       if(currentID==="share"){
         currentID = "share";
@@ -34,7 +32,7 @@ export const SharedFolder = () => {
           parent:currentGroup.group_id,
           token:serverToken
         }
-        console.log(request);
+        setGroupOpen(true);
         fetch('http://localhost:8080/api/groups/get/group/folder', {
             method: 'POST',
             headers: {
@@ -49,9 +47,6 @@ export const SharedFolder = () => {
         });
           setCurrentURL(currentID);
         }else {
-          console.log("else");
-          console.log(currentID);
-          console.log("-----------------------\n");
           setCurrentURL(currentID);
           const folderRequest ={
             parent:currentID,
@@ -67,8 +62,6 @@ export const SharedFolder = () => {
             body: JSON.stringify(folderRequest)
         }).then((response) => response.json()).then((data) => {
             setCurrentFolders(data);
-            console.log("data from response");
-            console.log(data);
         }).catch((error) => {
             console.error('Error retrieving data:', error);
         });
@@ -83,7 +76,6 @@ export const SharedFolder = () => {
   }, [currentGroup]);
 
   const AddFolder = (e) =>{
-    console.log("AddFolder");
     const folder = {
         token:serverToken,
         groupID:currentGroup.group_id,
@@ -101,34 +93,26 @@ export const SharedFolder = () => {
     body: JSON.stringify(folder)
     }).then((response) => response.json()).then((data) => {
         setCurrentFolders(data);
-        console.log(data);
     }).catch((error) => {
     console.error('Error retrieving data:', error);
     });
   }
 
   const handleChildValue = (data,item) => {
-    console.log("handleChildValue");
-    console.log(item);
-    console.log(data);
-    console.log("-----------------------\n");
     setCurrentGroup(item);
     setCurrentURL(item.name);
     setParent(item.group_id);
     setCurrentFolders(data);
+    setGroupOpen(true);
   };
 
   const OpenFolder = (item) =>{
-    console.log("OpenFolder in SharedFolders");
-    console.log(item);
     navigate(`/share/${currentGroup.name}/${item.folder_id}`);
     const folderRequest ={
       parent:item.folder_id,
       groupID:currentGroup.group_id,
       token:serverToken
     }
-    console.log("folderRequest");
-    console.log(folderRequest);
     fetch('http://localhost:8080/api/groups/get/group/folder', {
       method: 'POST',
       headers: {
@@ -137,15 +121,14 @@ export const SharedFolder = () => {
       },
       body: JSON.stringify(folderRequest)
   }).then((response) => response.json()).then((data) => {
-    console.log(data);
       setCurrentFolders(data);
       setParent(item.folder_id);
       setPath(item.path);
       setCount2(count2+1);
+      setGroupOpen(false);
   }).catch((error) => {
       console.error('Error retrieving data:', error);
   });
-  console.log("-----------------------\n");
 
   }
   return (
@@ -155,7 +138,9 @@ export const SharedFolder = () => {
               <><form className=" bg-orange-300 flex flex-col w-52 h-32 justify-center items-center rounded-md shadow-2xl" onSubmit={handleSubmit(AddFolder)}>
               <input className="mb-2" type="text" placeholder="New Folder:" name="NewFOlder" {...register('NewFolder', { required: true })} />
               <button className="hover:bg-sky-700 w-24 h-12 border-slate-950 border-2 rounded-xl" type="submit">Submit</button>
-            </form><AddUserToGroup value={currentGroup}></AddUserToGroup></>
+              { }
+            </form>
+            {groupOpen?<AddUserToGroup value={currentGroup}></AddUserToGroup>:[]}</>
             )}
             </div>
             <div className=' flex justify-start mt-10 w-2/4 flex-wrap'>

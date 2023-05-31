@@ -118,23 +118,7 @@ public class MyGroupService{
         System.out.println(folders);
         return folders;
     }
-    // public List<FolderDir>getFolderFromGroup(GroupRequest groupRequest){
-    //     System.out.println(groupRequest);
-    //     String username = jwtService.extractUsername(groupRequest.getToken());
-    //     List<MyGroupMembers> allMembers = myGroupMembersRepository.findAll();
-    //     List<FolderDir> folders = new ArrayList<>();
-    //     for(MyGroupMembers member : allMembers){
-    //         if(member.getUsername().equalsIgnoreCase(username)){
-    //             Optional<MyGroups> group = myGroupRepository.findById(groupRequest.getGroupID());
-    //             for(FolderDir folder : group.get().getSharedFolders()){
-    //                 if(folder.getParent()==groupRequest.getParent()){
-    //                     folders.add(folder);
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     return folders;
-    // }
+
     public List<FolderDir>addFolderToSharedFolder(GroupRequest groupRequest){
         Optional<MyGroups> group = myGroupRepository.findById(groupRequest.getGroupID());
         NewFolderRequest newFolderRequest = new NewFolderRequest(groupRequest.getName(), groupRequest.getParent(), groupRequest.getPath(), groupRequest.getToken(), groupRequest.isShared());
@@ -156,6 +140,8 @@ public class MyGroupService{
         else return false;
     }
     public String addUserToGroup(MemberGroupRequest memberGroupRequest) {
+        System.out.println("memberGroupRequest");
+        System.out.println(memberGroupRequest);
         String owner = jwtService.extractUsername(memberGroupRequest.getToken());
         System.out.println("Test from Service owner: "+owner);
         if(!checkIfGroupExists(memberGroupRequest.getGroupID())){

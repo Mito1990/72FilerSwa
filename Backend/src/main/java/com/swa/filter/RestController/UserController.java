@@ -2,6 +2,7 @@ package com.swa.filter.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.swa.filter.ObjectModel.ListOfUserRequest;
 import com.swa.filter.Services.UserService;
 import com.swa.filter.mySQLTables.User;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +25,11 @@ public class UserController {
     if(!userService.checkIfUserExists(username))return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User with username:{"+username+"} doesn't exists!");
     else return ResponseEntity.ok().body(userService.getUser(username));
   }
-  @GetMapping(path = "/get/users" )
-  public ResponseEntity<?>getListOfUsers() throws JsonProcessingException{
+  @PostMapping(path = "/get/users" )
+  public ResponseEntity<?>getListOfUsers(@RequestBody ListOfUserRequest listOfUserRequest) throws JsonProcessingException{
     ObjectMapper objectMapper = new ObjectMapper();
     // Convert the object to JSON string
-    String jsonString = objectMapper.writeValueAsString(userService.listOfUsernames());
+    String jsonString = objectMapper.writeValueAsString(userService.listOfUsernames(listOfUserRequest));
     return ResponseEntity.ok().body(jsonString);
   }
 

@@ -1,6 +1,11 @@
 package com.swa.filter.Services;
 
+import com.swa.filter.ObjectModel.ListOfUserRequest;
+import com.swa.filter.Repository.MyGroupMembersRepository;
+import com.swa.filter.Repository.MyGroupRepository;
 import com.swa.filter.Repository.UserRepository;
+import com.swa.filter.mySQLTables.MyGroupMembers;
+import com.swa.filter.mySQLTables.MyGroups;
 import com.swa.filter.mySQLTables.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service @RequiredArgsConstructor @Transactional @Slf4j
 public class UserService  {
+    private final MyGroupRepository myGroupRepository;
     private final UserRepository userRepository;
     public Optional<User> getUser(String username) {
         log.info("Fetching user:{} from Database",username);
@@ -26,11 +32,22 @@ public class UserService  {
         return userRepository.findAll();
     }
 
-    public List<String>listOfUsernames(){
-        List<User> listOfAllUsers = userRepository.findAll();
+    public List<String>listOfUsernames(ListOfUserRequest listOfUserRequest){
+        System.out.println("Request");
+        System.out.println(listOfUserRequest);
+        List<User> listOfAllUsers = getAllUsers();
         List<String> listOfUsernames = new ArrayList<>();
+        List<String> listOfUsernamesInMembers = new ArrayList<>();
+        Optional<MyGroups> group = myGroupRepository.findById(listOfUserRequest.getGroupID());
+        List<MyGroupMembers>members = group.get().getMembers();
+        for(MyGroupMembers member : members){
+            listOfUsernamesInMembers.add(member.getUsername());
+        }
         for(User user : listOfAllUsers){
-            listOfUsernames.add(user.getUsername());
+            if(!listOfUsernamesInMembers.contains(user.getUsername())){
+                System.out.println("\n\n\nHello from ListOfAllUsers");
+                listOfUsernames.add(user.getUsername());
+            }
         }
         return listOfUsernames;
     }
