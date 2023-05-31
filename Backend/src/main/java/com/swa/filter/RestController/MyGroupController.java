@@ -1,6 +1,7 @@
 package com.swa.filter.RestController;
 
 import com.swa.filter.ObjectModel.MemberGroupRequest;
+import com.swa.filter.ObjectModel.NewFolderGroupRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swa.filter.ObjectModel.AddFolderToGroupRequest;
@@ -59,22 +60,41 @@ public class MyGroupController{
     return ResponseEntity.ok().body(jsonString);
   }
   @PostMapping(path = "/get/group/folder")
-  public ResponseEntity<?>getFolderFromGroup(@RequestBody GroupFolderRequest groupFolderRequest) throws JsonProcessingException{
-    List<FolderDir> folders = myGroupService.getFolderFromGroup(groupFolderRequest);
+  public ResponseEntity<?>getFolderFromGroup(@RequestBody GroupRequest groupRequest) throws JsonProcessingException{
+    List<FolderDir> folders = myGroupService.getFolderFromGroup(groupRequest);
     // if(group  == null)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+groupRequest.getGroupname()+"} doesn't exists!");
     ObjectMapper objectMapper = new ObjectMapper();
     // Convert the object to JSON string
     String jsonString = objectMapper.writeValueAsString(folders);
     return ResponseEntity.ok().body(jsonString);
   }
-  @PostMapping(path = "/add/folder/to/group")
-  public ResponseEntity<?>addFoldertoGroup(@RequestBody AddFolderToGroupRequest addFolderToGroupRequest) throws JsonProcessingException{
-    List<FolderDir> folders = myGroupService.addFolderToGroup(addFolderToGroupRequest);
+  @PostMapping(path = "/add/folder")
+  public ResponseEntity<?>addFolderToSharedFolder(@RequestBody GroupRequest groupRequest) throws JsonProcessingException{
+    List<FolderDir> folders = myGroupService.addFolderToSharedFolder(groupRequest);
     // if(group  == null)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+groupRequest.getGroupname()+"} doesn't exists!");
     ObjectMapper objectMapper = new ObjectMapper();
     // Convert the object to JSON string
     String jsonString = objectMapper.writeValueAsString(folders);
     return ResponseEntity.ok().body(jsonString);
   }
+  
+  // @PostMapping(path = "/get/group/folder/folder")
+  // public ResponseEntity<?>getFolderFromGroupFolder(@RequestBody GroupRequest groupRequest) throws JsonProcessingException{
+  //   List<FolderDir> folders = myGroupService.getFolderFromGroupFolder(groupRequest);
+  //   // if(group  == null)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+groupRequest.getGroupname()+"} doesn't exists!");
+  //   ObjectMapper objectMapper = new ObjectMapper();
+  //   // Convert the object to JSON string
+  //   String jsonString = objectMapper.writeValueAsString(folders);
+  //   return ResponseEntity.ok().body(jsonString);
+  // }
+  // @PostMapping(path = "/add/folder/to/group")
+  // public ResponseEntity<?>addFoldertoGroup(@RequestBody NewFolderGroupRequest addFolderToGroupRequest) throws JsonProcessingException{
+  //   List<FolderDir> folders = myGroupService.addFolderToGroup(addFolderToGroupRequest);
+  //   // if(group  == null)return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Group:{"+groupRequest.getGroupname()+"} doesn't exists!");
+  //   ObjectMapper objectMapper = new ObjectMapper();
+  //   // Convert the object to JSON string
+  //   String jsonString = objectMapper.writeValueAsString(folders);
+  //   return ResponseEntity.ok().body(jsonString);
+  // }
 }
 

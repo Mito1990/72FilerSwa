@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GroupFolderRequest {
+public class  GroupFolderRequest {
     int groupID;
     String token;
 }

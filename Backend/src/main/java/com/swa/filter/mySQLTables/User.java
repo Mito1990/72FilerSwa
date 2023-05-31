@@ -22,7 +22,7 @@ import com.swa.filter.ObjectModel.Role;
 @NoArgsConstructor(force = true)
 public class User implements UserDetails {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.TABLE)
   private Long user_id;
   @NonNull
   private String name;

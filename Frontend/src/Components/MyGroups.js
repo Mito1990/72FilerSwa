@@ -31,11 +31,9 @@ export const MyGroups = (parentValue) =>{
         });
     },[count])
     const NewGroup = ()=>{
-        const name = getValues('NewGroup');
+        const nameFromInput = getValues('NewGroup');
         const newGroupRequest = {
-            name:name,
-            parent:0,
-            path:path+name,
+            name:nameFromInput,
             token:serverToken,
             shared:true
         }
@@ -53,11 +51,13 @@ export const MyGroups = (parentValue) =>{
         });
     }
     const OpenItem =(item)=>{
-        navigate(`/share/${item.group_id}`);
-        console.log("groupID");
+        navigate(`/share/${item.name}`);
+        console.log("OpenItem");
         console.log(item);
+        console.log("---------------------\n");
         const request = {
             groupID:item.group_id,
+            parent:item.group_id,
             token:serverToken
         }
         fetch('http://localhost:8080/api/groups/get/group/folder', {
@@ -68,10 +68,7 @@ export const MyGroups = (parentValue) =>{
             },
             body: JSON.stringify(request)
         }).then((response) => response.json()).then((data) => {
-            setData(data);
-            setGroupID(item.group_id);
-            parentValue.sendDataToParent(data,item.group_id);
-            setCount2(count2+1);
+            parentValue.sendDataToParent(data,item);
         }).catch((error) => {
             console.error('Error retrieving data:', error);
         });

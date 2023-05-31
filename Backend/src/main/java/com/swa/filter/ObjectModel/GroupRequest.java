@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class GroupRequest {
     private String name;
     private int groupID;
+    private int folderID;
     private int parent;
     private String path;
     private String token;

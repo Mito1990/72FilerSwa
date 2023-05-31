@@ -18,6 +18,7 @@ export const App = () =>{
 			<Route exact path="/home" element={isLoggedIn ? <Home/> : <Navigate replace to="/login" />}/>
 			<Route exact path="/share" element={isLoggedIn ? <SharedFolder/> : <Navigate replace to="/login" />}/>
 			<Route exact path="/share/:ID" element={isLoggedIn ? <SharedFolder/> : <Navigate replace to="/login" />}/>
+			<Route exact path="/share/:group/:ID" element={isLoggedIn ? <SharedFolder/> : <Navigate replace to="/login" />}/>
 			<Route exact path="/home/:ID" element={isLoggedIn ? <Home/> : <Navigate replace to="/login" />}/>
 		</Routes>
 		</BrowserRouter>

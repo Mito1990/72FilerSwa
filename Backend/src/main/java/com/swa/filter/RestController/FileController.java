@@ -29,10 +29,10 @@ public class FileController {
     public ResponseEntity<?> newFolder(@RequestBody NewFolderRequest newFolderRequest){
         return ResponseEntity.ok().body(fileService.newFolder(newFolderRequest));
     }
-    @PostMapping("/new/share")
-    public ResponseEntity<?> newFolderGroup(@RequestBody NewFolderGroupRequest newFolderRequest){
-        return ResponseEntity.ok().body(fileService.newFolderGroup(newFolderRequest));
-    }
+    // @PostMapping("/new/share")
+    // public ResponseEntity<?> newFolderGroup(@RequestBody NewFolderGroupRequest newFolderRequest){
+    //     return ResponseEntity.ok().body(fileService.newFolderGroup(newFolderRequest));
+    // }
     @PostMapping("/get/all")
     public ResponseEntity<?> getAll(@RequestBody GetFolderRequest getFolderRequest){
         return ResponseEntity.ok().body(fileService.getALLFoldersUser(getFolderRequest));

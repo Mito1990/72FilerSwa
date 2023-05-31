@@ -74,36 +74,37 @@ public class FileService {
     }
     return new AddFolderResponse(newpath.toString());
   }
-  public AddFolderResponse newFolderGroup(NewFolderGroupRequest newFolderGroupRequest) {
-    String Username = jwtService.extractUsername(newFolderGroupRequest.getToken());
-    Optional<User> user = userRepository.findUserByUsername(Username);
-    MyGroups group = user.get().getMygroups().get(newFolderGroupRequest.getGroupID());
-    String userRepo = user.get().getHome().getPath() + newFolderGroupRequest.getPath();
-    // System.out.println(userRepo + "\n\n\n");
-    Path newpath = Paths.get(userRepo);
-    List<FolderDir> folders = group.getSharedFolders();
-    for (FolderDir folder : folders) {
-      if (folder.getPath().equalsIgnoreCase(newFolderGroupRequest.getPath())) {
-        return new AddFolderResponse("Folder with name " + newFolderGroupRequest.getName() + " exists already");
-      }
-    }
-    FolderDir newfolderDir = new FolderDir();
-    newfolderDir.setName(newFolderGroupRequest.getName());
-    newfolderDir.setPath(newFolderGroupRequest.getPath());
-    newfolderDir.setParent(newFolderGroupRequest.getParent());
-    newfolderDir.setDate(new Date());
-    newfolderDir.setShared(newFolderGroupRequest.isShared());
-    folders.add(newfolderDir);
-    folderDirRepository.save(newfolderDir);
-    userRepository.save(user.get());
-    try {
-      Files.createDirectories(newpath);
-      System.out.println(newpath);
-    } catch (Exception e) {
-      // TODO: handle exception
-    }
-    return new AddFolderResponse(newpath.toString());
-  }
+  // public List<FolderDir> newFolderGroup(NewFolderGroupRequest newFolderGroupRequest) {
+  //   String Username = jwtService.extractUsername(newFolderGroupRequest.getToken());
+  //   Optional<User> user = userRepository.findUserByUsername(Username);
+  //   String userRepo = user.get().getHome().getPath() + newFolderGroupRequest.getPath();
+  //   List<MyGroups> groups =user.get().getMygroups();
+  //   List<FolderDir> folders = new ArrayList<>();
+  //   List<FolderDir> tempFolders = new ArrayList<>();
+  //   var newFolder = FolderDir.builder().name(newFolderGroupRequest.getName()).parent(newFolderGroupRequest.getParent()).path(newFolderGroupRequest.getPath()).shared(newFolderGroupRequest.isShared()).build();
+  //   folderDirRepository.save(newFolder);
+  //   for(MyGroups group : groups){
+  //       if(group.getGroup_id() == newFolderGroupRequest.getGroupID()){
+  //           tempFolders = group.getSharedFolders();
+  //           group.getSharedFolders().add(newFolder);
+  //           for(FolderDir folder :tempFolders ){
+  //             if(folder.getParent() == newFolderGroupRequest.getParent()){
+  //               folders.add(folder);
+  //             }
+  //           }
+  //       }
+  //   }
+  //   Path newpath = Paths.get(userRepo);
+  //   userRepository.save(user.get());
+  //   try {
+  //     Files.createDirectories(newpath);
+  //     System.out.println(newpath);
+  //   } catch (Exception e) {
+  //     // TODO: handle exception
+  //   }
+  //   return folders;
+  // }
+
   // public void n(String folder){
   // try {
   // File file = new File("../UserWorkSpace/"+username+"/"+username);

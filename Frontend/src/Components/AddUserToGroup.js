@@ -8,7 +8,6 @@ export const AddUserToGroup = (onChildValue) =>{
     const[path,setPath] = useState("/");
     const[data,setData] = useState([]);
     const[data2,setData2] = useState(onChildValue);
-    const[item,setItem] = useState();
     const [isOpen, setIsOpen] = useState(false);
     const serverToken = Cookies.get('Token');
     const getAllUsers = () =>{
@@ -30,16 +29,20 @@ export const AddUserToGroup = (onChildValue) =>{
             console.error('Error retrieving data:', error);
         });
     }
-    const addUser = (iteme)=>{
-        const item = iteme.target.dataset.item;
+    const addUser = (item)=>{
+        const user = item.target.dataset.item;
         console.log("hello");
-        console.log(item);
         console.log(data2);
+        console.log(data2.value.name);
+        console.log(data2.value.group_id);
+        console.log(onChildValue);
         const newGroupRequest = {
             token:serverToken,
-            user:item,
-            groupID:data2
+            user:user,
+            name:data2.value.name,
+            groupID:data2.value.group_id
         }
+        console.log(newGroupRequest);
         fetch('http://localhost:8080/api/groups/add/user/to/group', {
             method: 'POST',
             headers: {

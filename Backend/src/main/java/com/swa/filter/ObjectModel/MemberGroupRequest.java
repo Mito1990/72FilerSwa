@@ -13,7 +13,8 @@ import lombok.NoArgsConstructor;
 public class MemberGroupRequest {
     String token;
     String user;
-    String groupname;
+    String name;
+    int groupID;
     // int folderID;
     // String path;
     // GroupRequest groupRequest;

@@ -21,8 +21,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(force = true)
 public class MyGroupMembers {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private int member_id;
+    private int groupID;
     private String username;
     private Role role;
 }

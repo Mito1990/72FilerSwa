@@ -15,7 +15,7 @@ import com.swa.filter.ObjectModel.Role;
 @AllArgsConstructor
 public class MyGroups {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private int group_id;
     private String name;
     private String admin;
