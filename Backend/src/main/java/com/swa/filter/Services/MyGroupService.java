@@ -37,8 +37,6 @@ public class MyGroupService{
     private final MyGroupMembersRepository myGroupMembersRepository;
     private final FolderDirRepository folderDirRepository;
     public MyGroups createGroup(GroupRequest createGroupRequest) {
-        System.out.println("creategrouop");
-        System.out.println(createGroupRequest);
         String username = jwtService.extractUsername(createGroupRequest.getToken());
         if(!checkIfGroupNameExists(createGroupRequest.getName(),username)){
         List<MyGroupMembers> memberList = new ArrayList<>();
@@ -115,21 +113,26 @@ public class MyGroupService{
                 folders.add(folder);
             }
         }
+        System.out.println("test");
         System.out.println(folders);
         return folders;
     }
-
+ 
     public List<FolderDir>addFolderToSharedFolder(GroupRequest groupRequest){
+        System.out.println("\n\n\naddFolderToSharedFolder");
+        System.out.println("---------------------------------------------------------------------");
+        System.out.println("groupRequest");
+        System.out.println(groupRequest);
         Optional<MyGroups> group = myGroupRepository.findById(groupRequest.getGroupID());
         NewFolderRequest newFolderRequest = new NewFolderRequest(groupRequest.getName(), groupRequest.getParent(), groupRequest.getPath(), groupRequest.getToken(), groupRequest.isShared());
         fileService.newFolder(newFolderRequest);
-        var newFolder = FolderDir.builder().name(groupRequest.getName()).parent(groupRequest.getParent()).path(groupRequest.getPath()).shared(groupRequest.isShared()).build();
+        var newFolder = FolderDir.builder().name(groupRequest.getName()).parent(groupRequest.getParent()).path(groupRequest.getPath()).shared(groupRequest.isShared()).file(groupRequest.isFile()).build();
+        System.out.println("newFolder");
+        System.out.println(newFolder);
         folderDirRepository.save(newFolder);
         group.get().getSharedFolders().add(newFolder);
         myGroupRepository.save(group.get());
-        System.out.println("addFolderToSharedFolder");
-        System.out.println(getFolderFromGroup(groupRequest));
-        System.out.println("---------------------------");
+        System.out.println("---------------------------------------------------------------------");
         return getFolderFromGroup(groupRequest);
     }
     public boolean checkIfGroupExists(int groupID){
@@ -140,8 +143,6 @@ public class MyGroupService{
         else return false;
     }
     public String addUserToGroup(MemberGroupRequest memberGroupRequest) {
-        System.out.println("memberGroupRequest");
-        System.out.println(memberGroupRequest);
         String owner = jwtService.extractUsername(memberGroupRequest.getToken());
         System.out.println("Test from Service owner: "+owner);
         if(!checkIfGroupExists(memberGroupRequest.getGroupID())){
@@ -166,7 +167,7 @@ public class MyGroupService{
         userRepository.save(owne.get());
         return memberGroupRequest.getUser()+" successful added to "+memberGroupRequest.getName();
     }
-    
+
     public boolean checkIfUserExistsInGroup(String groupname,String owner,String username) {
         MyGroups mygroup = myGroupRepository.findByNameAndAdmin(groupname,owner);
         List<MyGroupMembers>members = mygroup.getMembers();

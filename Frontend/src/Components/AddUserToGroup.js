@@ -82,22 +82,5 @@ export const AddUserToGroup = (onChildValue) =>{
     </div>
     );
 }
-    // return (
-    //     <div>
-    //         <form className=" bg-orange-300 flex flex-col w-52 h-32 justify-center items-center rounded-md shadow-2xl" onSubmit={handleSubmit(getAllUsers)}>
-    //             {/* <input className="mb-2" type="text" placeholder="Add User:" name="NewGroup" {...register('Add User', { required: true })}/> */}
-    //             <button className="hover:bg-sky-700 w-24 h-12 border-slate-950 border-2 rounded-xl" type="submit">+</button>
-    //         </form>
-    //         {(data)?(
-    //             <ul>
-    //             {data.map((item, index) => (
-    //                 <li key={index} onClick={() => console.log(item)}>
-    //                     {item}
-    //                 </li>
-    //             ))}
-    //         </ul>
-    //     ):(<div></div>)}
-    //     </div>
-    // )
-// }
+
 

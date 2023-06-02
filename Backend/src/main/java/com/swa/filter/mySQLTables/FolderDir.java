@@ -26,4 +26,5 @@ public class FolderDir {
     Long size;
     Date date;
     boolean shared;
+    boolean file;
 }

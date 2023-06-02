@@ -10,7 +10,7 @@ export const Home = () => {
   const [count, setCount] = useState(0);
   const [parent, setParent] = useState(0);
   const [Currentfolder, setCurrentFolder] = useState();
-  const [path,setPath] = useState("/");
+  const [path,setPath] = useState("");
   const [data, setData] = useState([]);
   const {register, handleSubmit} = useForm();
   const navigate = useNavigate();

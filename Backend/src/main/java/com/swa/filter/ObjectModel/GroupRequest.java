@@ -17,4 +17,5 @@ public class GroupRequest {
     private String path;
     private String token;
     private boolean shared;
+    private boolean file;
 }
