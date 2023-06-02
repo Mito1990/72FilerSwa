@@ -16,12 +16,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(force = true)
 public class HomeDir {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     Long home_id;
     String name;
     String path;
     Long size;
     Date date;
     @OneToMany
-    List<FolderDir>folders;
+    private List<FolderDir>folders;
 }

@@ -9,9 +9,14 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor 
+@AllArgsConstructor
 public class MemberGroupRequest {
-    // String username;
-    GroupRequest groupRequest;
-    MemberRequest memberRequest;
+    String token;
+    String user;
+    String name;
+    int groupID;
+    // int folderID;
+    // String path;
+    // GroupRequest groupRequest;
+    // MemberRequest memberRequest;
 }

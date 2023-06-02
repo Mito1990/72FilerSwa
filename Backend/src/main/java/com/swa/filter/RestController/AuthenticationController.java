@@ -19,13 +19,11 @@ import lombok.RequiredArgsConstructor;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
-    // @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse>register(@RequestBody RegisterRequest registerRequest){
         return ResponseEntity.ok(authenticationService.register(registerRequest));
     }
 
-    // @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse>authenticate(@RequestBody AuthenticationRequest authenticationRequest){
         return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));

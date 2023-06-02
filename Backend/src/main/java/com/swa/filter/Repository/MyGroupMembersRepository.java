@@ -1,9 +1,8 @@
-// package com.swa.filter.Repository;
+package com.swa.filter.Repository;
 
-// import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-// import com.swa.filter.mySQLTables.MyGroupMembers;
+import com.swa.filter.mySQLTables.MyGroupMembers;
 
-// public interface MyGroupMembersRepository extends JpaRepository<MyGroupMembers,Integer> {
-    
-// }
+public interface MyGroupMembersRepository extends JpaRepository<MyGroupMembers,Integer> {
+}

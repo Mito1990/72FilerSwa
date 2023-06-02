@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor 
-public class NewFolderRequest {
+public class NewFolderGroupRequest {
     String name;
+    int groupID;
+    int folderID;
     int parent;
     String path;
     String token;

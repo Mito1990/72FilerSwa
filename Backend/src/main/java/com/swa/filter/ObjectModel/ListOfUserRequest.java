@@ -9,13 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GroupRequest {
-    private String name;
-    private Integer groupID;
-    private int folderID;
-    private int parent;
-    private String path;
+public class ListOfUserRequest {
     private String token;
-    private boolean shared;
-    private boolean file;
+    private int groupID;
 }
