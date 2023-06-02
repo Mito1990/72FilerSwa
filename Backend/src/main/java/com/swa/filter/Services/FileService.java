@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import com.swa.filter.mySQLTables.FolderDir;
+import com.swa.filter.mySQLTables.HomeDir;
 import com.swa.filter.mySQLTables.MyGroups;
 import com.swa.filter.mySQLTables.User;
 import jakarta.transaction.Transactional;
@@ -27,6 +28,7 @@ import com.swa.filter.ObjectModel.NewFolderGroupRequest;
 import com.swa.filter.ObjectModel.NewFolderRequest;
 import com.swa.filter.ObjectModel.WriteFileRequest;
 import com.swa.filter.Repository.FolderDirRepository;
+import com.swa.filter.Repository.HomeDirRepository;
 import com.swa.filter.Repository.MyGroupRepository;
 import com.swa.filter.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +43,7 @@ public class FileService {
   private final JwtService jwtService;
   private final FolderDirRepository folderDirRepository;
   private final MyGroupRepository myGroupRepository;
+  private final HomeDirRepository homeDirRepository;
 
   public String createUserFolder(String path) {
     Path userpath = Paths.get(rootPath + path);
@@ -60,26 +63,37 @@ public class FileService {
       System.out.println(groupRequest);
       String username = jwtService.extractUsername(groupRequest.getToken());
       Optional<User> user = userRepository.findUserByUsername(username);
+      HomeDir home = user.get().getHome();
+      List<FolderDir> homeFolder = home.getFolders();
       Optional<FolderDir> folder = folderDirRepository.findById(groupRequest.getFolderID());
+      String absolutePath;
+      String relativePath;
       if(folder.get().getName().equalsIgnoreCase(groupRequest.getName())){
         return "File with name "+folder.get().getName()+" exists already!";
       }
-      String absolutePath = rootPath+user.get().getUsername()+folder.get().getPath()+"/"+groupRequest.getName()+".txt";
-      String relativePath = folder.get().getPath()+"/"+groupRequest.getName()+".txt";
+      if(groupRequest.isShared()){
+        Optional<MyGroups> group = myGroupRepository.findById(groupRequest.getGroupID());
+        absolutePath = rootPath+group.get().getAdmin()+folder.get().getPath()+"/"+groupRequest.getName()+".txt";
+        relativePath = folder.get().getPath()+"/"+groupRequest.getName()+".txt";
+      }else{
+        absolutePath = rootPath+user.get().getUsername()+folder.get().getPath()+"/"+groupRequest.getName()+".txt";
+        relativePath = folder.get().getPath()+"/"+groupRequest.getName()+".txt";
+      }
       System.out.println(absolutePath);
       System.out.println(relativePath);
       try {
         File newFile = new File(absolutePath);
         boolean isCreated = newFile.createNewFile();
         if (isCreated) {
-          FolderDir file = FolderDir.builder().name(groupRequest.getName()).parent(groupRequest.getParent()).path(relativePath).file(groupRequest.isFile()).build();
+          var file = FolderDir.builder().name(groupRequest.getName()).parent(groupRequest.getParent()).path(relativePath).file(groupRequest.isFile()).build();
           folderDirRepository.save(file);
-          if(!groupRequest.isShared()){
+          if(groupRequest.isShared()){
             Optional<MyGroups> group = myGroupRepository.findById(groupRequest.getGroupID());
             group.get().getSharedFolders().add(file);
             myGroupRepository.save(group.get());
           }else{
-
+            homeFolder.add(file);
+            homeDirRepository.save(home);
           }
           System.out.println("File created successfully.");
           return "file created";
@@ -155,13 +169,18 @@ public class FileService {
   public List<FolderDir> getALLFoldersUser(GetFolderRequest getFolderRequest) {
     String Username = jwtService.extractUsername(getFolderRequest.getToken());
     Optional<User> user = userRepository.findUserByUsername(Username);
-    List<FolderDir> folders = user.get().getHome().getFolders();
+    HomeDir home = user.get().getHome();
+    List<FolderDir> folders = home.getFolders();
     List<FolderDir> list = new ArrayList<>();
     for (FolderDir folder : folders) {
       if (folder.getParent() == getFolderRequest.getParentID() && folder.isShared() == false) {
         list.add(folder);
       }
     }
+    System.out.println("\n\n\n------------------------------");
+    System.out.println("hello from getAllFolderUser");
+    System.out.println(list);
+    System.out.println("------------------------------\n\n\n");
     return list;
   }
 
@@ -189,7 +208,13 @@ public class FileService {
       String username = jwtService.extractUsername(groupRequest.getToken());
       Optional<User> user = userRepository.findUserByUsername(username);
       Optional<FolderDir> folder = folderDirRepository.findById(groupRequest.getFolderID());
-      String absolutePath = rootPath+user.get().getUsername()+folder.get().getPath();
+      String absolutePath;
+      if(groupRequest.getGroupID()==null){
+        absolutePath = rootPath+user.get().getUsername()+folder.get().getPath();
+      }else{
+        Optional<MyGroups> group = myGroupRepository.findById(groupRequest.getGroupID());
+        absolutePath = rootPath+group.get().getAdmin()+folder.get().getPath();
+      }
       System.out.println("absolutePath");
       System.out.println(absolutePath);
       System.out.println("filePath");
@@ -211,12 +236,18 @@ public void writeFile(WriteFileRequest writeFileRequest) {
   System.out.println("-------------------------------------");
   System.out.println("groupRequest");
   System.out.println(writeFileRequest);
+  String absolutePath;
   String username = jwtService.extractUsername(writeFileRequest.getToken());
   Optional<User> user = userRepository.findUserByUsername(username);
   Optional<FolderDir> folder = folderDirRepository.findById(writeFileRequest.getFolderID());
-  String absolutePath = rootPath+user.get().getUsername()+folder.get().getPath();
+  if(writeFileRequest.getGroupID()==null){
+      absolutePath = rootPath+user.get().getUsername()+folder.get().getPath();
+  }else{
+    Optional<MyGroups> group = myGroupRepository.findById(writeFileRequest.getGroupID());
+    absolutePath = rootPath+group.get().getAdmin()+folder.get().getPath();
+  }
+
   System.out.println("absolutePath");
-  System.out.println(absolutePath);
   System.out.println("filePath");
   System.out.println("-------------------------------------");
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(absolutePath))) {
@@ -232,32 +263,55 @@ public List<FolderDir> deleteFile(GroupRequest groupRequest){
   System.out.println(groupRequest);
   String username = jwtService.extractUsername(groupRequest.getToken());
   Optional<User> user = userRepository.findUserByUsername(username);
-  Optional<MyGroups> group = myGroupRepository.findById(groupRequest.getGroupID());
-  String absolutePath= rootPath+user.get().getUsername();
-  System.out.println("\n\n\n-------------------------------------");
-  System.out.println("getSharedFolders Before delete!");
-  System.out.println(group.get().getSharedFolders());
-  System.out.println("-------------------------------------\n\n\n");
-  List<FolderDir> update = new ArrayList<>();
-  List<FolderDir> folders = group.get().getSharedFolders();
-  FolderDir folderToDelete = new FolderDir();
-  for(FolderDir folder : folders){
-    if(folder.getFolder_id()==groupRequest.getFolderID()) {
-      absolutePath = absolutePath+folder.getPath();
-      System.out.println(absolutePath);
-      System.out.println("delete worked!\n");
-      folderToDelete = folder;
-    }else if(folder.getParent()==groupRequest.getParent()){
-      update.add(folder);
-    }
+  String absolutePath;
+  // String absolutePath= rootPath+user.get().getUsername();
+  if(groupRequest.getGroupID()==null){
+    absolutePath = rootPath+user.get().getUsername();
+  }else{
+    Optional<MyGroups> group = myGroupRepository.findById(groupRequest.getGroupID());
+    absolutePath = rootPath+group.get().getAdmin();
   }
-  folders.remove(folderToDelete);
-  myGroupRepository.save(group.get());
+  List<FolderDir> update = new ArrayList<>();
+  FolderDir folderToDelete = new FolderDir();
+  if(groupRequest.isShared()){
+    Optional<MyGroups> group = myGroupRepository.findById(groupRequest.getGroupID());
+    System.out.println("\n\n\n-------------------------------------");
+    System.out.println("getSharedFolders Before delete!");
+    System.out.println(group.get().getSharedFolders());
+    System.out.println("-------------------------------------\n\n\n");
+    List<FolderDir> folders = group.get().getSharedFolders();
+    for(FolderDir folder : folders){
+      if(folder.getFolder_id()==groupRequest.getFolderID()) {
+        absolutePath = absolutePath+folder.getPath();
+        System.out.println(absolutePath);
+        System.out.println("delete worked!\n");
+        folderToDelete = folder;
+      }else if(folder.getParent()==groupRequest.getParent()){
+        update.add(folder);
+      }
+    }
+    System.out.println("\n\n\n-------------------------------------");
+    System.out.println("getSharedFolders after delete!");
+    System.out.println(group.get().getSharedFolders());
+    System.out.println("-------------------------------------\n\n\n");
+    folders.remove(folderToDelete);
+    myGroupRepository.save(group.get());
+  }else{
+    HomeDir home = user.get().getHome();
+    List<FolderDir> folders = home.getFolders();
+    for(FolderDir folder : folders){
+      if(folder.getFolder_id()==groupRequest.getFolderID()) {
+        absolutePath = absolutePath+folder.getPath();
+        System.out.println(absolutePath);
+        System.out.println("delete worked!\n");
+        folderToDelete = folder;
+      }else if(folder.getParent()==groupRequest.getParent()){
+        update.add(folder);
+      }
+    }
+    folders.remove(folderToDelete);
+  }
   folderDirRepository.delete(folderToDelete);
-  System.out.println("\n\n\n-------------------------------------");
-  System.out.println("getSharedFolders after delete!");
-  System.out.println(group.get().getSharedFolders());
-  System.out.println("-------------------------------------\n\n\n");
 
   System.out.println("\n\n\n-------------------------------------");
   System.out.println("absolutePath");

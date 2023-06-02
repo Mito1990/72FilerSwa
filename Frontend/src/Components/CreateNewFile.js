@@ -3,47 +3,42 @@ import { useForm } from "react-hook-form";
 import Cookies from 'js-cookie';
 
 export const CreateNewFile = ({handleCreateFile, currentFolder,currentGroup }) => {
+console.error("hello from createNewFile")
+console.error("------------------------")
 const { register, handleSubmit, getValues } = useForm();
 const [isOpen, setIsOpen] = useState(false);
 const serverToken = Cookies.get('Token');
-console.error(currentFolder)
-console.error(currentGroup)
-
-const newFile = () => {
-setIsOpen(true);
-}
-
-const handleClose = () => {
-setIsOpen(false);
-};
-
+const newFile = () => {setIsOpen(true);}
+const handleClose = () => {setIsOpen(false);};
 const onSubmit = () => {
-const filename = getValues('File');
-const newFileRequest = {
-    token: serverToken,
-    name: filename,
-    path: currentFolder.path,
-    folderID: currentFolder.folder_id,
-    groupID: currentGroup.group_id,
-    parent: currentFolder.folder_id,
-    file: true
+    const filename = getValues('File');
+    const newFileRequest = {
+        token: serverToken,
+        name: filename,
+        path: currentFolder.path,
+        folderID: currentFolder.folder_id,
+        groupID: currentGroup.group_id,
+        parent: currentFolder.folder_id,
+        file: true,
+        shared:true
+    }
+    console.error("newFileRequest")
+    console.error(newFileRequest)
+    fetch('http://localhost:8080/api/folder/new/file', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + serverToken
+        },
+        body: JSON.stringify(newFileRequest)
+    }).then((response) => response.json()).then((data) => {
+        handleCreateFile.handleCreateFile(data);
+    }).catch((error) => {
+        console.error('Error retrieving data:', error);
+    });
+    setIsOpen(false);
 }
-
-fetch('http://localhost:8080/api/folder/new/file', {
-    method: 'POST',
-    headers: {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + serverToken
-    },
-    body: JSON.stringify(newFileRequest)
-}).then((response) => response.json()).then((data) => {
-    handleCreateFile.handleCreateFile(data);
-}).catch((error) => {
-    console.error('Error retrieving data:', error);
-});
-
-setIsOpen(false);
-}
+console.error("------------------------")
 
 return (
 <div>

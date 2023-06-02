@@ -1,24 +1,18 @@
 import { useState } from "react";
 import Cookies from 'js-cookie';
 
-export const OpenFile = ({ up, onDataToParent }) => {
-    console.log(onDataToParent)
+export const OpenFileHome = ({ update,currentFolder}) => {
+    console.error("currentFolder")
+    console.error(currentFolder)
     const [fileContent, setFileContent] = useState('');
-    const [itemFromParent] = useState(onDataToParent[0]);
-    const [currentGroupId] = useState(onDataToParent[1]);
     const [isOpen, setIsOpen] = useState(false);
     const serverToken = Cookies.get('Token');
-    console.log("OpenFile")
-    console.log("------------------------")
-    console.log("filename")
-    console.log(itemFromParent.folder_id);
-    console.warn(onDataToParent[0].parent)
+
     const handleDownloadFile =(item) => {
         const folderRequest ={
         folderID:item.folder_id,
-        groupID:currentGroupId,
         token:serverToken,
-        shared:true,
+        shared:false,
         file:true
         }
         console.log(folderRequest);
@@ -45,11 +39,10 @@ export const OpenFile = ({ up, onDataToParent }) => {
 
     const handleSaveFile = () => {
         const folderRequest ={
-            folderID:itemFromParent.folder_id,
-            groupID:currentGroupId,
+            folderID:currentFolder.folder_id,
             content:fileContent,
             token:serverToken,
-            shared:true,
+            shared:false,
             file:true
             }
             console.log("---save---")
@@ -80,37 +73,37 @@ export const OpenFile = ({ up, onDataToParent }) => {
     const handleDeleteFile = async () =>{
         setIsOpen(false);
         const folderRequest = {
-            groupID:currentGroupId,
-            parent:itemFromParent.parent,
-            path:itemFromParent.path,
-            folderID:itemFromParent.folder_id,
+            parent:currentFolder.parent,
+            path:currentFolder.path,
+            folderID:currentFolder.folder_id,
             token:serverToken,
-            shared:true,
+            shared:false,
             file:true
             }
             console.log("---Delete---")
             console.log(folderRequest);
-            await fetch('http://localhost:8080/api/folder/file/delete', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer '+serverToken
-                },
-                body: JSON.stringify(folderRequest)
-            }).then((response) => response.json()).then((data) => {
-                // setFileContent(data);
-                up.getUpdate(data);
-            }).catch((error) => {
+                try{
+                const response = await fetch('http://localhost:8080/api/folder/file/delete', {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer '+serverToken
+                    },
+                    body: JSON.stringify(folderRequest)
+                })
+                const data = await response.json();
+                update.update(data);
+            }catch(error){
                 console.error('Error retrieving data:', error);
-            });
+            };
             console.log("-----------------------------------------------------")
     }
     return (
         <div className="">
         {!isOpen ? (
-        <button className="flex flex-col justify-items-center m-2 w-full sm:w-1/2 md:w-1/3 lg:w-3/4 xl:w-1/5 flex-basis-full"onClick={() => handleDownloadFile(itemFromParent)}>
+        <button className="flex flex-col justify-items-center m-2 w-full sm:w-1/2 md:w-1/3 lg:w-3/4 xl:w-1/5 flex-basis-full"onClick={() => handleDownloadFile(currentFolder)}>
             <svg className="h-9 w-9 bg-slate-500"xmlns="http://www.w3.org/2000/svg"height="1em"viewBox="0 0 384 512"><path d="M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128z" /></svg>
-            <div className="h-5 w-9">{itemFromParent.name}</div>
+            <div className="h-5 w-9">{currentFolder.name}</div>
         </button>
         ) : (
         <div className="flex flex-col h-full">
