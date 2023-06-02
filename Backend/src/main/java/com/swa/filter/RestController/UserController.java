@@ -1,5 +1,8 @@
 package com.swa.filter.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.swa.filter.ObjectModel.ListOfUserRequest;
 import com.swa.filter.Services.UserService;
 import com.swa.filter.mySQLTables.User;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +16,6 @@ import java.util.List;
 @RequestMapping(path = "/api/users")
 public class UserController {
   private final UserService userService;
-  @CrossOrigin(origins = "http://localhost:3000")
   @GetMapping(path = "/get/all" )
   public ResponseEntity<List<User>>getAllUsers(){
     return ResponseEntity.ok().body(userService.getAllUsers());
@@ -22,6 +24,13 @@ public class UserController {
   public ResponseEntity<?>getUsers(@RequestParam String username){
     if(!userService.checkIfUserExists(username))return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User with username:{"+username+"} doesn't exists!");
     else return ResponseEntity.ok().body(userService.getUser(username));
+  }
+  @PostMapping(path = "/get/users" )
+  public ResponseEntity<?>getListOfUsers(@RequestBody ListOfUserRequest listOfUserRequest) throws JsonProcessingException{
+    ObjectMapper objectMapper = new ObjectMapper();
+    // Convert the object to JSON string
+    String jsonString = objectMapper.writeValueAsString(userService.listOfUsernames(listOfUserRequest));
+    return ResponseEntity.ok().body(jsonString);
   }
 
 }

@@ -12,6 +12,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.swa.filter.ObjectModel.Role;
+
 
 @Data
 @Entity
@@ -20,7 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @NoArgsConstructor(force = true)
 public class User implements UserDetails {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.TABLE)
   private Long user_id;
   @NonNull
   private String name;
@@ -30,6 +32,11 @@ public class User implements UserDetails {
   private String password;
   @Enumerated(EnumType.STRING)
   private Role role;
+  @OneToOne
+  // @JoinColumn(name = "home_id")
+  HomeDir home;
+  @OneToMany
+  private List<MyGroups>mygroups;
 
   @Override 
   public Collection<? extends GrantedAuthority> getAuthorities() {
