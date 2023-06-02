@@ -173,8 +173,12 @@ export const SharedFolder = () => {
   const getUpdate = async (data) => {
     setCurrentFolders(data);
   };
+
+  const homeFolder = () =>{
+    navigate("/home");
+  }
   return (
-    <div className=' h-screen w-screen bg-slate-500 flex items-start'>
+    <div className=' h-screen w-screen bg-slate-500 flex-row'>
       <div className='flex flex-row w-full'>
         <div>{(currentURL==="share")?(<MyGroups sendDataToParent={handleChildValue}></MyGroups>):(
           <><form className=" bg-orange-300 flex flex-col mt-2 ml-2 w-52 h-32 justify-center items-center rounded-md shadow-2xl" onSubmit={handleSubmit(AddFolder)}>
@@ -199,6 +203,8 @@ export const SharedFolder = () => {
               )):[]}
         </div>
       </div>
+      <button className="hover:bg-sky-700 w-24 h-12 border-slate-950 border-2 rounded-xl" onClick={homeFolder}>Home</button>
+
     </div>
   );
 }
