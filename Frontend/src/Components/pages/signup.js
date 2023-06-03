@@ -1,7 +1,7 @@
 import {useForm} from "react-hook-form"
 import {useNavigate} from "react-router-dom"
 
-export const Register = () =>{
+export const SignUp = () =>{
   const {register, handleSubmit} = useForm();
   const navigate = useNavigate();
 
