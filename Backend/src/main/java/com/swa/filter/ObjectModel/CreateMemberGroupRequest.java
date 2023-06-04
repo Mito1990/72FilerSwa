@@ -1,5 +1,7 @@
-
 package com.swa.filter.ObjectModel;
+
+import com.swa.filter.mySQLTables.Folder;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,11 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddFolderToGroupRequest {
-    String token;
-    int groupID;
-    int parentID;
-    String Path;
-    String name;
-    boolean shared;
+public class CreateMemberGroupRequest {
+    private String token;
+    private String groupName;
 }

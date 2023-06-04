@@ -15,13 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.swa.filter.ObjectModel.CreateNewFolderRequest;
 import com.swa.filter.ObjectModel.GetFolderRequest;
 import com.swa.filter.ObjectModel.GetFolderResponse;
 import com.swa.filter.ObjectModel.GroupRequest;
 import com.swa.filter.ObjectModel.NewFolderGroupRequest;
 import com.swa.filter.ObjectModel.NewFolderRequest;
 import com.swa.filter.ObjectModel.WriteFileRequest;
-import com.swa.filter.Services.FileService;
+import com.swa.filter.Services.FileElementService;
 import com.swa.filter.mySQLTables.Folder;
 
 import io.jsonwebtoken.io.IOException;
@@ -30,16 +31,25 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/folder")
-public class FileController {
-    private final FileService fileService;
+public class FileElementController {
+    private final FileElementService fileElementService;
+
+    @PostMapping(path = "/createNewFolder")
+    public ResponseEntity<?> createNewFolder(@RequestBody CreateNewFolderRequest createNewFolderRequest) throws JsonProcessingException{
+      ObjectMapper objectMapper = new ObjectMapper();
+      String jsonString = objectMapper.writeValueAsString(fileElementService.createNewFolder(createNewFolderRequest));
+      return ResponseEntity.ok().body(jsonString);
+    }
     // @PostMapping("/new")
     //     public ResponseEntity<?> newFolder(@RequestBody NewFolderRequest newFolderRequest){
     //     return ResponseEntity.ok().body(fileService.newFo(newFolderRequest));
     // }
-    // @GetMapping("/get")
-    // public Folder getFolder(@RequestBody GetFolderResponse getFolderRequest){
-    //     return fileService.getFolder(getFolderRequest);
-    // }
+    @PostMapping("/getFolder")
+    public ResponseEntity<?> getFolder(@RequestBody GetFolderRequest getFolderRequest) throws JsonProcessingException{
+      ObjectMapper objectMapper = new ObjectMapper();
+      String jsonString = objectMapper.writeValueAsString(fileElementService.getFolder(getFolderRequest));
+      return ResponseEntity.ok().body(jsonString);
+    }
     // @PostMapping("/new")
     // public ResponseEntity<?> newFolder(@RequestBody NewFolderRequest newFolderRequest){
     //     return ResponseEntity.ok().body(fileService.newFolder(newFolderRequest));

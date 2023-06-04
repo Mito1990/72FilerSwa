@@ -26,7 +26,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
-    private final FileService fileService;
+    private final FileElementService fileService;
     public AuthenticationResponse register(RegisterRequest registerRequest) {
         if(userService.checkIfUserExists(registerRequest.getUsername())){
             return AuthenticationResponse.builder().message("User Exits already!").build();
@@ -37,8 +37,7 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(Role.USER)
                 .home(null)
-                .shareFolders(null)
-                .members(null)
+                .memberGroups(null)
                 .build();
             fileService.createUserFolder(registerRequest.getUsername());
             userRepository.save(user);

@@ -35,9 +35,7 @@ public class User implements UserDetails {
   @OneToOne
   Folder home;
   @OneToMany
-  List<Folder>shareFolders;
-  @OneToMany
-  List<Member>members;
+  List<MemberGroup>memberGroups;
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return List.of(new SimpleGrantedAuthority(role.name()));

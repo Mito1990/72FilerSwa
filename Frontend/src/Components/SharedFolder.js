@@ -11,7 +11,7 @@ import{OpenFile}from './OpenFile';
 
 export const SharedFolder = () => {
   const [currentGroup,setCurrentGroup] = useState([]);
-  const [currentFolders,setCurrentFolders] = useState([]);
+  const [fileElementsInCurrentFolder,setFileElementsInCurrentFolder] = useState([]);
   const [currentFolder,setCurrentFolder] = useState([]);
   const [groupOpen,setGroupOpen] = useState(false);
   const [parentID,setParentID] = useState(0);
@@ -33,9 +33,8 @@ export const SharedFolder = () => {
           token:serverToken,
           parentID:currentFolder.id
       }
-      console.error(getFolderRequest)
       try {
-          const response = await fetch('http://localhost:8080/api/share/getFolder', {
+          const response = await fetch('http://localhost:8080/api/folder/getFolder', {
               method: 'POST',
               headers: {
               'Content-Type': 'application/json',
@@ -44,7 +43,7 @@ export const SharedFolder = () => {
               body: JSON.stringify(getFolderRequest)
           });
           const data = await response.json();
-          setCurrentFolders(data);
+          setFileElementsInCurrentFolder(data);
           } catch (error) {
           console.error('Error retrieving data:', error);
           }
@@ -55,9 +54,8 @@ export const SharedFolder = () => {
             token:serverToken,
             parentID:currentID
         }
-        console.error(getFolderRequest)
         try {
-            const response = await fetch('http://localhost:8080/api/share/getFolder', {
+            const response = await fetch('http://localhost:8080/api/folder/getFolder', {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
@@ -66,7 +64,7 @@ export const SharedFolder = () => {
                 body: JSON.stringify(getFolderRequest)
             });
             const data = await response.json();
-            setCurrentFolders(data);
+            setFileElementsInCurrentFolder(data);
             } catch (error) {
             console.error('Error retrieving data:', error);
             }
@@ -91,7 +89,7 @@ export const SharedFolder = () => {
     }
     console.error("AddFolder in Shared")
     console.error(folder)
-    await fetch('http://localhost:8080/api/share/addNewFolder', {
+    await fetch('http://localhost:8080/api/folder/createNewFolder', {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json',
@@ -99,20 +97,20 @@ export const SharedFolder = () => {
     },
     body: JSON.stringify(folder)
     }).then((response) => response.json()).then((data) => {
-        setCurrentFolders(data);
+        setFileElementsInCurrentFolder(data);
     }).catch((error) => {
     console.error('Error retrieving data:', error);
     });
   }
 
-  const dataFromMyGroups = async(data,item) => {
+  const dataFromMyGroups = async(shareFolder,child) => {
     console.error("data from handleChildValue")
-    console.error(data)
-    setCurrentFolder(item)
-    setCurrentGroup(item.name);
-    setCurrentURL(item.name);
-    setParentID(item.id);
-    setCurrentFolders(data);
+    console.error(shareFolder)
+    setCurrentFolder(child)
+    setCurrentGroup(child.name);
+    setCurrentURL(child.name);
+    setParentID(child.id);
+    setFileElementsInCurrentFolder(shareFolder);
     setGroupOpen(true);
   };
   const handleCreateFile = (data) =>{
@@ -129,7 +127,7 @@ export const SharedFolder = () => {
       },
       body: JSON.stringify(folderRequest)
   }).then((response) => response.json()).then((data) => {
-      setCurrentFolders(data);
+      setFileElementsInCurrentFolder(data);
   }).catch((error) => {
       console.error('Error retrieving data:', error);
   });
@@ -147,7 +145,7 @@ export const SharedFolder = () => {
       parentID:item.id
   }
     try {
-      const response = await fetch('http://localhost:8080/api/share/getFolder', {
+      const response = await fetch('http://localhost:8080/api/folder/getFolder', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -156,27 +154,22 @@ export const SharedFolder = () => {
         body: JSON.stringify(getFolderRequest)
       });
       const data = await response.json();
-      setCurrentFolders(data);
+      setFileElementsInCurrentFolder(data);
     } catch (error) {
       console.error('Error retrieving data:', error);
     }
   };
   
   useEffect( ()  => {
-    // Handle the updated currentFolder state here
     console.error('Updated currentFolder:', currentFolder);
-    console.error('Updated currentFolder:', currentFolders);
-    // Perform any necessary actions with the updated state
-
-    // Clean up the effect if needed
+    console.error('Updated currentFolder:', fileElementsInCurrentFolder);
     return () => {
-      // Cleanup code
     };
-  }, [currentFolder,currentFolders]);
+  }, [currentFolder,fileElementsInCurrentFolder]);
   const getUpdate = async (data) => {
     console.error("hello from getUpdate from shared")
     console.log(data);
-    setCurrentFolders(data);
+    setFileElementsInCurrentFolder(data);
   };
 
   const homeFolder = () =>{
@@ -194,7 +187,7 @@ export const SharedFolder = () => {
         )}
         </div>
         <div className=' flex justify-start mt-2 flex-wrap'>
-          {currentURL!=="share"?currentFolders.map((item, index) => (
+          {currentURL!=="share"?fileElementsInCurrentFolder.map((item, index) => (
             (!item.file)?(
                 <button key={index} className='flex flex-col justify-items-center m-2 w-full sm:w-1/2 md:w-1/3 lg:w-3/4 xl:w-1/5 flex-basis-full' onClick={() => OpenFolder(item)} >
                   <svg className=' h-9 w-9 bg-slate-500' xmlns="http://www.w3.org /2000/svg" viewBox="0 0 512 512"><path d="M64 480H448c35.3 0 64-28.7 64-64V160c0-35.3-28.7-64-64-64H288c-10.1 0-19.6-4.7-25.6-12.8L243.2 57.6C231.1 41.5 212.1 32 192 32H64C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64z"/></svg>

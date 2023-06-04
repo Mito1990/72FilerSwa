@@ -1,5 +1,7 @@
 package com.swa.filter.mySQLTables;
 
+import java.util.List;
+
 import com.swa.filter.ObjectModel.Role;
 
 import jakarta.persistence.Entity;
@@ -17,11 +19,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor()
-public class Member {
+public class MemberGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer memberID;
-    private Integer shareID;
-    private String username;
-    private Role role;
+    private Integer memberGroupID;
+    private List<String> usernames;
+    private Folder shareFolder;
+    private String admin;
 }

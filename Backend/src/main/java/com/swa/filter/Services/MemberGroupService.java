@@ -10,15 +10,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.swa.filter.ObjectModel.MemberGroupRequest;
 import com.swa.filter.ObjectModel.NewFolderGroupRequest;
 import com.swa.filter.ObjectModel.NewFolderRequest;
-import com.swa.filter.ObjectModel.NewShareFolderRequest;
+import com.swa.filter.ObjectModel.CreateMemberGroupRequest;
 import com.swa.filter.mySQLTables.FileElement;
 import com.swa.filter.mySQLTables.Folder;
-import com.swa.filter.mySQLTables.Member;
+import com.swa.filter.mySQLTables.MemberGroup;
 import com.swa.filter.ObjectModel.Role;
 import com.swa.filter.ObjectModel.AddFolderResponse;
-import com.swa.filter.ObjectModel.AddFolderToGroupRequest;
 import com.swa.filter.ObjectModel.AddMemberRequest;
-import com.swa.filter.ObjectModel.AddNewFolderRequest;
 import com.swa.filter.ObjectModel.GetFolderRequest;
 import com.swa.filter.ObjectModel.GroupFolderRequest;
 import com.swa.filter.ObjectModel.GroupRequest;
@@ -33,78 +31,40 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class MemberService{
-    private final FileService fileService;
+public class MemberGroupService{
+    private final FileElementService fileService;
     private final UserService userService;
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final MemberRepository memberRepository;
     private final FolderRepository folderRepository;
+    //Returns the folder of the MemeberGroup
+    public Folder createMemberGroup(CreateMemberGroupRequest createMemberGroupRequest) {
+        System.out.println("\n\n\ncreateMemberGroup");
+        System.out.println("-----------------------------------------------------");
+        String owner = jwtService.extractUsername(createMemberGroupRequest.getToken());
+        Optional<User> user = userRepository.findUserByUsername(owner);
+        Folder newShareFolder = new Folder(createMemberGroupRequest.getGroupName(), null, true);
+        MemberGroup memberGroup = MemberGroup.builder().admin(owner).shareFolder(newShareFolder).build();
+        user.get().getMemberGroups().add(memberGroup);
+        memberRepository.save(memberGroup);
+        userRepository.save(user.get());
+        System.out.println("Member Group is created!");
+        System.out.println(memberGroup);
+        System.out.println("-----------------------------------------------------\n\n\n");
+        return memberGroup.getShareFolder();
+    }
 
-    public List<Folder> newShareFolder(NewShareFolderRequest newShareFolderRequest) {
-        System.out.println("\nnewShareFolder");
-        System.out.println("-----------------------------------------------------");
-        String owner = jwtService.extractUsername(newShareFolderRequest.getToken());
-        Optional<User> user = userRepository.findUserByUsername(owner);
-        Folder newShareFolder = new Folder(newShareFolderRequest.getName(), null, true);
-        Member member = Member.builder().username(newShareFolderRequest.getName()).shareID(newShareFolder.getId()).role(Role.ADMIN).build();
-        user.get().getShareFolders().add(newShareFolder);
-        user.get().getMembers().add(member);
-        memberRepository.save(member);
-        folderRepository.save(newShareFolder);
-        userRepository.save(user.get());
-        log.info("New share folder successful created!",user.get().getShareFolders());
-        System.out.println("-----------------------------------------------------\n");
-        return user.get().getShareFolders();
-    }
-    public List<?>addNewFolder(AddNewFolderRequest addNewFolderRequest){
-            System.out.println("\nAddNewFolderRequest");
-            System.out.println("-----------------------------------------------------");
-            System.out.println("addNewFolderRequest");
-            System.out.println(addNewFolderRequest);
-            if(addNewFolderRequest.getParent()==null){
-                System.out.println("Parent == null");
-            }
-            String owner = jwtService.extractUsername(addNewFolderRequest.getToken());
-            Optional<User> user = userRepository.findUserByUsername(owner);
-            user.get().getShareFolders();
-            Optional<Folder> parentFolder = folderRepository.findById(addNewFolderRequest.getParent().getId());
-            Folder newFolder = new Folder(addNewFolderRequest.getName(),parentFolder.get() ,addNewFolderRequest.isShared());
-            parentFolder.get().getChildren().add(newFolder);
-            folderRepository.save(newFolder);
-            userRepository.save(user.get());
-            System.out.println("getFolder(new GetFolderRequest(addNewFolderRequest.getToken(), addNewFolderRequest.getParent().getId()))");
-            System.out.println(getFolder(new GetFolderRequest(addNewFolderRequest.getToken(), addNewFolderRequest.getParent().getId())));
-            System.out.println("-----------------------------------------------------\n");
-            return getFolder(new GetFolderRequest(addNewFolderRequest.getToken(), parentFolder.get().getId()));
-    }
-    public void addMember(AddMemberRequest addMemberRequest){
-        String owner = jwtService.extractUsername(addMemberRequest.getToken());
-        Optional<User> user = userRepository.findUserByUsername(owner);
-        Member member = Member.builder().username(addMemberRequest.getMember()).shareID(addMemberRequest.getShareID()).role(Role.USER).build();
-        log.info("Member: {} successful added!",addMemberRequest.getMember());
-        user.get().getMembers().add(member);
-        memberRepository.save(member);
-        userRepository.save(user.get());
-    }
-    public List<?> getFolder(GetFolderRequest getFolderRequest){
-        System.out.println("getFolder");
-        System.out.println("-----------------------------------------------------");
-        System.out.println("getFolderRequest");
-        System.out.println(getFolderRequest);
-        String owner = jwtService.extractUsername(getFolderRequest.getToken());
-        Optional<User> user = userRepository.findUserByUsername(owner);
-        if(getFolderRequest.getParentID()==null){
-            System.out.println("-----------------------------------------------------\n");
-            return user.get().getShareFolders();
-        }else{
-            Optional<Folder> parentFolder = folderRepository.findById(getFolderRequest.getParentID());
-            System.out.println("parentFolder");
-            System.out.println(parentFolder);
-            System.out.println("-----------------------------------------------------\n");
-            return parentFolder.get().getChildren();
-        }
-    }
+    // public void addMember(AddMemberRequest addMemberRequest){
+    //     String owner = jwtService.extractUsername(addMemberRequest.getToken());
+    //     Optional<User> user = userRepository.findUserByUsername(owner);
+    //     MemberGroup member = MemberGroup.builder().username(addMemberRequest.getMember()).shareID(addMemberRequest.getShareID()).role(Role.USER).build();
+    //     log.info("Member: {} successful added!",addMemberRequest.getMember());
+    //     user.get().getMembers().add(member);
+    //     memberRepository.save(member);
+    //     userRepository.save(user.get());
+    // }
+
     // public boolean checkIfGroupNameExists(String name,String Username){
     //     Optional<User> user = userRepository.findUserByUsername(Username);
     //     List<MyGroups> groups = user.get().getMygroups();

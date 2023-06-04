@@ -3,7 +3,7 @@ package com.swa.filter.Services;
 import com.swa.filter.ObjectModel.ListOfUsernameRequest;
 import com.swa.filter.Repository.MemberRepository;
 import com.swa.filter.Repository.UserRepository;
-import com.swa.filter.mySQLTables.Member;
+import com.swa.filter.mySQLTables.MemberGroup;
 import com.swa.filter.mySQLTables.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,24 +40,24 @@ public class UserService  {
         return listOfAllUsernames;
     }
     
-    public List<String> listOfAddableUsers(ListOfUsernameRequest listOfUsernameRequest){
-        String owner = jwtService.extractUsername(listOfUsernameRequest.getToken());
-        Optional<User> user = userRepository.findUserByUsername(owner);
-        List<Member>members = user.get().getMembers();
-        List<String>listOfAddableUsers = new ArrayList<>();
-        for(String username : listOfAllUsernames()){
-            for(Member member : members){
-                if(member.getShareID().equals(listOfUsernameRequest.getShareID())){
-                    if(username.equalsIgnoreCase(member.getUsername())){
-                        continue;
-                    }
-                }
-                listOfAddableUsers.add(username);
-            }
-        }
-        log.info("Fetching ListOfAddableUsers from Database: ",listOfAddableUsers);
-        return listOfAddableUsers;
-    }
+    // public List<String> listOfAddableUsers(ListOfUsernameRequest listOfUsernameRequest){
+    //     String owner = jwtService.extractUsername(listOfUsernameRequest.getToken());
+    //     Optional<User> user = userRepository.findUserByUsername(owner);
+    //     List<MemberGroup>members = user.get().getMemberGroups();
+    //     List<String>listOfAddableUsers = new ArrayList<>();
+    //     for(String username : listOfAllUsernames()){
+    //         for(MemberGroup member : members){
+    //             if(member.().equals(listOfUsernameRequest.getShareID())){
+    //                 if(username.equalsIgnoreCase(member.getUsername())){
+    //                     continue;
+    //                 }
+    //             }
+    //             listOfAddableUsers.add(username);
+    //         }
+    //     }
+    //     log.info("Fetching ListOfAddableUsers from Database: ",listOfAddableUsers);
+    //     return listOfAddableUsers;
+    // }
 
     public boolean checkIfUserExists(String username) {
         Optional<User> user = userRepository.findUserByUsername(username);

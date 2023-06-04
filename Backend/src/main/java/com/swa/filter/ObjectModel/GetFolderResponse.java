@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor 
+@AllArgsConstructor
 public class GetFolderResponse {
     String name;
     String pathparent;

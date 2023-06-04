@@ -1,15 +1,13 @@
 package com.swa.filter.RestController;
 
-import com.swa.filter.ObjectModel.NewShareFolderRequest;
+import com.swa.filter.ObjectModel.CreateMemberGroupRequest;
 import com.swa.filter.ObjectModel.NewFolderGroupRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.swa.filter.ObjectModel.AddFolderToGroupRequest;
-import com.swa.filter.ObjectModel.AddNewFolderRequest;
 import com.swa.filter.ObjectModel.GetFolderRequest;
 import com.swa.filter.ObjectModel.GroupFolderRequest;
 import com.swa.filter.ObjectModel.GroupRequest;
-import com.swa.filter.Services.MemberService;
+import com.swa.filter.Services.MemberGroupService;
 import com.swa.filter.mySQLTables.Folder;
 
 import lombok.RequiredArgsConstructor;
@@ -24,27 +22,15 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/share")
 public class MemberController{
-  private final MemberService memberService;
+  private final MemberGroupService memberService;
 
-  @PostMapping(path = "/newShareFolder")
-  public ResponseEntity<?> newShareFolder(@RequestBody NewShareFolderRequest newShareFolderRequest) throws JsonProcessingException{
+  @PostMapping(path = "/createMemberGroup")
+  public ResponseEntity<?> createMemberGroup(@RequestBody CreateMemberGroupRequest createMemberGroupRequest) throws JsonProcessingException{
     ObjectMapper objectMapper = new ObjectMapper();
-    String jsonString = objectMapper.writeValueAsString(memberService.newShareFolder(newShareFolderRequest));
-    return ResponseEntity.ok().body(jsonString);
-  }
-  @PostMapping(path = "/addNewFolder")
-  public ResponseEntity<?> addNewFolder(@RequestBody AddNewFolderRequest addNewFolderRequest) throws JsonProcessingException{
-    ObjectMapper objectMapper = new ObjectMapper();
-    String jsonString = objectMapper.writeValueAsString(memberService.addNewFolder(addNewFolderRequest));
+    String jsonString = objectMapper.writeValueAsString(memberService.createMemberGroup(createMemberGroupRequest));
     return ResponseEntity.ok().body(jsonString);
   }
 
-  @PostMapping(path = "/getFolder")
-  public ResponseEntity<?> getFolder(@RequestBody GetFolderRequest getFolderRequest) throws JsonProcessingException{
-    ObjectMapper objectMapper = new ObjectMapper();
-    String jsonString = objectMapper.writeValueAsString(memberService.getFolder(getFolderRequest));
-    return ResponseEntity.ok().body(jsonString);
-  }
 
 
 
