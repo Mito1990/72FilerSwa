@@ -14,62 +14,62 @@ export const SharedFolder = () => {
   const [currentFolders,setCurrentFolders] = useState([]);
   const [currentFolder,setCurrentFolder] = useState([]);
   const [groupOpen,setGroupOpen] = useState(false);
-  const [parent,setParent] = useState(0);
+  const [parentID,setParentID] = useState(0);
   const [currentURL, setCurrentURL] = useState("share");
-  const [path,setPath] = useState("");
   const {register, handleSubmit} = useForm();
   const navigate = useNavigate();
   const serverToken = Cookies.get('Token');
 
   useEffect(() => {
-    const handlePopstate = () => {
+    const handlePopstate = async () => {
       let currentID = getCurrentFolderIdFromUrl();
       if(currentID==="share"){
         currentID = "share";
         setCurrentURL(currentID);
-      }else if(currentID===currentGroup.name){
-        const request = {
-          groupID:currentGroup.group_id,
-          parent:currentGroup.group_id,
-          token:serverToken
-        }
-        setGroupOpen(true);
-        fetch('http://localhost:8080/api/groups/get/group/folder', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer '+serverToken
-            },
-            body: JSON.stringify(request)
-        }).then((response) => response.json()).then((data) => {
-            setCurrentFolders(data);
-            setParent(currentGroup.group_id);
-        }).catch((error) => {
-            console.error('Error retrieving data:', error);
-        });
+      }else if(currentID===currentGroup){
+        console.error("currentGroup => currentgroup")
+        console.error(currentGroup)
+        const getFolderRequest = {
+          token:serverToken,
+          parentID:currentFolder.id
+      }
+      console.error(getFolderRequest)
+      try {
+          const response = await fetch('http://localhost:8080/api/share/getFolder', {
+              method: 'POST',
+              headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer '+serverToken
+              },
+              body: JSON.stringify(getFolderRequest)
+          });
+          const data = await response.json();
+          setCurrentFolders(data);
+          } catch (error) {
+          console.error('Error retrieving data:', error);
+          }
           setCurrentURL(currentID);
         }else {
           setCurrentURL(currentID);
-          const folderRequest ={
-            parent:currentID,
-            groupID:currentGroup.group_id,
-            token:serverToken
-          }
-          console.error(folderRequest);
-          fetch('http://localhost:8080/api/groups/get/group/folder', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer '+serverToken
-            },
-            body: JSON.stringify(folderRequest)
-        }).then((response) => response.json()).then((data) => {
+          const getFolderRequest = {
+            token:serverToken,
+            parentID:currentID
+        }
+        console.error(getFolderRequest)
+        try {
+            const response = await fetch('http://localhost:8080/api/share/getFolder', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+serverToken
+                },
+                body: JSON.stringify(getFolderRequest)
+            });
+            const data = await response.json();
             setCurrentFolders(data);
-            setPath(data.path);
-            setParent(currentID);
-        }).catch((error) => {
+            } catch (error) {
             console.error('Error retrieving data:', error);
-        });
+            }
         }
     };
        // Attach the handlePopstate function to the popstate event
@@ -80,16 +80,18 @@ export const SharedFolder = () => {
     };
   }, [currentGroup]);
 
-  const AddFolder = (e) =>{
+  const AddFolder = async (e) =>{
+    console.error("currentFolder => AddFolder")
+    console.error(currentFolder)
     const folder = {
         token:serverToken,
-        groupID:currentGroup.group_id,
         name:e.NewFolder,
-        parent:parent,
-        path:path+"/"+e.NewFolder,
-        shared:true
+        parent:currentFolder,
+        isShared:true,
     }
-    fetch('http://localhost:8080/api/groups/add/folder', {
+    console.error("AddFolder in Shared")
+    console.error(folder)
+    await fetch('http://localhost:8080/api/share/addNewFolder', {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json',
@@ -98,26 +100,27 @@ export const SharedFolder = () => {
     body: JSON.stringify(folder)
     }).then((response) => response.json()).then((data) => {
         setCurrentFolders(data);
-        setPath(path+"/"+e.NewFolder)
     }).catch((error) => {
     console.error('Error retrieving data:', error);
     });
   }
 
-  const handleChildValue = (data,item) => {
-    setCurrentGroup(item);
+  const dataFromMyGroups = async(data,item) => {
+    console.error("data from handleChildValue")
+    console.error(data)
+    setCurrentFolder(item)
+    setCurrentGroup(item.name);
     setCurrentURL(item.name);
-    setParent(item.group_id);
+    setParentID(item.id);
     setCurrentFolders(data);
     setGroupOpen(true);
   };
   const handleCreateFile = (data) =>{
     const folderRequest ={
-      parent:parent,
+      parent:parentID,
       groupID:currentGroup.group_id,
       token:serverToken
     }
-    console.log(folderRequest);
     fetch('http://localhost:8080/api/groups/get/group/folder', {
       method: 'POST',
       headers: {
@@ -133,25 +136,24 @@ export const SharedFolder = () => {
   }
 
   const OpenFolder = async (item) => {
-    setCurrentFolder(item);
-    setParent(item.folder_id);
-    setPath(item.path);
+    console.error("item => OpenFolder")
+    console.error(item)
+    setParentID(item.id);
     setGroupOpen(false);
     setCurrentFolder(item);
-    navigate(`/share/${currentGroup.name}/${item.folder_id}`);
-    const folderRequest = {
-      parent: item.folder_id,
-      groupID: currentGroup.group_id,
-      token: serverToken
-    };
+    navigate(`/share/${currentGroup}/${item.id}`);
+    const getFolderRequest = {
+      token:serverToken,
+      parentID:item.id
+  }
     try {
-      const response = await fetch('http://localhost:8080/api/groups/get/group/folder', {
+      const response = await fetch('http://localhost:8080/api/share/getFolder', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + serverToken
         },
-        body: JSON.stringify(folderRequest)
+        body: JSON.stringify(getFolderRequest)
       });
       const data = await response.json();
       setCurrentFolders(data);
@@ -163,14 +165,17 @@ export const SharedFolder = () => {
   useEffect( ()  => {
     // Handle the updated currentFolder state here
     console.error('Updated currentFolder:', currentFolder);
+    console.error('Updated currentFolder:', currentFolders);
     // Perform any necessary actions with the updated state
 
     // Clean up the effect if needed
     return () => {
       // Cleanup code
     };
-  }, [currentFolder]);
+  }, [currentFolder,currentFolders]);
   const getUpdate = async (data) => {
+    console.error("hello from getUpdate from shared")
+    console.log(data);
     setCurrentFolders(data);
   };
 
@@ -180,7 +185,7 @@ export const SharedFolder = () => {
   return (
     <div className=' h-screen w-screen bg-slate-500 flex-row'>
       <div className='flex flex-row w-full'>
-        <div>{(currentURL==="share")?(<MyGroups sendDataToParent={handleChildValue}></MyGroups>):(
+        <div>{(currentURL==="share")?(<MyGroups dataFromMyGroups={dataFromMyGroups}></MyGroups>):(
           <><form className=" bg-orange-300 flex flex-col mt-2 ml-2 w-52 h-32 justify-center items-center rounded-md shadow-2xl" onSubmit={handleSubmit(AddFolder)}>
             <input className="mb-2" type="text" placeholder="New Folder:" name="NewFOlder" {...register('NewFolder', { required: true })} />
             <button className="hover:bg-sky-700 w-24 h-12 border-slate-950 border-2 rounded-xl" type="submit">Submit</button>
@@ -198,7 +203,7 @@ export const SharedFolder = () => {
                   </div>
                 </button>
               ):(
-                  <OpenFile up={{getUpdate}} onDataToParent={[item,currentGroup.group_id]}></OpenFile>
+                  <div className='w-full h-full'key={index}><OpenFile getUpdate={{getUpdate}} parentFolderItem={item} groupId={currentGroup.group_id} onDataToParent={[item,currentGroup.group_id]} ></OpenFile></div>
                 )
               )):[]}
         </div>

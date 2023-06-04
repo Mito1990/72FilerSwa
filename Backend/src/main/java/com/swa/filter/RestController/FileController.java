@@ -22,7 +22,7 @@ import com.swa.filter.ObjectModel.NewFolderGroupRequest;
 import com.swa.filter.ObjectModel.NewFolderRequest;
 import com.swa.filter.ObjectModel.WriteFileRequest;
 import com.swa.filter.Services.FileService;
-import com.swa.filter.mySQLTables.FolderDir;
+import com.swa.filter.mySQLTables.Folder;
 
 import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -32,45 +32,52 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/folder")
 public class FileController {
     private final FileService fileService;
-
-    @GetMapping("/get")
-    public FolderDir getFolder(@RequestBody GetFolderResponse getFolderRequest){
-        return fileService.getFolder(getFolderRequest);
-    }
-    @PostMapping("/new")
-    public ResponseEntity<?> newFolder(@RequestBody NewFolderRequest newFolderRequest){
-        return ResponseEntity.ok().body(fileService.newFolder(newFolderRequest));
-    }
-    @PostMapping("/get/all")
-    public ResponseEntity<?> getAll(@RequestBody GetFolderRequest getFolderRequest){
-        return ResponseEntity.ok().body(fileService.getALLFoldersUser(getFolderRequest));
-    }
-    @PostMapping("/get/share")
-    public ResponseEntity<?> getSharedFolders(@RequestBody GetFolderRequest getFolderRequest){
-        return ResponseEntity.ok().body(fileService.getListOfSharedFolderID(getFolderRequest));
-    }
-    @PostMapping("/new/file")
-    public ResponseEntity<?> createNewFile(@RequestBody GroupRequest groupRequest) throws JsonProcessingException{
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonString = objectMapper.writeValueAsString(ResponseEntity.ok().body(fileService.createNewFile(groupRequest)));
-        return ResponseEntity.ok().body(jsonString);
-    }
+    // @PostMapping("/new")
+    //     public ResponseEntity<?> newFolder(@RequestBody NewFolderRequest newFolderRequest){
+    //     return ResponseEntity.ok().body(fileService.newFo(newFolderRequest));
+    // }
+    // @GetMapping("/get")
+    // public Folder getFolder(@RequestBody GetFolderResponse getFolderRequest){
+    //     return fileService.getFolder(getFolderRequest);
+    // }
+    // @PostMapping("/new")
+    // public ResponseEntity<?> newFolder(@RequestBody NewFolderRequest newFolderRequest){
+    //     return ResponseEntity.ok().body(fileService.newFolder(newFolderRequest));
+    // }
+    // @PostMapping("/get/all")
+    // public ResponseEntity<?> getAll(@RequestBody GetFolderRequest getFolderRequest){
+    //     return ResponseEntity.ok().body(fileService.getALLFoldersUser(getFolderRequest));
+    // }
+    // @PostMapping("/get/share")
+    // public ResponseEntity<?> getSharedFolders(@RequestBody GetFolderRequest getFolderRequest){
+    //     return ResponseEntity.ok().body(fileService.getListOfSharedFolderID(getFolderRequest));
+    // }
+    // @PostMapping("/new/file")
+    // public ResponseEntity<?> createNewFile(@RequestBody GroupRequest groupRequest) throws JsonProcessingException{
+    //     ObjectMapper objectMapper = new ObjectMapper();
+    //     String jsonString = objectMapper.writeValueAsString(ResponseEntity.ok().body(fileService.createNewFile(groupRequest)));
+    //     return ResponseEntity.ok().body(jsonString);
+    // }
     // @PostMapping("/file")
     // public ResponseEntity<String> readFile(@RequestBody GroupRequest groupRequest) throws JsonProcessingException, java.io.IOException  {
     //     ObjectMapper objectMapper = new ObjectMapper();
     //     String jsonString = objectMapper.writeValueAsString(ResponseEntity.ok().body(fileService.readFile(groupRequest)));
     //     return ResponseEntity.ok().body(jsonString);
     // }
-    @PostMapping("/file/read")
-    public String readFile(@RequestBody GroupRequest groupRequest) throws JsonProcessingException, java.io.IOException  {
-        return fileService.readFile(groupRequest);
-    } 
-    @PostMapping("/file/write")
-    public void writeFile(@RequestBody WriteFileRequest writeFileRequest) throws JsonProcessingException, java.io.IOException  {
-        fileService.writeFile(writeFileRequest);
-    }
-    @PostMapping("/file/delete")
-    public ResponseEntity<?> deleteFile(@RequestBody GroupRequest groupRequest) throws JsonProcessingException, java.io.IOException  {
-        return ResponseEntity.ok().body(fileService.deleteFile(groupRequest));
-    }
+    // @PostMapping("/file/read")
+//     public String readFile(@RequestBody GroupRequest groupRequest) throws JsonProcessingException, java.io.IOException  {
+//         return fileService.readFile(groupRequest);
+//     } 
+//     @PostMapping("/file/write")
+//     public void writeFile(@RequestBody WriteFileRequest writeFileRequest) throws JsonProcessingException, java.io.IOException  {
+//         fileService.writeFile(writeFileRequest);
+//     }
+//     @PostMapping("/file/delete")
+//     public ResponseEntity<?> deleteFile(@RequestBody GroupRequest groupRequest) throws JsonProcessingException, java.io.IOException  {
+//         return ResponseEntity.ok().body(fileService.deleteFile(groupRequest));
+//     }
+//     @PostMapping("/file/rename")
+//     public ResponseEntity<?> renameFile(@RequestBody GroupRequest writeFileRequest) throws JsonProcessingException, java.io.IOException  {
+//         return ResponseEntity.ok().body(fileService.renameFile(writeFileRequest));
+//     }
 }

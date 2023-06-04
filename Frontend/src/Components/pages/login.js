@@ -25,7 +25,7 @@ export const Login = ({ setIsLoggedIn }) =>{
         console.error('Error:', error);
       }
       setIsLoggedIn(Cookies.get('status'))
-      navigate("/home"); 
+      navigate("/home");
    }
 
     return(

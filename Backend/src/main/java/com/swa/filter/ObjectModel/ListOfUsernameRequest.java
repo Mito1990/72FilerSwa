@@ -1,7 +1,5 @@
 package com.swa.filter.ObjectModel;
 
-import com.swa.filter.mySQLTables.Folder;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetFolderRequest {
-    String token;
-    Integer parentID;
+public class ListOfUsernameRequest {
+    private String token;
+    private Integer shareID;
 }

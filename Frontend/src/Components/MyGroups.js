@@ -4,74 +4,79 @@ import Cookies from 'js-cookie';
 import {useNavigate } from "react-router-dom"
 
 
-export const MyGroups = (parentValue) =>{
+export const MyGroups = (dataFromMyGroups) =>{
     const{register, handleSubmit ,getValues} = useForm();
-    const[path] = useState("/");
     const[data,setData] = useState([]);
-    const[groupID,setGroupID] = useState();
-    const[count,setCount] = useState(0);
-    const[count2,setCount2] = useState(0);
+    const[parentID,setParentID]=useState(null);
     const serverToken = Cookies.get('Token');
     const navigate = useNavigate();
     useEffect(()=>{
-        const groupRequest = {
-            token:serverToken
+        const getFolderRequest = {
+            token:serverToken,
+            parent:parentID
         }
-        fetch('http://localhost:8080/api/groups/get/group', {
+        fetch('http://localhost:8080/api/share/getFolder', {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json',
             'Authorization': 'Bearer '+serverToken
         },
-        body: JSON.stringify(groupRequest)
+        body: JSON.stringify(getFolderRequest)
         }).then((response) => response.json()).then((data) => {
             setData(data);
         }).catch((error) => {
             console.error('Error retrieving data:', error);
         });
-    },[count])
+    },[])
     const NewGroup = ()=>{
         const nameFromInput = getValues('NewGroup');
-        const newGroupRequest = {
-            name:nameFromInput,
+        const newShareFolderRequest = {
             token:serverToken,
-            shared:true
+            name:nameFromInput,
+            parent:null,
+            sharedID:null,
+            isShared:true,
         }
-        fetch('http://localhost:8080/api/groups/create/group', {
+        fetch('http://localhost:8080/api/share/newShareFolder', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer '+serverToken
-            },
-            body: JSON.stringify(newGroupRequest)
+        },body: JSON.stringify(newShareFolderRequest)
         }).then((response) => response.json()).then((data) => {
-            setCount(count+1);
+            console.error("data newShareFolder");
+            setData(data)
         }).catch((error) => {
             console.error('Error retrieving data:', error);
         });
     }
-    const OpenItem =(item)=>{
+    const OpenItem = async(item)=>{
         navigate(`/share/${item.name}`);
         console.log("OpenItem");
         console.log(item);
         console.log("---------------------\n");
-        const request = {
-            groupID:item.group_id,
-            parent:item.group_id,
-            token:serverToken
+        const getFolderRequest = {
+            token:serverToken,
+            parentID:item.id
         }
-        fetch('http://localhost:8080/api/groups/get/group/folder', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer '+serverToken
-            },
-            body: JSON.stringify(request)
-        }).then((response) => response.json()).then((data) => {
-            parentValue.sendDataToParent(data,item);
-        }).catch((error) => {
+        console.error(getFolderRequest)
+        try {
+            const response = await fetch('http://localhost:8080/api/share/getFolder', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer '+serverToken
+                },
+                body: JSON.stringify(getFolderRequest)
+            });
+            const data = await response.json();
+            console.error("data from open Group")
+            console.error(data)
+            setData(data);
+            dataFromMyGroups.dataFromMyGroups(data,item)
+            } catch (error) {
             console.error('Error retrieving data:', error);
-        });
+            }
     }
     return (
         <div className="flex flex-row items-start">

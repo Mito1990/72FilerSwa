@@ -1,7 +1,5 @@
 package com.swa.filter.ObjectModel;
 
-import java.util.List;
-
 import com.swa.filter.mySQLTables.Folder;
 
 import lombok.AllArgsConstructor;
@@ -12,9 +10,11 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor 
-public class GetFolderResponse {
-    String name;
-    String pathparent;
-    List<Folder>folders;
+@AllArgsConstructor
+public class NewShareFolderRequest {
+    private String token;
+    private String name;
+    Folder parent;
+    Integer shareID;
+    private boolean isShared;
 }

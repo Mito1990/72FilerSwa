@@ -2,9 +2,11 @@ import { useState } from "react";
 import Cookies from 'js-cookie';
 
 export const OpenFileHome = ({ update,currentFolder}) => {
-    console.error("currentFolder")
+    console.error("OpenFileHome => item")
     console.error(currentFolder)
     const [fileContent, setFileContent] = useState('');
+    const [rename, setRename] = useState('');
+    const [isClicked, setIsClicked] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const serverToken = Cookies.get('Token');
 
@@ -38,6 +40,7 @@ export const OpenFileHome = ({ update,currentFolder}) => {
     };
 
     const handleSaveFile = () => {
+        setIsClicked(false);
         const folderRequest ={
             folderID:currentFolder.folder_id,
             content:fileContent,
@@ -98,6 +101,44 @@ export const OpenFileHome = ({ update,currentFolder}) => {
             };
             console.log("-----------------------------------------------------")
     }
+    const handleRenameFile = async(e)=>{
+        setRename(e.target.value);
+        console.log(rename);
+    }
+    const setClicked = ()=>{
+        setIsClicked(true);
+    }
+    const handleKeyDown = async (e) => {
+        console.error("hello from handleKeyDown")
+        if (e.keyCode === 13) {
+            setIsClicked(false);
+            const folderRequest ={
+                name:rename,
+                parent:currentFolder.parent,
+                path:currentFolder.path,
+                folderID:currentFolder.folder_id,
+                token:serverToken,
+                shared:false,
+                file:true
+            }
+            console.error("folderRequest")
+            try{
+                const response = await fetch('http://localhost:8080/api/folder/file/rename', {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer '+serverToken
+                    },
+                    body: JSON.stringify(folderRequest)
+                })
+                const data = await response.json();
+                update.update(data);
+            }catch(error){
+                console.error('Error retrieving data:', error);
+            };
+            console.log("-----------------------------------------------------")
+        }
+    };
     return (
         <div className="">
         {!isOpen ? (
@@ -106,17 +147,17 @@ export const OpenFileHome = ({ update,currentFolder}) => {
             <div className="h-5 w-9">{currentFolder.name}</div>
         </button>
         ) : (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-96 w-1/2">
             <div className="flex items-center justify-between px-4 py-2 bg-gray-800 text-white">
-                <h1 className="text-xl font-bold">Text Editor</h1>
+                {!isClicked?<button className="px-3 py-1 text-xl font-medium hover:bg-blue-600 text-white rounded"onClick={setClicked}>{currentFolder.name}</button>:<input className=" text-slate-950" onKeyDown={handleKeyDown} type="text" value={rename} onChange={handleRenameFile}></input>}
                 <div className="flex flex-row">
                     <button className="px-3 py-1 text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white rounded"onClick={handleSaveFile}>Save</button>
-                    <button className="px-3 py-1 text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white rounded"onClick={handleDeleteFile}>Delete</button>
+                    <button className="px-3 py-1 text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white rounded"onChange={handleDeleteFile}>Delete</button>
                     <button className="px-3 py-1 text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white rounded"onClick={handleClose}>Close</button>
                 </div>
             </div>
-            <div className="flex-1 p-4 bg-white">
-                <textarea className="w-full min-h-full bg-gray-100 p-2 text-sm leading-snug resize-none focus:outline-none focus:bg-white focus:shadow-outline"value={fileContent}onChange={handleFileChange}style={{ height: `${fileContent.split('\n').length * 1.2}em` }}></textarea>
+            <div className="flex-1 p-4 bg-white h-full">
+                <textarea className="w-full h-full bg-gray-100 p-2 text-sm leading-snug resize-none focus:outline-none focus:bg-white focus:shadow-outline"value={fileContent}onChange={handleFileChange}></textarea>
             </div>
         </div>
         )}

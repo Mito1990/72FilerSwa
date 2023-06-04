@@ -18,13 +18,13 @@ import lombok.RequiredArgsConstructor;
 public class ApplicationConfig {
     private final UserRepository userRepository;
     @Bean
-    public UserDetailsService userdDetailsService(){
-        return username -> userRepository.findUserByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username+" not found!"));  
+    public UserDetailsService userDetailsService(){
+        return username -> userRepository.findUserByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username+" not found!"));
     }
     @Bean
     public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(userdDetailsService());
+        daoAuthenticationProvider.setUserDetailsService(userDetailsService());
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         return daoAuthenticationProvider;
     }
