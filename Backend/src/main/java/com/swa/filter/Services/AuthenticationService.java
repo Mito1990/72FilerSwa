@@ -1,19 +1,14 @@
 package com.swa.filter.Services;
 
-import java.util.Date;
-import java.util.Optional;
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.swa.filter.ObjectModel.AuthenticationRequest;
 import com.swa.filter.ObjectModel.AuthenticationResponse;
 import com.swa.filter.ObjectModel.RegisterRequest;
 import com.swa.filter.ObjectModel.Role;
 import com.swa.filter.Repository.UserRepository;
-import com.swa.filter.mySQLTables.Folder;
 import com.swa.filter.mySQLTables.User;
 import lombok.RequiredArgsConstructor;
 
@@ -26,7 +21,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
-    private final FileElementService fileService;
+    private final FileElementService fileElementService;
     public AuthenticationResponse register(RegisterRequest registerRequest) {
         if(userService.checkIfUserExists(registerRequest.getUsername())){
             return AuthenticationResponse.builder().message("User Exits already!").build();
@@ -39,7 +34,7 @@ public class AuthenticationService {
                 .home(null)
                 .memberGroups(null)
                 .build();
-            fileService.createUserFolder(registerRequest.getUsername());
+            fileElementService.createUserFolder(registerRequest.getUsername());
             userRepository.save(user);
             return AuthenticationResponse.builder().message("User successful registered!").build();
         }

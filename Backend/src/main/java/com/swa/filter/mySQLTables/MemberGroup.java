@@ -2,12 +2,12 @@ package com.swa.filter.mySQLTables;
 
 import java.util.List;
 
-import com.swa.filter.ObjectModel.Role;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +24,7 @@ public class MemberGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer memberGroupID;
     private List<String> usernames;
+    @OneToOne
     private Folder shareFolder;
     private String admin;
 }

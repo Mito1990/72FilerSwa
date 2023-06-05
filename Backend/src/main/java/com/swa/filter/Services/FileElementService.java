@@ -29,8 +29,6 @@ import com.swa.filter.Repository.FolderRepository;
 import com.swa.filter.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import com.swa.filter.ObjectModel.AddFolderResponse;
 import com.swa.filter.ObjectModel.CreateNewFolderRequest;
 
 @Transactional
@@ -69,7 +67,7 @@ public class FileElementService {
     Optional<User> user = userRepository.findUserByUsername(owner);
     Optional<Folder> parentFolder = folderRepository.findById(createNewFolderRequest.getParentFolder().getId());
     Folder newFolder = new Folder(createNewFolderRequest.getFolderName(),parentFolder.get(),createNewFolderRequest.isShared());
-    parentFolder.get().getChildren().add(newFolder);
+    // parentFolder.get().getChildren().add(newFolder);
     folderRepository.save(newFolder);
     userRepository.save(user.get());
     System.out.println("new Folder is created!");

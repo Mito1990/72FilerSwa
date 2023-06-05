@@ -25,12 +25,10 @@ import com.swa.filter.mySQLTables.User;
 import com.swa.filter.Repository.FolderRepository;
 import com.swa.filter.Repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-@Slf4j
 public class MemberGroupService{
     private final FileElementService fileService;
     private final UserService userService;
@@ -47,6 +45,7 @@ public class MemberGroupService{
         Folder newShareFolder = new Folder(createMemberGroupRequest.getGroupName(), null, true);
         MemberGroup memberGroup = MemberGroup.builder().admin(owner).shareFolder(newShareFolder).build();
         user.get().getMemberGroups().add(memberGroup);
+        folderRepository.save(newShareFolder);
         memberRepository.save(memberGroup);
         userRepository.save(user.get());
         System.out.println("Member Group is created!");
