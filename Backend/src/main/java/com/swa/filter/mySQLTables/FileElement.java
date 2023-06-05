@@ -19,7 +19,6 @@ public abstract class FileElement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
-    @ManyToOne
-    private Folder parent;
+    private Integer parent;
     private Boolean isShared;
 }

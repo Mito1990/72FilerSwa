@@ -1,5 +1,4 @@
 package com.swa.filter.ObjectModel;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,8 +8,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetFolderRequest {
+public class AddUserToMemberGroupRequest {
     String token;
-    String location;
-    Integer parentID;
+    String user;
+    Integer MemberGroupID;
 }

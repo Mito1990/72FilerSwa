@@ -1,10 +1,13 @@
 package com.swa.filter.RestController;
 
+import com.swa.filter.ObjectModel.AddUserToMemberGroupRequest;
 import com.swa.filter.ObjectModel.CreateMemberGroupRequest;
+import com.swa.filter.ObjectModel.DeleteMemberFromGroupRequest;
 import com.swa.filter.ObjectModel.NewFolderGroupRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swa.filter.ObjectModel.GetFolderRequest;
+import com.swa.filter.ObjectModel.GetListOfMemberGroupsRequest;
 import com.swa.filter.ObjectModel.GroupFolderRequest;
 import com.swa.filter.ObjectModel.GroupRequest;
 import com.swa.filter.Services.MemberGroupService;
@@ -20,7 +23,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/share")
+@RequestMapping(path = "/api/memberGroupController")
 public class MemberController{
   private final MemberGroupService memberService;
 
@@ -30,7 +33,24 @@ public class MemberController{
     String jsonString = objectMapper.writeValueAsString(memberService.createMemberGroup(createMemberGroupRequest));
     return ResponseEntity.ok().body(jsonString);
   }
-
+  @PostMapping(path = "/getListOfMemberGroups")
+  public ResponseEntity<?> getListOfMemberGroups(@RequestBody GetListOfMemberGroupsRequest getListOfMemberGroupsRequest) throws JsonProcessingException{
+    ObjectMapper objectMapper = new ObjectMapper();
+    String jsonString = objectMapper.writeValueAsString(memberService.getListOfMemberGroups(getListOfMemberGroupsRequest));
+    return ResponseEntity.ok().body(jsonString);
+  }
+  @PostMapping(path = "/addUserToMemberGroup")
+  public ResponseEntity<?> addUserToMemberGroup(@RequestBody AddUserToMemberGroupRequest addUserToMemberGroupRequest) throws JsonProcessingException{
+    ObjectMapper objectMapper = new ObjectMapper();
+    String jsonString = objectMapper.writeValueAsString(memberService.addUserToMemberGroup(addUserToMemberGroupRequest));
+    return ResponseEntity.ok().body(jsonString);
+  }
+  @PostMapping(path = "/deleteMemberFromGroup")
+  public ResponseEntity<?> deleteMemberFromGroup(@RequestBody DeleteMemberFromGroupRequest deleteMemberFromGroupGroupRequest) throws JsonProcessingException{
+    ObjectMapper objectMapper = new ObjectMapper();
+    String jsonString = objectMapper.writeValueAsString(memberService.deleteMemberFromGroup(deleteMemberFromGroupRequest));
+    return ResponseEntity.ok().body(jsonString);
+  }
 
 
 

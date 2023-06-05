@@ -2,7 +2,7 @@ package com.swa.filter.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.swa.filter.ObjectModel.ListOfUsernameRequest;
+import com.swa.filter.ObjectModel.ListOfUsernameNotAddedToGroupRequest;
 import com.swa.filter.Services.UserService;
 import com.swa.filter.mySQLTables.User;
 import lombok.RequiredArgsConstructor;
@@ -27,13 +27,13 @@ public class UserController {
   }
 
   
-  // @PostMapping(path = "/get/users" )
-  // public ResponseEntity<?>getListOfUsers(@RequestBody ListOfUsernameRequest listOfUserRequest) throws JsonProcessingException{
-  //   ObjectMapper objectMapper = new ObjectMapper();
-  //   // Convert the object to JSON string
-  //   String jsonString = objectMapper.writeValueAsString(userService.listOfUsernames(listOfUserRequest));
-  //   return ResponseEntity.ok().body(jsonString);
-  // }
+  @PostMapping(path = "/get/ListOfUsernamesNotAddedToGroup")
+  public ResponseEntity<?>getListOfUsernamesIsNotAddedToGroup(@RequestBody ListOfUsernameNotAddedToGroupRequest listOfUsernameNotAddedToGroupRequest) throws JsonProcessingException{
+    ObjectMapper objectMapper = new ObjectMapper();
+    // Convert the object to JSON string
+    String jsonString = objectMapper.writeValueAsString(userService.getListOfUsernamesIsNotAddedToGroup(listOfUsernameNotAddedToGroupRequest));
+    return ResponseEntity.ok().body(jsonString);
+  }
 
 }
 

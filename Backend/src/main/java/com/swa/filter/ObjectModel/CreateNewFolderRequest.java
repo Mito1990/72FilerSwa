@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 public class CreateNewFolderRequest {
     String token;
     String folderName;
-    Folder parentFolder;
-    boolean isShared;
+    Integer parentFolderID;
+    Boolean isShared;
 }

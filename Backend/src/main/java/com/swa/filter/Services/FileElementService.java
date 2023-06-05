@@ -26,6 +26,7 @@ import com.swa.filter.ObjectModel.NewFolderGroupRequest;
 import com.swa.filter.ObjectModel.NewFolderRequest;
 import com.swa.filter.ObjectModel.WriteFileRequest;
 import com.swa.filter.Repository.FolderRepository;
+import com.swa.filter.Repository.MemberGroupRepository;
 import com.swa.filter.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,7 @@ public class FileElementService {
   private final UserRepository userRepository;
   private final JwtService jwtService;
   private final FolderRepository folderRepository;
+  private final MemberGroupRepository memberGroupRepository;
 
   public void createUserFolder(String username) {
     Path userPathHome = Paths.get(rootPath+username+"/home");
@@ -54,25 +56,26 @@ public class FileElementService {
     log.info("userPathHome: {}",userPathHome);
     log.info("userPathShare: {}",userPathShare);
   }
+
   public Folder createNewFolder(CreateNewFolderRequest createNewFolderRequest){
     System.out.println("\n\n\nCreateNewFolderRequest");
     System.out.println("-----------------------------------------------------");
     System.out.println("createNewFolderRequest");
-    System.out.println(createNewFolderRequest);
-    if(createNewFolderRequest.getParentFolder()==null){
+    System.out.println(createNewFolderRequest.toString());
+    if(createNewFolderRequest.getParentFolderID()==null){
         System.err.println("Parent == null");
         return null;
     }
     String owner = jwtService.extractUsername(createNewFolderRequest.getToken());
     Optional<User> user = userRepository.findUserByUsername(owner);
-    Optional<Folder> parentFolder = folderRepository.findById(createNewFolderRequest.getParentFolder().getId());
-    Folder newFolder = new Folder(createNewFolderRequest.getFolderName(),parentFolder.get(),createNewFolderRequest.isShared());
-    // parentFolder.get().getChildren().add(newFolder);
+    Optional<Folder> parentFolder = folderRepository.findById(createNewFolderRequest.getParentFolderID());
+    Folder newFolder = new Folder(createNewFolderRequest.getFolderName(),createNewFolderRequest.getParentFolderID(),createNewFolderRequest.getIsShared());
+    parentFolder.get().getChildren().add(newFolder);
     folderRepository.save(newFolder);
-    userRepository.save(user.get());
+    // userRepository.save(user.get());
     System.out.println("new Folder is created!");
     System.out.println("-----------------------------------------------------\n\n\n");
-    return newFolder;
+    return parentFolder.get();
 }
 public Folder getFolder(GetFolderRequest getFolderRequest){
   System.out.println("getFolder");
@@ -83,6 +86,7 @@ public Folder getFolder(GetFolderRequest getFolderRequest){
   System.out.println("-----------------------------------------------------\n");
   return parentFolder.get();
 }
+
 }
 
 

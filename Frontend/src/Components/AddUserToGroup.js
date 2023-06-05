@@ -3,32 +3,32 @@ import {useForm} from "react-hook-form"
 import Cookies from 'js-cookie';
 
 
-export const AddUserToGroup = (onChildValue) =>{
+export const AddUserToGroup = (group) =>{
     // const {register, handleSubmit ,getValues} = useForm();
+    console.error("group.groupName");
+    console.error(group.currentGroup.memberGroupID);
     const[data,setData] = useState([]);
-    const[data2,setData2] = useState(onChildValue);
     const [isOpen, setIsOpen] = useState(false);
     const serverToken = Cookies.get('Token');
-    const getAllUsers = () =>{
+    const getListOfUsernamesNotAddedToGroup = () =>{
         console.log("getAllUsers");
-        const listOfUserRequest ={
+        const listOfUsernamesRequest ={
             token:serverToken,
-            groupID:data2.value.group_id
+            memberGroupID:group.currentGroup.memberGroupID
         }
-        console.log(listOfUserRequest);
+        console.log(listOfUsernamesRequest);
         setIsOpen(true);
-        fetch('http://localhost:8080/api/users/get/users', {
+        fetch('http://localhost:8080/api/users/get/ListOfUsernamesNotAddedToGroup', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer '+serverToken
             },
-            body: JSON.stringify(listOfUserRequest)
-        }).then((response) => response.json()).then((data) => {
+            body: JSON.stringify(listOfUsernamesRequest)
+        }).then((response) => response.json()).then((ListOfUsernamesResponse) => {
             console.log("second ");
-            console.log(data);
-            setData(data);
-            // onChildValue(data);
+            console.log(ListOfUsernamesResponse);
+            setData(ListOfUsernamesResponse);
         }).catch((error) => {
             console.error('Error retrieving data:', error);
         });
@@ -38,10 +38,9 @@ export const AddUserToGroup = (onChildValue) =>{
         const addUserToGroupRequest = {
             token:serverToken,
             user:user,
-            name:data2.value.name,
-            groupID:data2.value.group_id
+            memberGroupID:group.currentGroup.memberGroupID
         }
-        fetch('http://localhost:8080/api/groups/add/user/to/group', {
+        fetch('http://localhost:8080/api/memberGroupController/addUserToMemberGroup', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -60,7 +59,7 @@ export const AddUserToGroup = (onChildValue) =>{
     };
     return (
     <div>
-        <button onClick={getAllUsers} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button onClick={getListOfUsernamesNotAddedToGroup} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
         Add User
         </button>
         {isOpen && (

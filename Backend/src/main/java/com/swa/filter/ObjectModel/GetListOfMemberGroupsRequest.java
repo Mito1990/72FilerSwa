@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetFolderRequest {
+public class GetListOfMemberGroupsRequest {
     String token;
-    String location;
-    Integer parentID;
 }
+
+
+

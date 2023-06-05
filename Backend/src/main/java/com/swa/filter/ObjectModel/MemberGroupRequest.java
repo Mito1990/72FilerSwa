@@ -15,8 +15,4 @@ public class MemberGroupRequest {
     String user;
     String name;
     int groupID;
-    // int folderID;
-    // String path;
-    // GroupRequest groupRequest;
-    // MemberRequest memberRequest;
 }

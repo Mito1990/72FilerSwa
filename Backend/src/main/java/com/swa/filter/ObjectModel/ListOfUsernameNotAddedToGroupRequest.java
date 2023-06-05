@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetFolderRequest {
-    String token;
-    String location;
-    Integer parentID;
+public class ListOfUsernameNotAddedToGroupRequest {
+    private String token;
+    private Integer memberGroupID;
 }

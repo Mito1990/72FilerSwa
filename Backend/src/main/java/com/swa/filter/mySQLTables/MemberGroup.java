@@ -26,5 +26,6 @@ public class MemberGroup {
     private List<String> usernames;
     @OneToOne
     private Folder shareFolder;
+    private String groupName;
     private String admin;
 }
