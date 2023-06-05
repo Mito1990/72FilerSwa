@@ -13,7 +13,6 @@ export const SharedFolder = () => {
   const [sharedFolders,setSharedFolders] = useState([]);
   const [isGroupOpen,setIsGroupOpen] = useState(false);
   const [parentID,setParentID] = useState(0);
-  const [parentFolder,setParentFolder] = useState(0);
   const [URL, setURL] = useState("share");
   const {register, handleSubmit} = useForm();
   const navigate = useNavigate();
@@ -94,12 +93,13 @@ export const SharedFolder = () => {
     setParentID(group.memberGroupID);
     setCurrentGroup(group);
     setIsGroupOpen(true);
-    setParentFolder(group.shareFolder)
     setSharedFolders(sharedFolder)
     navigate(`/share/${group.groupName}`);
   };
 
   const handleCreateFile = (data) =>{
+    console.error("handleCreateFile -> ")
+    console.error(data)
     const folderRequest ={
       parent:parentID,
       groupID:currentGroup.group_id,
@@ -119,8 +119,6 @@ export const SharedFolder = () => {
   }
 
   const OpenSharedFolder = async (item) => {
-    console.error("item => OpenFolder")
-    console.error(item)
     setParentID(item.id);
     setIsGroupOpen(false);
     setSharedFolders(item);
@@ -146,43 +144,45 @@ export const SharedFolder = () => {
   const getUpdate = async (data) => {
     console.error("hello from getUpdate from shared")
     console.log(data);
-    // setFileElementsInCurrentFolder(data);
   };
 
   const homeFolder = () =>{
     navigate("/home");
   }
   return (
-    <div className=' h-screen w-screen bg-slate-500 flex-row'>
-      <div className='flex flex-row w-full'>
-        <div>{(URL==="share") ? (<MyGroups dataFromMyGroups={dataFromMyGroups}></MyGroups>) : (
-            <><form className=" bg-orange-300 flex flex-col mt-2 ml-2 w-52 h-32 justify-center items-center rounded-md shadow-2xl" onSubmit={handleSubmit(AddFolder)}>
-              <input className="mb-2" type="text" placeholder="New Folder:" name="NewFOlder" {...register('NewFolder', { required: true })} />
-              <button className="hover:bg-sky-700 w-24 h-12 border-slate-950 border-2 rounded-xl" type="submit">Submit</button>
-            </form>
-            { (isGroupOpen) ? ( <div className='ml-2 flex flex-row'><AddUserToGroup currentGroup={currentGroup}></AddUserToGroup><DeleteUserFromGroup currentGroup={currentGroup}></DeleteUserFromGroup></div> ) : (
-                <div className='ml-2'><CreateNewFile handleCreateFile={{handleCreateFile}} currentFolder={sharedFolders} currentGroup={currentGroup}></CreateNewFile></div>
-              ) }</>
-          )}
-        </div>
-        <div className=' flex justify-start mt-2 flex-wrap'>
-          {URL!=="share"?sharedFolders.children.map((sharedFolder, index) => (
-            (!sharedFolder.file)?(
-                <button key={index} className='flex flex-col justify-items-center m-2 w-full sm:w-1/2 md:w-1/3 lg:w-3/4 xl:w-1/5 flex-basis-full' onClick={() => OpenSharedFolder(sharedFolder)} >
-                  <svg className=' h-9 w-9 bg-slate-500' xmlns="http://www.w3.org /2000/svg" viewBox="0 0 512 512"><path d="M64 480H448c35.3 0 64-28.7 64-64V160c0-35.3-28.7-64-64-64H288c-10.1 0-19.6-4.7-25.6-12.8L243.2 57.6C231.1 41.5 212.1 32 192 32H64C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64z"/></svg>
-                  <div className='h-5 w-9' key={index}>
-                  {sharedFolder.name}
-                  </div>
-                </button>
-              ):(
-                  <div className='w-full h-full'key={index}><OpenFile getUpdate={{getUpdate}} parentFolderItem={sharedFolder} groupId={currentGroup.group_id} onDataToParent={[sharedFolder,currentGroup.group_id]} ></OpenFile></div>
-                )
-              )):[]}
-        </div>
+    <div className='h-screen w-screen bg-slate-500 flex-col'>
+      <div name="Panel" className=''>
+            <div className=''>
+                {(URL==="share") ? (<div className='flex bg-pink-950 flex-row w-full'><MyGroups dataFromMyGroups={dataFromMyGroups}></MyGroups></div>):(
+                      <div className='flex flex-col'>
+                          <form className=" bg-orange-300 flex flex-col w-52 h-32  justify-center items-center rounded-md shadow-2xl" onSubmit={handleSubmit(AddFolder)}>
+                            <input className="mb-2" type="text" placeholder="New Folder:" name="NewFOlder" {...register('NewFolder', { required: true })} />
+                            <button className="hover:bg-sky-700 w-24 h-12 border-slate-950 border-2 rounded-xl" type="submit">Submit</button>
+                          </form>
+                          <div className=' flex flex-col justify-between bg-white w-52'>
+                            <div className='w-52 p-2 bg-emerald-200 flex justify-center items-center'><AddUserToGroup currentGroup={currentGroup}></AddUserToGroup></div>
+                            <div className='w-52 p-2 bg-emerald-200 flex justify-center items-center'><DeleteUserFromGroup currentGroup={currentGroup}></DeleteUserFromGroup></div>
+                            <div className='w-52 p-2 bg-emerald-200 flex justify-center items-center'><CreateNewFile handleCreateFile={{ handleCreateFile }} currentFolder={sharedFolders} currentGroup={currentGroup}></CreateNewFile></div>
+                          </div>
+                      </div>
+                )}
+            </div>
       </div>
-      <button className="hover:bg-sky-700 w-24 h-12 border-slate-950 border-2 rounded-xl" onClick={homeFolder}>Home</button>
-
-    </div>
+            <div className='bg-green-100 flex justify-start mt-2 flex-wrap h-20 flex-row '>
+                {URL !== "share" ? sharedFolders.children.map((sharedFolder, index) => (
+                  (!sharedFolder.isFile) ? (
+                    <button key={index} className='  flex flex-col justify-items-center m-2 mt-4' onClick={() => OpenSharedFolder(sharedFolder)}>
+                      <svg className=' h-9 w-9' xmlns="http://www.w3.org /2000/svg" viewBox="0 0 512 512"><path d="M64 480H448c35.3 0 64-28.7 64-64V160c0-35.3-28.7-64-64-64H288c-10.1 0-19.6-4.7-25.6-12.8L243.2 57.6C231.1 41.5 212.1 32 192 32H64C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64z" /></svg>
+                      <div className='h-6 w-6 text-xs justify-start items-start' key={index}>
+                        {sharedFolder.name}
+                      </div>
+                    </button>
+                  ) : (
+                    <div className='flex flex-col h-20 justify-items-center m-2' key={index}><OpenFile getUpdate={{ getUpdate }} parentFolderItem={sharedFolder} groupId={currentGroup.group_id} onDataToParent={[sharedFolder, currentGroup.group_id]}></OpenFile></div>
+                  ) ()
+                )) : []}
+              </div>
+      </div>
   );
 }
 
@@ -206,3 +206,40 @@ if (!isNaN(folderId)) {
   return parseInt(folderId);
 }
 };
+
+// return (
+//   <div className=' h-screen w-screen bg-slate-500 flex-row'>
+//     <div className='flex flex-row w-full'>
+//       <div>{(URL==="share") ? (<MyGroups dataFromMyGroups={dataFromMyGroups}></MyGroups>) : (
+//           <><form className=" bg-orange-300 flex flex-col mt-2 ml-2 w-52 h-32 justify-center items-center rounded-md shadow-2xl" onSubmit={handleSubmit(AddFolder)}>
+//             <input className="mb-2" type="text" placeholder="New Folder:" name="NewFOlder" {...register('NewFolder', { required: true })} />
+//             <button className="hover:bg-sky-700 w-24 h-12 border-slate-950 border-2 rounded-xl" type="submit">Submit</button>
+//           </form>
+//           {isGroupOpen ? (
+//             <div className='ml-2 flex flex-col'>
+//                 <AddUserToGroup currentGroup={currentGroup}></AddUserToGroup>
+//                 <DeleteUserFromGroup currentGroup={currentGroup}></DeleteUserFromGroup>
+//                 <div className='ml-2'><CreateNewFile handleCreateFile={{handleCreateFile}} currentFolder={sharedFolders} currentGroup={currentGroup}></CreateNewFile></div>
+//             </div>
+//           ) : ( [] )} </>
+//         )}
+//       </div>
+//       <div className=' flex justify-start mt-2 flex-wrap'>
+//         {URL!=="share"?sharedFolders.children.map((sharedFolder, index) => (
+//           (!sharedFolder.isFile)?(
+//               <button key={index} className=' bg-pink-300 flex flex-row justify-items-center m-2 w-full sm:w-1/2 md:w-1/3 lg:w-3/4 xl:w-1/5 flex-basis-full' onClick={() => OpenSharedFolder(sharedFolder)} >
+//                 <svg className=' h-9 w-9 bg-slate-500' xmlns="http://www.w3.org /2000/svg" viewBox="0 0 512 512"><path d="M64 480H448c35.3 0 64-28.7 64-64V160c0-35.3-28.7-64-64-64H288c-10.1 0-19.6-4.7-25.6-12.8L243.2 57.6C231.1 41.5 212.1 32 192 32H64C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64z"/></svg>
+//                 <div className='h-5 w-9' key={index}>
+//                 {sharedFolder.name}
+//                 </div>
+//               </button>
+//             ):(
+//                 <div className='w-full h-full'key={index}><OpenFile getUpdate={{getUpdate}} parentFolderItem={sharedFolder} groupId={currentGroup.group_id} onDataToParent={[sharedFolder,currentGroup.group_id]} ></OpenFile></div>
+//               )
+//             )):[]}
+//       </div>
+//     </div>
+//     <button className="hover:bg-sky-700 w-24 h-12 border-slate-950 border-2 rounded-xl" onClick={homeFolder}>Home</button>
+
+//   </div>
+// );

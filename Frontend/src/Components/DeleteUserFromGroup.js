@@ -11,7 +11,6 @@ export const DeleteUserFromGroup = (group) =>{
             token:serverToken,
             memberGroupID:group.currentGroup.memberGroupID
         }
-        console.log(listOfUsernamesRequest);
         setIsOpen(true);
         fetch('http://localhost:8080/api/users/get/ListOfUsernamesInGroup', {
             method: 'POST',
@@ -51,8 +50,8 @@ export const DeleteUserFromGroup = (group) =>{
     setIsOpen(false);
     };
     return (
-    <div>
-        <button onClick={getListOfUsernamesInGroup} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    <div className="flex w-full">
+        <button onClick={getListOfUsernamesInGroup} className=" w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
         Delete User
         </button>
         {isOpen && (

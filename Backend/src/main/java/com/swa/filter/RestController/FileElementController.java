@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.swa.filter.ObjectModel.CreateNewFileRequest;
 import com.swa.filter.ObjectModel.CreateNewFolderRequest;
 import com.swa.filter.ObjectModel.GetFolderRequest;
 import com.swa.filter.ObjectModel.GetFolderResponse;
@@ -40,16 +41,23 @@ public class FileElementController {
       String jsonString = objectMapper.writeValueAsString(fileElementService.createNewFolder(createNewFolderRequest));
       return ResponseEntity.ok().body(jsonString);
     }
-    // @PostMapping("/new")
-    //     public ResponseEntity<?> newFolder(@RequestBody NewFolderRequest newFolderRequest){
-    //     return ResponseEntity.ok().body(fileService.newFo(newFolderRequest));
-    // }
     @PostMapping("/getFolder")
     public ResponseEntity<?> getFolder(@RequestBody GetFolderRequest getFolderRequest) throws JsonProcessingException{
       ObjectMapper objectMapper = new ObjectMapper();
       String jsonString = objectMapper.writeValueAsString(fileElementService.getFolder(getFolderRequest));
       return ResponseEntity.ok().body(jsonString);
     }
+     @PostMapping("/createNewFile")
+    public ResponseEntity<?> createNewFile(@RequestBody CreateNewFileRequest CreateNewFileRequest) throws JsonProcessingException{
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(ResponseEntity.ok().body(fileElementService.createNewFile(CreateNewFileRequest)));
+        return ResponseEntity.ok().body(jsonString);
+    }
+    // @PostMapping("/new")
+    //     public ResponseEntity<?> newFolder(@RequestBody NewFolderRequest newFolderRequest){
+    //     return ResponseEntity.ok().body(fileService.newFo(newFolderRequest));
+    // }
+ 
     // @PostMapping("/new")
     // public ResponseEntity<?> newFolder(@RequestBody NewFolderRequest newFolderRequest){
     //     return ResponseEntity.ok().body(fileService.newFolder(newFolderRequest));
@@ -62,12 +70,7 @@ public class FileElementController {
     // public ResponseEntity<?> getSharedFolders(@RequestBody GetFolderRequest getFolderRequest){
     //     return ResponseEntity.ok().body(fileService.getListOfSharedFolderID(getFolderRequest));
     // }
-    // @PostMapping("/new/file")
-    // public ResponseEntity<?> createNewFile(@RequestBody GroupRequest groupRequest) throws JsonProcessingException{
-    //     ObjectMapper objectMapper = new ObjectMapper();
-    //     String jsonString = objectMapper.writeValueAsString(ResponseEntity.ok().body(fileService.createNewFile(groupRequest)));
-    //     return ResponseEntity.ok().body(jsonString);
-    // }
+   
     // @PostMapping("/file")
     // public ResponseEntity<String> readFile(@RequestBody GroupRequest groupRequest) throws JsonProcessingException, java.io.IOException  {
     //     ObjectMapper objectMapper = new ObjectMapper();

@@ -21,4 +21,5 @@ public abstract class FileElement {
     private String name;
     private Integer parent;
     private Boolean isShared;
+    private Boolean isFile;
 }

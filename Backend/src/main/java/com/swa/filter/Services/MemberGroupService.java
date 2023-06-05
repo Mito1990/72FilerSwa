@@ -45,7 +45,7 @@ public class MemberGroupService{
         System.out.println("-----------------------------------------------------");
         String owner = jwtService.extractUsername(createMemberGroupRequest.getToken());
         Optional<User> user = userRepository.findUserByUsername(owner);
-        Folder newShareFolder = new Folder(createMemberGroupRequest.getGroupName(), null, true);
+        Folder newShareFolder = new Folder(createMemberGroupRequest.getGroupName(), null,false, true);
         List<String> list = new ArrayList<>();
         MemberGroup memberGroup = MemberGroup.builder().admin(owner).groupName(createMemberGroupRequest.getGroupName()).shareFolder(newShareFolder).usernames(list).build();
         user.get().getMemberGroups().add(memberGroup);

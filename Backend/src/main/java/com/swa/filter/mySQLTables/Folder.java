@@ -18,8 +18,8 @@ import lombok.NoArgsConstructor;
 public class Folder extends FileElement {
     @OneToMany
     private List<FileElement> children;
-    public Folder(String name, Integer parentFolderID, boolean isShared) {
-        super(null, name, parentFolderID, isShared);
+    public Folder(String name, Integer parentFolderID, Boolean isShared,Boolean isFile) {
+        super(null, name, parentFolderID, isShared,isFile);
         this.children = new ArrayList<>();
     }
 }

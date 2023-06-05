@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import com.swa.filter.mySQLTables.Folder;
+import com.swa.filter.mySQLTables.MemberGroup;
+import com.swa.filter.mySQLTables.MyFile;
 import com.swa.filter.mySQLTables.User;
 import jakarta.transaction.Transactional;
 import com.swa.filter.ObjectModel.GetFolderRequest;
@@ -27,9 +29,12 @@ import com.swa.filter.ObjectModel.NewFolderRequest;
 import com.swa.filter.ObjectModel.WriteFileRequest;
 import com.swa.filter.Repository.FolderRepository;
 import com.swa.filter.Repository.MemberGroupRepository;
+import com.swa.filter.Repository.MyFileRepository;
 import com.swa.filter.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import com.swa.filter.ObjectModel.CreateNewFileRequest;
 import com.swa.filter.ObjectModel.CreateNewFolderRequest;
 
 @Transactional
@@ -42,6 +47,7 @@ public class FileElementService {
   private final JwtService jwtService;
   private final FolderRepository folderRepository;
   private final MemberGroupRepository memberGroupRepository;
+  private final MyFileRepository myFileRepository;
 
   public void createUserFolder(String username) {
     Path userPathHome = Paths.get(rootPath+username+"/home");
@@ -69,7 +75,7 @@ public class FileElementService {
     String owner = jwtService.extractUsername(createNewFolderRequest.getToken());
     Optional<User> user = userRepository.findUserByUsername(owner);
     Optional<Folder> parentFolder = folderRepository.findById(createNewFolderRequest.getParentFolderID());
-    Folder newFolder = new Folder(createNewFolderRequest.getFolderName(),createNewFolderRequest.getParentFolderID(),createNewFolderRequest.getIsShared());
+    Folder newFolder = new Folder(createNewFolderRequest.getFolderName(),createNewFolderRequest.getParentFolderID() ,createNewFolderRequest.getIsShared(),false);
     parentFolder.get().getChildren().add(newFolder);
     folderRepository.save(newFolder);
     // userRepository.save(user.get());
@@ -86,7 +92,18 @@ public Folder getFolder(GetFolderRequest getFolderRequest){
   System.out.println("-----------------------------------------------------\n");
   return parentFolder.get();
 }
-
+public Folder createNewFile(CreateNewFileRequest createNewFileRequest){
+  System.out.println("\n\n\ncreateNewFile");
+  System.out.println("----------------------------------------------");
+  System.out.println(createNewFileRequest);
+  Optional<Folder> parentFolder = folderRepository.findById(createNewFileRequest.getParentFolderID());
+  MyFile newFile = new MyFile(createNewFileRequest.getFileName(),createNewFileRequest.getParentFolderID(),createNewFileRequest.getIsShared(),true);
+  myFileRepository.save(newFile);
+  parentFolder.get().getChildren().add(newFile);
+  folderRepository.save(parentFolder.get());
+  System.out.println("----------------------------------------------\n\n\n");
+  return parentFolder.get();
+}
 }
 
 

@@ -1,22 +1,16 @@
-import { useEffect, useState } from "react";
-import {useForm} from "react-hook-form"
+import { useState } from "react";
 import Cookies from 'js-cookie';
 
 
 export const AddUserToGroup = (group) =>{
-    // const {register, handleSubmit ,getValues} = useForm();
-    console.error("group.groupName");
-    console.error(group.currentGroup.memberGroupID);
-    const[data,setData] = useState([]);
+    const[listOfUserNamesNotAddedToGroup,setListOfUsernamesNotAddedToGroup] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     const serverToken = Cookies.get('Token');
     const getListOfUsernamesNotAddedToGroup = () =>{
-        console.log("getAllUsers");
         const listOfUsernamesRequest ={
             token:serverToken,
             memberGroupID:group.currentGroup.memberGroupID
         }
-        console.log(listOfUsernamesRequest);
         setIsOpen(true);
         fetch('http://localhost:8080/api/users/get/ListOfUsernamesNotAddedToGroup', {
             method: 'POST',
@@ -26,15 +20,13 @@ export const AddUserToGroup = (group) =>{
             },
             body: JSON.stringify(listOfUsernamesRequest)
         }).then((response) => response.json()).then((ListOfUsernamesResponse) => {
-            console.log("second ");
-            console.log(ListOfUsernamesResponse);
-            setData(ListOfUsernamesResponse);
+            setListOfUsernamesNotAddedToGroup(ListOfUsernamesResponse);
         }).catch((error) => {
             console.error('Error retrieving data:', error);
         });
     }
-    const addUser = (item)=>{
-        const user = item.target.dataset.item;
+    const addUser = (userFromList)=>{
+        const user = userFromList.target.dataset.item;
         const addUserToGroupRequest = {
             token:serverToken,
             user:user,
@@ -47,7 +39,7 @@ export const AddUserToGroup = (group) =>{
                 'Authorization': 'Bearer '+serverToken
             },
             body: JSON.stringify(addUserToGroupRequest)
-        }).then((response) => response.json()).then((data) => {
+        }).then((response) => response.json()).then((responseFromAddUserToMemberGroup) => {
         }).catch((error) => {
             console.error('Error retrieving data:', error);
         });
@@ -58,8 +50,8 @@ export const AddUserToGroup = (group) =>{
     setIsOpen(false);
     };
     return (
-    <div>
-        <button onClick={getListOfUsernamesNotAddedToGroup} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    <div className="flex w-full">
+        <button onClick={getListOfUsernamesNotAddedToGroup} className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
         Add User
         </button>
         {isOpen && (
@@ -69,9 +61,9 @@ export const AddUserToGroup = (group) =>{
                 X
             </button>
             <ul>
-                {(data)?(data.map((item, index) => (
-                    <button key={index} onClick={addUser} data-item={item} className="cursor-pointer py-2 mt-2 ml-2 flex flex-col justify-center items-center">
-                        {item}
+                {(listOfUserNamesNotAddedToGroup)?(listOfUserNamesNotAddedToGroup.map((user, index) => (
+                    <button key={index} onClick={addUser} data-item={user} className="cursor-pointer py-2 mt-2 ml-2 flex flex-col justify-center items-center">
+                        {user}
                     </button>
                 ))):(<div></div>)}
             </ul>
