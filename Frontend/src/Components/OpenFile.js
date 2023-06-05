@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Cookies from 'js-cookie';
 
-export const OpenFile = ({ getUpdate, parentFolderItem, groupId }) => {
+export const OpenFile = ({ getUpdate, parentFolderItem }) => {
     console.log(parentFolderItem)
     const [fileContent, setFileContent] = useState('');
     const [isOpen, setIsOpen] = useState(false);
@@ -13,7 +13,7 @@ export const OpenFile = ({ getUpdate, parentFolderItem, groupId }) => {
     const handleDownloadFile =(item) => {
         const folderRequest ={
         folderID:item.folder_id,
-        groupID:groupId,
+        // groupID:groupId,
         token:serverToken,
         shared:true,
         file:true
@@ -41,7 +41,7 @@ export const OpenFile = ({ getUpdate, parentFolderItem, groupId }) => {
     const handleSaveFile = () => {
         const folderRequest ={
             folderID:parentFolderItem.folder_id,
-            groupID:groupId,
+            // groupID:groupId,
             content:fileContent,
             token:serverToken,
             shared:true,
@@ -69,7 +69,7 @@ export const OpenFile = ({ getUpdate, parentFolderItem, groupId }) => {
     const handleDeleteFile = async () =>{
         setIsOpen(false);
         const folderRequest = {
-            groupID:groupId,
+            // groupID:groupId,
             parent:parentFolderItem.parent,
             path:parentFolderItem.path,
             folderID:parentFolderItem.folder_id,
@@ -104,7 +104,7 @@ export const OpenFile = ({ getUpdate, parentFolderItem, groupId }) => {
             setIsClicked(false);
             const folderRequest ={
                 name:rename,
-                groupID:groupId,
+                // groupID:groupId,
                 parent:parentFolderItem.parent,
                 path:parentFolderItem.path,
                 folderID:parentFolderItem.folder_id,
