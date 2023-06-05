@@ -1,6 +1,4 @@
 package com.swa.filter.ObjectModel;
-
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateMemberGroupRequest {
+public class ListOfUsernamesInGroup {
     private String token;
-    private String groupName;
+    private Integer memberGroupID;
 }

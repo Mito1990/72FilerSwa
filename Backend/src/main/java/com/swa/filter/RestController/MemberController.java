@@ -46,7 +46,7 @@ public class MemberController{
     return ResponseEntity.ok().body(jsonString);
   }
   @PostMapping(path = "/deleteMemberFromGroup")
-  public ResponseEntity<?> deleteMemberFromGroup(@RequestBody DeleteMemberFromGroupRequest deleteMemberFromGroupGroupRequest) throws JsonProcessingException{
+  public ResponseEntity<?> deleteMemberFromGroup(@RequestBody DeleteMemberFromGroupRequest deleteMemberFromGroupRequest) throws JsonProcessingException{
     ObjectMapper objectMapper = new ObjectMapper();
     String jsonString = objectMapper.writeValueAsString(memberService.deleteMemberFromGroup(deleteMemberFromGroupRequest));
     return ResponseEntity.ok().body(jsonString);

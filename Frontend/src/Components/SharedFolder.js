@@ -6,6 +6,7 @@ import { MyGroups } from './MyGroups';
 import { AddUserToGroup} from './AddUserToGroup';
 import { CreateNewFile } from './CreateNewFile';
 import{OpenFile}from './OpenFile';
+import { DeleteUserFromGroup } from './DeleteUserFromGroup';
 
 export const SharedFolder = () => {
   const [currentGroup,setCurrentGroup] = useState();
@@ -159,7 +160,7 @@ export const SharedFolder = () => {
               <input className="mb-2" type="text" placeholder="New Folder:" name="NewFOlder" {...register('NewFolder', { required: true })} />
               <button className="hover:bg-sky-700 w-24 h-12 border-slate-950 border-2 rounded-xl" type="submit">Submit</button>
             </form>
-            { (isGroupOpen) ? ( <div className='ml-2'><AddUserToGroup currentGroup={currentGroup}></AddUserToGroup></div> ) : (
+            { (isGroupOpen) ? ( <div className='ml-2 flex flex-row'><AddUserToGroup currentGroup={currentGroup}></AddUserToGroup><DeleteUserFromGroup currentGroup={currentGroup}></DeleteUserFromGroup></div> ) : (
                 <div className='ml-2'><CreateNewFile handleCreateFile={{handleCreateFile}} currentFolder={sharedFolders} currentGroup={currentGroup}></CreateNewFile></div>
               ) }</>
           )}

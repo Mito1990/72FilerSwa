@@ -1,6 +1,7 @@
 package com.swa.filter.Services;
 
 import com.swa.filter.ObjectModel.ListOfUsernameNotAddedToGroupRequest;
+import com.swa.filter.ObjectModel.ListOfUsernamesInGroup;
 import com.swa.filter.Repository.MemberGroupRepository;
 import com.swa.filter.Repository.UserRepository;
 import com.swa.filter.mySQLTables.MemberGroup;
@@ -58,24 +59,10 @@ public class UserService  {
         log.info("Fetching all listOfAllUsernames from Database: ",listOfAllUsernames);
         return listOfAllUsernames;
     }
-    // public List<String> listOfAddableUsers(ListOfUsernameRequest listOfUsernameRequest){
-    //     String owner = jwtService.extractUsername(listOfUsernameRequest.getToken());
-    //     Optional<User> user = userRepository.findUserByUsername(owner);
-    //     List<MemberGroup>members = user.get().getMemberGroups();
-    //     List<String>listOfAddableUsers = new ArrayList<>();
-    //     for(String username : listOfAllUsernames()){
-    //         for(MemberGroup member : members){
-    //             if(member.().equals(listOfUsernameRequest.getShareID())){
-    //                 if(username.equalsIgnoreCase(member.getUsername())){
-    //                     continue;
-    //                 }
-    //             }
-    //             listOfAddableUsers.add(username);
-    //         }
-    //     }
-    //     log.info("Fetching ListOfAddableUsers from Database: ",listOfAddableUsers);
-    //     return listOfAddableUsers;
-    // }
+    public List<String>getListOfUsernamesInGroup(ListOfUsernamesInGroup listOfUsernamesInGroup){
+        Optional<MemberGroup> memberGroup = memberGroupRepository.findById(listOfUsernamesInGroup.getMemberGroupID());
+        return memberGroup.get().getUsernames();
+    }
 
     public boolean checkIfUserExists(String username) {
         Optional<User> user = userRepository.findUserByUsername(username);
