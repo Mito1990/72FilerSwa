@@ -17,11 +17,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swa.filter.ObjectModel.CreateNewFileRequest;
 import com.swa.filter.ObjectModel.CreateNewFolderRequest;
+import com.swa.filter.ObjectModel.DeleteFileRequest;
 import com.swa.filter.ObjectModel.GetFolderRequest;
 import com.swa.filter.ObjectModel.GetFolderResponse;
 import com.swa.filter.ObjectModel.GroupRequest;
 import com.swa.filter.ObjectModel.NewFolderGroupRequest;
 import com.swa.filter.ObjectModel.NewFolderRequest;
+import com.swa.filter.ObjectModel.ReadFileRequest;
 import com.swa.filter.ObjectModel.WriteFileRequest;
 import com.swa.filter.Services.FileElementService;
 import com.swa.filter.mySQLTables.Folder;
@@ -47,12 +49,31 @@ public class FileElementController {
       String jsonString = objectMapper.writeValueAsString(fileElementService.getFolder(getFolderRequest));
       return ResponseEntity.ok().body(jsonString);
     }
-     @PostMapping("/createNewFile")
+    @PostMapping("/createNewFile")
     public ResponseEntity<?> createNewFile(@RequestBody CreateNewFileRequest CreateNewFileRequest) throws JsonProcessingException{
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(ResponseEntity.ok().body(fileElementService.createNewFile(CreateNewFileRequest)));
         return ResponseEntity.ok().body(jsonString);
     }
+    @PostMapping("/file/read")
+    public String readFile(@RequestBody ReadFileRequest groupRequest) throws JsonProcessingException, java.io.IOException  {
+        return fileElementService.readFile(groupRequest);
+    }
+
+    @PostMapping("/file/write")
+    public void writeFile(@RequestBody WriteFileRequest writeFileRequest) throws JsonProcessingException, java.io.IOException  {
+        fileElementService.writeFile(writeFileRequest);
+    }
+    @PostMapping("/file/delete")
+    public ResponseEntity<?> deleteFile(@RequestBody DeleteFileRequest groupRequest) throws JsonProcessingException, java.io.IOException  {
+      ObjectMapper objectMapper = new ObjectMapper();
+      String jsonString = objectMapper.writeValueAsString(ResponseEntity.ok().body(fileElementService.deleteFile(groupRequest)));
+      return ResponseEntity.ok().body(jsonString);
+    }
+    // @PostMapping("/file/rename")
+    // public ResponseEntity<?> renameFile(@RequestBody GroupRequest writeFileRequest) throws JsonProcessingException, java.io.IOException  {
+    //     return ResponseEntity.ok().body(fileElementService.renameFile(writeFileRequest));
+    // }
     // @PostMapping("/new")
     //     public ResponseEntity<?> newFolder(@RequestBody NewFolderRequest newFolderRequest){
     //     return ResponseEntity.ok().body(fileService.newFo(newFolderRequest));
@@ -77,20 +98,5 @@ public class FileElementController {
     //     String jsonString = objectMapper.writeValueAsString(ResponseEntity.ok().body(fileService.readFile(groupRequest)));
     //     return ResponseEntity.ok().body(jsonString);
     // }
-    // @PostMapping("/file/read")
-//     public String readFile(@RequestBody GroupRequest groupRequest) throws JsonProcessingException, java.io.IOException  {
-//         return fileService.readFile(groupRequest);
-//     } 
-//     @PostMapping("/file/write")
-//     public void writeFile(@RequestBody WriteFileRequest writeFileRequest) throws JsonProcessingException, java.io.IOException  {
-//         fileService.writeFile(writeFileRequest);
-//     }
-//     @PostMapping("/file/delete")
-//     public ResponseEntity<?> deleteFile(@RequestBody GroupRequest groupRequest) throws JsonProcessingException, java.io.IOException  {
-//         return ResponseEntity.ok().body(fileService.deleteFile(groupRequest));
-//     }
-//     @PostMapping("/file/rename")
-//     public ResponseEntity<?> renameFile(@RequestBody GroupRequest writeFileRequest) throws JsonProcessingException, java.io.IOException  {
-//         return ResponseEntity.ok().body(fileService.renameFile(writeFileRequest));
-//     }
+
 }

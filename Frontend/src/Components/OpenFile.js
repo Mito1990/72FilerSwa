@@ -1,9 +1,9 @@
 import { useState } from "react";
 import Cookies from 'js-cookie';
 
-export const OpenFile = ({ currentGroup, parentFolderItem }) => {
+export const OpenFile = ({ currentGroup, currentFile, dataFromOpenFile }) => {
     console.error("hello from OpenFIle")
-    console.log(parentFolderItem)
+    console.log(currentFile)
     console.log(currentGroup)
     const [fileContent, setFileContent] = useState('');
     const [isOpen, setIsOpen] = useState(false);
@@ -30,7 +30,6 @@ export const OpenFile = ({ currentGroup, parentFolderItem }) => {
         }).catch((error) => {
             console.error('Error retrieving data:', error);
         });
-        console.log("-----------------------------------------------------")
     };
 
     const handleFileChange = (event) => {
@@ -39,9 +38,9 @@ export const OpenFile = ({ currentGroup, parentFolderItem }) => {
 
     const handleSaveFile = () => {
         const folderRequest ={
-            folderID:parentFolderItem.folder_id,
-            content:fileContent,
             token:serverToken,
+            fileID: currentFile.id,
+            content:fileContent
             }
             fetch('http://localhost:8080/api/folder/file/write', {
                 method: 'POST',
@@ -65,7 +64,7 @@ export const OpenFile = ({ currentGroup, parentFolderItem }) => {
     const handleDeleteFile = async () =>{
         setIsOpen(false);
         const folderRequest = {
-            folderID:parentFolderItem.folder_id,
+            folderID:currentFile.id,
             token:serverToken,
             }
             await fetch('http://localhost:8080/api/folder/file/delete', {
@@ -76,11 +75,11 @@ export const OpenFile = ({ currentGroup, parentFolderItem }) => {
                 },
                 body: JSON.stringify(folderRequest)
             }).then((response) => response.json()).then((data) => {
-                // getUpdate.getUpdate(data);
+            dataFromOpenFile.dataFromOpenFile("hello world!")
             }).catch((error) => {
                 console.error('Error retrieving data:', error);
             });
-            console.log("-----------------------------------------------------")
+            dataFromOpenFile.dataFromOpenFile()
     }
     const handleRenameFile =(e)=>{
         setRename(e.target.value);
@@ -95,7 +94,7 @@ export const OpenFile = ({ currentGroup, parentFolderItem }) => {
             setIsClicked(false);
             const folderRequest ={
                 name:rename,
-                folderID:parentFolderItem.folder_id,
+                folderID:currentFile.folder_id,
                 token:serverToken,
             }
             try{
@@ -117,16 +116,16 @@ export const OpenFile = ({ currentGroup, parentFolderItem }) => {
     return (
         <div className="">
         {!isOpen ? (
-        <button className="flex flex-col justify-center item-center m-6"onClick={() => handleDownloadFile(parentFolderItem)}>
+        <button className="flex flex-col justify-center item-center m-6"onClick={() => handleDownloadFile(currentFile)}>
             <svg className="h-9 w-9 "xmlns="http://www.w3.org/2000/svg"height="1em"viewBox="0 0 384 512"><path d="M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128z" /></svg>
-            <p className="pl-3 h-6 w-6 flex justify-center items-center text-center">{parentFolderItem.name}</p>
+            <p className="pl-3 h-6 w-6 flex justify-center items-center text-center">{currentFile.name}</p>
         </button>
         ) : (
         <div className="flex flex-col h-full">
             <div className="flex items-center justify-between px-4 py-2 bg-gray-800 text-white">
-            {!isClicked?<button className="px-3 py-1 text-xl font-medium hover:bg-blue-600 text-white rounded"onClick={setClicked}>{parentFolderItem.name}</button>:<input className=" text-slate-950" onKeyDown={handleKeyDown} type="text" value={rename} onChange={handleRenameFile}></input>}
+            {!isClicked?<button className="px-3 py-1 text-xl font-medium hover:bg-blue-600 text-white rounded"onClick={setClicked}>{currentFile.name}</button>:<input className=" text-slate-950" onKeyDown={handleKeyDown} type="text" value={rename} onChange={handleRenameFile}></input>}
                 <div className="flex flex-row">
-                    <button className="px-3 py-1 text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white rounded"onClick={handleSaveFile}>Save</button>
+                    <button className="px-3 py-1 text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white rounded"parentFolderItem={currentFile} onClick={handleSaveFile}>Save</button>
                     <button className="px-3 py-1 text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white rounded"onClick={handleDeleteFile}>Delete</button>
                     <button className="px-3 py-1 text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white rounded"onClick={handleClose}>Close</button>
                 </div>

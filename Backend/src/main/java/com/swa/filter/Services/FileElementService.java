@@ -32,11 +32,14 @@ import com.swa.filter.Repository.FolderRepository;
 import com.swa.filter.Repository.MemberGroupRepository;
 import com.swa.filter.Repository.MyFileRepository;
 import com.swa.filter.Repository.UserRepository;
+import com.swa.filter.RestController.FileElementRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import com.swa.filter.ObjectModel.CreateNewFileRequest;
 import com.swa.filter.ObjectModel.CreateNewFolderRequest;
+import com.swa.filter.ObjectModel.DeleteFileRequest;
 
 @Transactional
 @RequiredArgsConstructor
@@ -51,6 +54,7 @@ public class FileElementService {
   private final FolderRepository folderRepository;
   private final MemberGroupRepository memberGroupRepository;
   private final MyFileRepository myFileRepository;
+  private final FileElementRepository fileElementRepository;
 
   public void createUserFolder(String username) {
     Path userPathHome = Paths.get(rootUsers+username+pathHome);
@@ -109,14 +113,16 @@ public class FileElementService {
     Optional<Folder> parentFolder = folderRepository.findById(createNewFileRequest.getParentFolderID());
     MyFile newFile = new MyFile(createNewFileRequest.getFileName(),createNewFileRequest.getParentFolderID(),createNewFileRequest.getIsShared(),true);
     myFileRepository.save(newFile);
+    String filePath = createNewFileInUserFolder(createNewFileRequest,newFile.getId());
+    newFile.setPath(filePath);
+    myFileRepository.save(newFile);
     parentFolder.get().getChildren().add(newFile);
     folderRepository.save(parentFolder.get());
-    createNewFileInUserFolder(createNewFileRequest,newFile.getId());
     System.out.println("----------------------------------------------\n\n\n");
     return parentFolder.get();
   }
 
-  public void createNewFileInUserFolder(CreateNewFileRequest createNewFileRequest,Integer fileID){
+  public String createNewFileInUserFolder(CreateNewFileRequest createNewFileRequest,Integer fileID){
     String filePath;
     String owner = jwtService.extractUsername(createNewFileRequest.getToken());
     if(createNewFileRequest.getIsShared()){
@@ -124,10 +130,8 @@ public class FileElementService {
     }else{
       filePath = rootUsers+owner+pathHome+fileID.toString()+"_"+createNewFileRequest.getFileName()+".txt";
     }
-    // Create a File object
     File file = new File(filePath);
     try {
-        // Create a new file
         boolean isNewFileCreated = file.createNewFile();
         if (isNewFileCreated) {
             System.out.println("File created successfully.");
@@ -137,7 +141,7 @@ public class FileElementService {
     } catch (IOException e) {
         System.out.println("An error occurred while creating the file: " + e.getMessage());
     }
-
+    return filePath;
 }
 
   // public void createNewFolderInUserFolder(CreateNewFolderRequest createNewFolderRequest){
@@ -157,37 +161,72 @@ public class FileElementService {
   //   log.info("userPathHome: {}",path);
   // }
 
-// public String readFile(ReadFileRequest readFileRequest) {
-//     System.out.println("\n\n\nreadFile");
-//       System.out.println("-------------------------------------");
-//       System.out.println("readRequest");
-//       System.out.println(readFileRequest);
-//       Optional<MyFile> readFile = myFileRepository.findById(readFileRequest.getFileID());
-//       String absolutePath;
-//       String filePath = rootPath+
-//       if(groupRequest.getGroupID()==null){
-//         absolutePath = rootPath+user.get().getUsername()+folder.get().getPath();
-//       }else{
-//         Optional<MyGroups> group = myGroupRepository.findById(groupRequest.getGroupID());
-//         absolutePath = rootPath+group.get().getAdmin()+folder.get().getPath();
-//       }
-//       System.out.println("absolutePath");
-//       System.out.println(absolutePath);
-//       System.out.println("filePath");
-//       System.out.println("-------------------------------------");
-//     StringBuilder content = new StringBuilder();
-//     try (BufferedReader reader = new BufferedReader(new FileReader(absolutePath))) {
-//         String line;
-//         while ((line = reader.readLine()) != null) {
-//             content.append(line).append("\n");
-//         }
-//     } catch (IOException e) {
-//         e.printStackTrace();
-//     }
-//     return content.toString();
-// }
+public String readFile(ReadFileRequest readFileRequest) {
+    System.out.println("\n\n\n\n\nreadFile");
+      System.out.println("-------------------------------------");
+      System.out.println("readRequest");
+      System.out.println(readFileRequest);
+      Optional<MyFile> readFile = myFileRepository.findById(readFileRequest.getFileID());
+      String filePath = readFile.get().getPath();
+      System.out.println("filePath");
+      System.out.println(filePath);
+    StringBuilder content = new StringBuilder();
+    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+            content.append(line).append("\n");
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    System.out.println("-------------------------------------\n\n\n\n\n");
 
-
+    return content.toString();
+}
+public void writeFile(WriteFileRequest writeFileRequest) {
+  System.out.println("\n\n\nwriteFile");
+  System.out.println("-------------------------------------");
+  System.out.println("groupRequest");
+  System.out.println(writeFileRequest);
+  Optional<MyFile> writeFile = myFileRepository.findById(writeFileRequest.getFileID());
+  String filePath = writeFile.get().getPath();
+  System.out.println("-------------------------------------");
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+        writer.write(writeFileRequest.getContent());
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+public String deleteFile(DeleteFileRequest deleteFileRequest){
+  System.out.println("\n\n\nDeleteFile");
+  System.out.println("-------------------------------------");
+  System.out.println("deleteFileRequest");
+  System.out.println(deleteFileRequest);
+  Optional<MyFile> deleteFile = myFileRepository.findById(deleteFileRequest.getFolderID());
+  String filePath = deleteFile.get().getPath();
+  File file = new File(filePath);
+  if (file.exists()) {
+      boolean deleted = file.delete();
+      if (deleted) {
+          System.out.println("File deleted successfully.");
+      } else {
+          System.out.println("Failed to delete the file.");
+      }
+  } else {
+      System.out.println("File does not exist.");
+  }
+  Optional<Folder> parent = folderRepository.findById(deleteFile.get().getParent());
+  if(parent.get().getChildren().remove(deleteFile.get())){
+    System.out.println("test");
+    myFileRepository.delete(deleteFile.get());
+    System.out.println("test2");
+    System.out.println(deleteFile.get().getName()+" has been successful updated!");
+    return deleteFile.get().getName()+" has been successful updated!";
+  }else{
+    return "something went wrong while deleting!";
+  }
+// return null;
+}
 }
 
 

@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Entity
 public abstract class FileElement {
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
     private Integer parent;
