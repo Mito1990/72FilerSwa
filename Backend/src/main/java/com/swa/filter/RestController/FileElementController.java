@@ -1,34 +1,21 @@
 package com.swa.filter.RestController;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swa.filter.ObjectModel.CreateNewFileRequest;
 import com.swa.filter.ObjectModel.CreateNewFolderRequest;
 import com.swa.filter.ObjectModel.DeleteFileRequest;
 import com.swa.filter.ObjectModel.GetFolderRequest;
-import com.swa.filter.ObjectModel.GetFolderResponse;
-import com.swa.filter.ObjectModel.GroupRequest;
-import com.swa.filter.ObjectModel.NewFolderGroupRequest;
-import com.swa.filter.ObjectModel.NewFolderRequest;
 import com.swa.filter.ObjectModel.ReadFileRequest;
+import com.swa.filter.ObjectModel.RenameFileRequest;
+import com.swa.filter.ObjectModel.RenameMemberGroupRequest;
 import com.swa.filter.ObjectModel.WriteFileRequest;
 import com.swa.filter.Services.FileElementService;
-import com.swa.filter.mySQLTables.Folder;
-
-import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -68,6 +55,19 @@ public class FileElementController {
     public ResponseEntity<?> deleteFile(@RequestBody DeleteFileRequest groupRequest) throws JsonProcessingException, java.io.IOException  {
       ObjectMapper objectMapper = new ObjectMapper();
       String jsonString = objectMapper.writeValueAsString(ResponseEntity.ok().body(fileElementService.deleteFile(groupRequest)));
+      return ResponseEntity.ok().body(jsonString);
+    }
+    @PostMapping("/file/rename/fileElement")
+    public ResponseEntity<?>renameFileElement(@RequestBody RenameFileRequest renameFileRequest) throws JsonProcessingException, java.io.IOException  {
+      ObjectMapper objectMapper = new ObjectMapper();
+      String jsonString = objectMapper.writeValueAsString(ResponseEntity.ok().body(fileElementService.renameFileElement(renameFileRequest)));
+      return ResponseEntity.ok().body(jsonString);
+    }
+    @PostMapping("/file/rename/group")
+    public ResponseEntity<?>renameMemberGroup(@RequestBody RenameMemberGroupRequest renameMemberGroupRequest) throws JsonProcessingException, java.io.IOException  {
+      System.out.println("\n\n\n\nhello from FileElementController -> renameMemberGroup\n\n\n\n");
+      ObjectMapper objectMapper = new ObjectMapper();
+      String jsonString = objectMapper.writeValueAsString(ResponseEntity.ok().body(fileElementService.renameMemberGroup(renameMemberGroupRequest)));
       return ResponseEntity.ok().body(jsonString);
     }
     // @PostMapping("/file/rename")

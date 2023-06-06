@@ -19,7 +19,7 @@ public class Folder extends FileElement {
     @OneToMany
     private List<FileElement> children;
     public Folder(String name, Integer parentFolderID, Boolean isShared,Boolean isFile) {
-        super(null, name, parentFolderID, isShared,isFile);
+        super(null, name, parentFolderID, isShared,isFile, null);
         this.children = new ArrayList<>();
     }
 }

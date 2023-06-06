@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
+import Cookies from 'js-cookie';
 
 export const RightClickPopUp = ({dataFromRightClickPopUp,sendCurrentFolderToRightClickPopUp}) => {
 const [isOpen, setIsOpen] = useState(true);
 const [isRenameButtonClicked, setIsRenameButtonClicked] = useState(false);
 const [rename, setRename] = useState('');
+const serverToken = Cookies.get('Token');
+
 console.error("hello from RightcliukcPopup top ")
-console.error(sendCurrentFolderToRightClickPopUp)
+if(sendCurrentFolderToRightClickPopUp.memberGroupID){
+    console.error(sendCurrentFolderToRightClickPopUp)
+}else if(sendCurrentFolderToRightClickPopUp.id){
+    console.error(sendCurrentFolderToRightClickPopUp)
+
+}
 
 const handleOpenPopup = () => {
     setIsOpen(true);
@@ -31,26 +39,55 @@ const handleRename = (event) => {
 
 const handleKeyDown = async (e) => {
     console.error("hello from handleKeyDown")
+    console.error(rename);
     if (e.keyCode === 13) {
-        setIsRenameButtonClicked(false);
-        const folderRequest ={
-            name:rename,
-            folderID:sendCurrentFolderToRightClickPopUp
+        if(sendCurrentFolderToRightClickPopUp.memberGroupID){
+            try{
+                const renameRequest ={
+                    token:serverToken,
+                    rename:rename,
+                    id:sendCurrentFolderToRightClickPopUp.memberGroupID
+                }
+                const response = await fetch('http://localhost:8080/api/folder/file/rename/group', {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer '+serverToken
+                    },
+                    body: JSON.stringify(renameRequest)
+                })
+                const data = await response.json();
+                dataFromRightClickPopUp.dataFromRightClickPopUp();
+            }catch(error){
+                console.error('Error retrieving data:', error);
+            };
+            setIsRenameButtonClicked(false);
+            setIsOpen(false);
         }
-        try{
-            const response = await fetch('http://localhost:8080/api/folder/file/rename', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                // 'Authorization': 'Bearer '+serverToken
-                },
-                body: JSON.stringify(folderRequest)
-            })
-            const data = await response.json();
-            // getUpdate.getUpdate(data);
-        }catch(error){
-            console.error('Error retrieving data:', error);
-        };
+        else{
+            try{
+                const renameRequest ={
+                    token:serverToken,
+                    rename:rename,
+                    id:sendCurrentFolderToRightClickPopUp.id
+                }
+                const response = await fetch('http://localhost:8080/api/folder/file/rename/fileElement', {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer '+serverToken
+                    },
+                    body: JSON.stringify(renameRequest)
+                })
+                const data = await response.json();
+                dataFromRightClickPopUp.dataFromRightClickPopUp();
+            }catch(error){
+                console.error('Error retrieving data:', error);
+            };
+            setIsRenameButtonClicked(false);
+            setIsOpen(false);
+        }
+     
     }
 }
 return (

@@ -12,9 +12,8 @@ import lombok.NoArgsConstructor;
 @Entity
 public class MyFile extends FileElement {
     private String extension;
-    private String path;
     public MyFile(String name, Integer parentFolderID, Boolean isShared, Boolean isFile) {
-        super(null, name, parentFolderID, isShared, isFile);
+        super(null, name, parentFolderID, isShared, isFile,null);
         this.extension = ".txt";
     }
 }

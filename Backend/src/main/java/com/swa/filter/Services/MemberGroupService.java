@@ -52,7 +52,8 @@ public class MemberGroupService{
         folderRepository.save(newShareFolder);
         memberGroupRepository.save(memberGroup);
         userRepository.save(user.get());
-        fileElementService.createMemberGroupFolder(createMemberGroupRequest.getGroupName(),memberGroup.getMemberGroupID());
+        memberGroup.setPath(fileElementService.createMemberGroupFolder(createMemberGroupRequest.getGroupName(),memberGroup.getMemberGroupID()));
+        memberGroupRepository.save(memberGroup);
         System.out.println("Member Group is created!");
         System.out.println(memberGroup);
         System.out.println("-----------------------------------------------------\n\n\n");
@@ -77,5 +78,4 @@ public class MemberGroupService{
         }
         return "User:{"+deleteMemberFromGroupRequest.getUser()+"} not found in group: {"+memberGroup.get().getGroupName()+"}";
     }
-    
 }

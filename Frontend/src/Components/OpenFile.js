@@ -93,12 +93,12 @@ export const OpenFile = ({ currentGroup, currentFile, dataFromOpenFile }) => {
         if (e.keyCode === 13) {
             setIsClicked(false);
             const folderRequest ={
-                name:rename,
-                folderID:currentFile.folder_id,
+                rename:rename,
+                id:currentFile.id,
                 token:serverToken,
             }
             try{
-                const response = await fetch('http://localhost:8080/api/folder/file/rename', {
+                const response = await fetch('http://localhost:8080/api/folder/file/rename/fileElement', {
                     method: 'POST',
                     headers: {
                     'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ export const OpenFile = ({ currentGroup, currentFile, dataFromOpenFile }) => {
                     body: JSON.stringify(folderRequest)
                 })
                 const data = await response.json();
-                // getUpdate.getUpdate(data);
+                dataFromOpenFile.dataFromOpenFile()
             }catch(error){
                 console.error('Error retrieving data:', error);
             };

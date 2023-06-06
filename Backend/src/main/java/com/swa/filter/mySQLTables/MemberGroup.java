@@ -28,4 +28,5 @@ public class MemberGroup {
     private Folder shareFolder;
     private String groupName;
     private String admin;
+    private String path;
 }

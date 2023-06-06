@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Member;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,6 +17,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
+
+import com.swa.filter.mySQLTables.FileElement;
 import com.swa.filter.mySQLTables.Folder;
 import com.swa.filter.mySQLTables.MemberGroup;
 import com.swa.filter.mySQLTables.MyFile;
@@ -27,6 +30,8 @@ import com.swa.filter.ObjectModel.GroupRequest;
 import com.swa.filter.ObjectModel.NewFolderGroupRequest;
 import com.swa.filter.ObjectModel.NewFolderRequest;
 import com.swa.filter.ObjectModel.ReadFileRequest;
+import com.swa.filter.ObjectModel.RenameFileRequest;
+import com.swa.filter.ObjectModel.RenameMemberGroupRequest;
 import com.swa.filter.ObjectModel.WriteFileRequest;
 import com.swa.filter.Repository.FolderRepository;
 import com.swa.filter.Repository.MemberGroupRepository;
@@ -66,15 +71,17 @@ public class FileElementService {
     }
     log.info("userPathHome: {}",userPathHome);
   }
-  public void createMemberGroupFolder(String groupName,Integer memberGroupID) {
+  public String createMemberGroupFolder(String groupName,Integer memberGroupID) {
     Path groupPath = Paths.get(rootGroups+memberGroupID.toString()+"_"+groupName);
     try {
       Files.createDirectories(groupPath);
       System.out.println("Directory is created!");
+      return rootGroups+memberGroupID.toString()+"_"+groupName;
     } catch (IOException e) {
       System.err.println("Failed to create directory!" + e.getMessage());
     }
-    log.info("create member groupfolder: {}",groupPath);
+    log.info("create member group folder: {}",groupPath);
+    return "Something went wrong with creating a group path!";
   }
 
   public Folder createNewFolder(CreateNewFolderRequest createNewFolderRequest){
@@ -144,23 +151,6 @@ public class FileElementService {
     return filePath;
 }
 
-  // public void createNewFolderInUserFolder(CreateNewFolderRequest createNewFolderRequest){
-  //   String owner = jwtService.extractUsername(createNewFolderRequest.getToken());
-  //   Path path;
-  //   if(createNewFolderRequest.getIsShared()){
-  //     path = Paths.get(rootPath+owner+pathShare+createNewFolderRequest.getFolderName());
-  //   }else{
-  //     path = Paths.get(rootPath+owner+pathShare+createNewFolderRequest.getFolderName());
-  //   }
-  //   try {
-  //     Files.createDirectories(path);
-  //     System.out.println("Directory is created!");
-  //   } catch (IOException e) {
-  //     System.err.println("Failed to create directory!" + e.getMessage());
-  //   }
-  //   log.info("userPathHome: {}",path);
-  // }
-
 public String readFile(ReadFileRequest readFileRequest) {
     System.out.println("\n\n\n\n\nreadFile");
       System.out.println("-------------------------------------");
@@ -227,7 +217,90 @@ public String deleteFile(DeleteFileRequest deleteFileRequest){
   }
 // return null;
 }
+public String renameFileElement(RenameFileRequest renameFileRequest) {
+  System.out.println("\n\n\nrenameFileElement");
+  System.out.println("-------------------------------------");
+  System.out.println("groupRequest");
+  System.out.println(renameFileRequest);
+  Optional<FileElement> renameFileElement = fileElementRepository.findById(renameFileRequest.getId());
+  renameFileElement.get().setName(renameFileRequest.getRename());
+  fileElementRepository.save(renameFileElement.get());
+  if(renameFileElement.get().getPath()!=null){
+    String filePath = renameFileElement.get().getPath();
+    Integer lastIndexOfFilePath = filePath.lastIndexOf("/");
+    if ( lastIndexOfFilePath != -1) {
+      String newFilePath = filePath.substring(0,  lastIndexOfFilePath + 1) + renameFileRequest.getRename()+".txt";
+      System.out.println("New file path: " + newFilePath);
+      File oldFile = new File(filePath);
+      File newFile = new File(newFilePath);
+      if (oldFile.renameTo(newFile)) {
+        System.out.println("File renamed successfully.");
+        return "File renamed successfully.";
+      }
+      else {
+        System.out.println("Failed to rename the file.");
+        return "Failed to rename the file.";
+      }
+    }
+    else {
+        System.out.println("Invalid file path.");
+        return "Invalid file path.";
+    }
+  }else{
+    return null;
+  }
 }
+public String renameMemberGroup(RenameMemberGroupRequest renameMemberGroupRequest) {
+  System.out.println("\n\n\nRenameMemberGroupRequest");
+  System.out.println("-------------------------------------");
+  System.out.println("groupRequest");
+  System.out.println(renameMemberGroupRequest);
+  Optional<MemberGroup> renameMemberGroup = memberGroupRepository.findById(renameMemberGroupRequest.getId());
+  renameMemberGroup.get().setGroupName(renameMemberGroupRequest.getRename());
+  memberGroupRepository.save(renameMemberGroup.get());
+  if(!renameMemberGroup.get().getPath().isEmpty()){
+    String filePath = renameMemberGroup.get().getPath();
+    Integer lastIndexOfFilePath = filePath.lastIndexOf("/");
+    if ( lastIndexOfFilePath != -1) {
+      String newFilePath = filePath.substring(0,  lastIndexOfFilePath + 1) + renameMemberGroupRequest.getRename();
+      System.out.println("New file path: " + newFilePath);
+      File oldFile = new File(filePath);
+      File newFile = new File(newFilePath);
+      if (oldFile.renameTo(newFile)) {
+        System.out.println("File renamed successfully.");
+        return "Group renamed successfully.";
+      }
+      else {
+        System.out.println("Failed to rename the file.");
+        return "Failed to rename the Group.";
+      }
+    }
+    else {
+        System.out.println("Invalid file path.");
+        return "Invalid file path.";
+    }
+  }else{
+    return null;
+  }
+  // public void createNewFolderInUserFolder(CreateNewFolderRequest createNewFolderRequest){
+  //   String owner = jwtService.extractUsername(createNewFolderRequest.getToken());
+  //   Path path;
+  //   if(createNewFolderRequest.getIsShared()){
+  //     path = Paths.get(rootPath+owner+pathShare+createNewFolderRequest.getFolderName());
+  //   }else{
+  //     path = Paths.get(rootPath+owner+pathShare+createNewFolderRequest.getFolderName());
+  //   }
+  //   try {
+  //     Files.createDirectories(path);
+  //     System.out.println("Directory is created!");
+  //   } catch (IOException e) {
+  //     System.err.println("Failed to create directory!" + e.getMessage());
+  //   }
+  //   log.info("userPathHome: {}",path);
+  // }
+}
+}
+
 
 
 
