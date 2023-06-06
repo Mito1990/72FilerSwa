@@ -11,6 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class GetFolderRequest {
     String token;
-    String location;
     Integer parentID;
 }

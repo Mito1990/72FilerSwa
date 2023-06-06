@@ -4,19 +4,16 @@ import {useNavigate } from "react-router-dom"
 import { OpenFile } from "./OpenFile";
 
 
-export const MapItem = (dataFromMapItem,update) =>{
+export const MapItem = ({dataFromMapItem,updateFromMyGroup}) =>{
+    console.error("hello from MapItem:")
     const[list,setList]=useState([]);
-    const[updateFromParent,setUpdateFromParent]=useState(update);
-    const[URL,setURL]=useState(getCurrentUrl());
     const[isGroup,setIsGroup]=useState(true);
     const[currentGroup,setCurrentGroup]=useState();
     const navigate = useNavigate();
     const serverToken = Cookies.get('Token');
-    console.log(update);
-    // navigate(`/share/${group.name}`);
-    // let currentURL = getCurrentUrl();
     useEffect(()=>{
-    if(URL==='share'){
+    if(getCurrentUrl()==='share'){
+        setIsGroup(true)
         const getFolderRequest = {
             token:serverToken,
         }
@@ -37,7 +34,7 @@ export const MapItem = (dataFromMapItem,update) =>{
     }else {
         const getFolderRequest = {
             token:serverToken,
-            parentID:URL
+            parentID:getCurrentUrl()
         }
         fetch('http://localhost:8080/api/folder/getFolder', {
             method: 'POST',
@@ -48,25 +45,18 @@ export const MapItem = (dataFromMapItem,update) =>{
         }).then((response) => response.json()).then((getFolderResponse) => {
             console.error("getFolderResponse")
             console.error(getFolderResponse)
-            setList(getFolderResponse)
+            setList(getFolderResponse.children)
         }).catch((error) => {
             console.error('Error retrieving shareFolder:', error);
         });
     }
-},[])
+},[updateFromMyGroup])
 
 const OpenGroup = async (group) => {
-    console.error("OpenGroup")
-    console.error("[")
-    console.error("group")
-    console.error(group)
-    console.error("group.shareFolder")
-    console.error(group.shareFolder.children)
     setList(group.shareFolder.children)
     setCurrentGroup(group)
-    navigate(`/share/${group.groupName}`);
+    navigate(`/share/${group.groupName}/${group.memberGroupID}`);
     setIsGroup(false);
-    // navigate(`/share/${group.groupName}/${group.memberGroupID}`);
     const getFolderRequest = {
         token:serverToken,
         parentID:group.memberGroupID
@@ -81,21 +71,14 @@ const OpenGroup = async (group) => {
         body: JSON.stringify(getFolderRequest)
         });
         const getFolderResponse= await response.json();
-        dataFromMapItem.dataFromMapItem(getCurrentUrl())
+        dataFromMapItem.dataFromMapItem(getCurrentUrl(),getFolderResponse)
     } catch (error) {
         console.error('Error retrieving data:', error);
     }
-    console.error("]")
 };
 
 
 const OpenFolder = async (folder) => {
-    console.error("OpenFolder")
-    console.error("[")
-    console.error("folder")
-    console.error(folder)
-    console.error("folder.children")
-    console.error(folder.children)
     setList(folder.children)
     setIsGroup(false);
     navigate(`/share/${currentGroup.groupName}/${folder.id}`);
@@ -114,12 +97,10 @@ const OpenFolder = async (folder) => {
         });
         const getFolderResponse= await response.json();
         setList(getFolderResponse.children)
-        dataFromMapItem.dataFromMapItem(getCurrentUrl())
-
+        dataFromMapItem.dataFromMapItem(getCurrentUrl(),getFolderResponse)
     } catch (error) {
         console.error('Error retrieving data:', error);
     }
-    console.error("]")
 };
 return (
     <div className='flex flex-row flex-wrap'>

@@ -10,12 +10,12 @@ import { DeleteUserFromGroup } from './DeleteUserFromGroup';
 import { MapItem } from './MapItem';
 
 export const SharedFolder = () => {
-  const [currentGroup,setCurrentGroup] = useState();
-  const [sharedFolders,setSharedFolders] = useState([]);
-  const [isGroupOpen,setIsGroupOpen] = useState(false);
-  const [parentID,setParentID] = useState(0);
+  const [currentGroup] = useState();
+  const [parentFolder,setParentFolder] = useState();
+  const [sharedFolders] = useState([]);
+  const [parentID] = useState(0);
   const [URL, setURL] = useState("share");
-  const [update, setUpdate] = useState(0);
+  const [updateMapItem, setUpdateMapItem] = useState(0);
   const {register, handleSubmit} = useForm();
   const navigate = useNavigate();
   const serverToken = Cookies.get('Token');
@@ -27,34 +27,17 @@ export const SharedFolder = () => {
         navigate(`/share`)
         currentURL="/share";
         setURL("share")
+        setUpdateMapItem(updateMapItem+1)
         return;
       }else if(currentURL === "share") {
+        setUpdateMapItem(updateMapItem+1)
         setURL(currentURL);
-      }else if (currentURL === currentGroup.groupName) {
-      currentURL = currentGroup.memberGroupID;
-      } else  {
+        return;
+      }
+      else  {
         setURL(currentURL);
       }
-      try {
-        const getFolderRequest = {
-          token:serverToken,
-          parentID:currentURL
-        }
-        const response = await fetch('http://localhost:8080/api/folder/getFolder', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer '+serverToken
-            },
-            body: JSON.stringify(getFolderRequest)
-        });
-        const getFolderResponse = await response.json();
-        console.error("shareFolderResponse")
-        console.error(getFolderResponse)
-        setSharedFolders(getFolderResponse)
-        } catch (error) {
-        console.error('Error retrieving shareFolder:', error);
-        }
+        setUpdateMapItem(updateMapItem+1)
     };
     window.addEventListener('popstate', handlePopstate);
     return () => {
@@ -64,14 +47,12 @@ export const SharedFolder = () => {
 
 
   const AddFolder = async (e) =>{
-    console.error("AddFOlder")
     const createNewFolder = {
         token:serverToken,
         folderName:e.NewFolder,
-        parentFolderID:parentID,
+        parentFolderID:parentFolder.id,
         isShared:true,
     }
-    console.error(createNewFolder)
     await fetch('http://localhost:8080/api/folder/createNewFolder', {
         method: 'POST',
         headers: {
@@ -80,24 +61,14 @@ export const SharedFolder = () => {
     },
     body: JSON.stringify(createNewFolder)
     }).then((response) => response.json()).then((createNewFolderResponse) => {
-        setSharedFolders(createNewFolderResponse)
+      setUpdateMapItem(updateMapItem+1)
     }).catch((error) => {
     console.error('Error retrieving data:', error);
     });
   }
 
   const dataFromMyGroups = async(group) => {
-    // console.error("sharedFolder")
-    // console.error(sharedFolder)
-    // console.error("group")
-    // console.error(group)
-    // setURL(group.groupName);
-    // setParentID(group.memberGroupID);
-    setCurrentGroup(group);
-    setUpdate(update+1)
-    // setIsGroupOpen(true);
-    // setSharedFolders(sharedFolder)
-    // navigate(`/share/${group.groupName}`);
+    setUpdateMapItem(updateMapItem+1)
   };
 
   const handleCreateFile = (data) =>{
@@ -121,37 +92,10 @@ export const SharedFolder = () => {
   });
   }
 
-  // const OpenSharedFolder = async (item) => {
-  //   setParentID(item.id);
-  //   setIsGroupOpen(false);
-  //   setSharedFolders(item);
-  //   navigate(`/share/${currentGroup.groupName}/${item.id}`);
-  //   const getFolderRequest = {
-  //     token:serverToken,
-  //     parentID:item.id
-  // }
-  //   try {
-  //     const response = await fetch('http://localhost:8080/api/folder/getFolder', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': 'Bearer ' + serverToken
-  //       },
-  //       body: JSON.stringify(getFolderRequest)
-  //     });
-  //     const getFolderRespone= await response.json();
-  //   } catch (error) {
-  //     console.error('Error retrieving data:', error);
-  //   }
-  // };
-  // const getUpdate = async (data) => {
-  //   console.error("hello from getUpdate from shared")
-  //   console.log(data);
-  // };
-const dataFromMapItem = async(currentURL) =>{
-  console.log("dataFromMapItem")
+const dataFromMapItem = async(currentURL,parentFolder) =>{
   setURL(currentURL)
-  console.log(currentURL)
+  setParentFolder(parentFolder);
+
 }
   const homeFolder = () =>{
     navigate("/home");
@@ -176,7 +120,7 @@ const dataFromMapItem = async(currentURL) =>{
                 )}
             </div>
             {/* <button className="hover:bg-sky-700 w-24 h-12 border-slate-950 border-2 rounded-xl" onClick={homeFolder}>Home</button> */}
-            <div className=' bg-pink-300 w-full'><MapItem dataFromMapItem={dataFromMapItem} map={update}></MapItem></div>
+            <div className=' bg-pink-300 w-full'><MapItem dataFromMapItem={{dataFromMapItem}} updateFromMyGroup={{updateMapItem}}></MapItem></div>
       </div>
     </div>
   );
