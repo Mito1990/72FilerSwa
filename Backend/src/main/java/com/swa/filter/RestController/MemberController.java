@@ -27,7 +27,7 @@ public class MemberController{
   @PostMapping(path = "/getListOfMemberGroups")
   public ResponseEntity<?> getListOfMemberGroups(@RequestBody GetListOfMemberGroupsRequest getListOfMemberGroupsRequest) throws JsonProcessingException{
     ObjectMapper objectMapper = new ObjectMapper();
-    String jsonString = objectMapper.writeValueAsString(memberService.getListOfMemberGroups(getListOfMemberGroupsRequest));
+    String jsonString = objectMapper.writeValueAsString(memberService.getListOfGroupsIncludeUser(getListOfMemberGroupsRequest));
     return ResponseEntity.ok().body(jsonString);
   }
   @PostMapping(path = "/addUserToMemberGroup")

@@ -60,10 +60,18 @@ public class MemberGroupService{
         System.out.println("-----------------------------------------------------\n\n\n");
         return "MemberGroup: {"+memberGroup+"} successful created!";
     }
-    public List<MemberGroup>getListOfMemberGroups(GetListOfMemberGroupsRequest getListOfMemberGroupsRequest){
+    public List<MemberGroup>getListOfGroupsIncludeUser(GetListOfMemberGroupsRequest getListOfMemberGroupsRequest){
         String owner = jwtService.extractUsername(getListOfMemberGroupsRequest.getToken());
         Optional<User> user = userRepository.findUserByUsername(owner);
-        return user.get().getMemberGroups();
+        List<MemberGroup>getListOfGroupsIncludeUser = new ArrayList<>();
+        List<MemberGroup> allMemberGroups = memberGroupRepository.findAll();
+        for(MemberGroup memberGroup : allMemberGroups){
+            if(memberGroup.getUsernames().contains(owner) || memberGroup.getAdmin().equalsIgnoreCase(owner)){
+                getListOfGroupsIncludeUser.add(memberGroup);
+            };
+        }
+        System.out.println(getListOfGroupsIncludeUser);
+        return getListOfGroupsIncludeUser;
     }
     public String addUserToMemberGroup(AddUserToMemberGroupRequest addUserToMemberGroupRequest){
         Optional<MemberGroup> memberGroup = memberGroupRepository.findById(addUserToMemberGroupRequest.getMemberGroupID());
@@ -91,6 +99,6 @@ public class MemberGroupService{
                 return "Group successful deleted!";
             }
         }
-        return "Only the Admin:{"+owner+"} has the right to delete the group!";
+        return "Only the Admin:{"+deleteMemberGroup.get().getAdmin()+"} has the right to delete the group!";
     }
 }

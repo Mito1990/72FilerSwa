@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swa.filter.ObjectModel.CreateNewFileRequest;
 import com.swa.filter.ObjectModel.CreateNewFolderRequest;
 import com.swa.filter.ObjectModel.DeleteFileRequest;
+import com.swa.filter.ObjectModel.DeleteFolderRequest;
 import com.swa.filter.ObjectModel.GetFolderRequest;
 import com.swa.filter.ObjectModel.ReadFileRequest;
 import com.swa.filter.ObjectModel.RenameFileRequest;
@@ -55,6 +56,12 @@ public class FileElementController {
     public ResponseEntity<?> deleteFile(@RequestBody DeleteFileRequest groupRequest) throws JsonProcessingException, java.io.IOException  {
       ObjectMapper objectMapper = new ObjectMapper();
       String jsonString = objectMapper.writeValueAsString(ResponseEntity.ok().body(fileElementService.deleteFile(groupRequest)));
+      return ResponseEntity.ok().body(jsonString);
+    }
+    @PostMapping("/file/delete/folder")
+    public ResponseEntity<?> deleteFolder(@RequestBody DeleteFolderRequest deleteFolderRequest) throws JsonProcessingException, java.io.IOException  {
+      ObjectMapper objectMapper = new ObjectMapper();
+      String jsonString = objectMapper.writeValueAsString(ResponseEntity.ok().body(fileElementService.deleteFolder(deleteFolderRequest)));
       return ResponseEntity.ok().body(jsonString);
     }
     @PostMapping("/file/rename/fileElement")

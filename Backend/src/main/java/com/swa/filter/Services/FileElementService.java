@@ -45,6 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.swa.filter.ObjectModel.CreateNewFileRequest;
 import com.swa.filter.ObjectModel.CreateNewFolderRequest;
 import com.swa.filter.ObjectModel.DeleteFileRequest;
+import com.swa.filter.ObjectModel.DeleteFolderRequest;
 
 @Transactional
 @RequiredArgsConstructor
@@ -215,7 +216,15 @@ public String deleteFile(DeleteFileRequest deleteFileRequest){
   }else{
     return "something went wrong while deleting!";
   }
-// return null;
+}
+public String deleteFolder(DeleteFolderRequest deleteFolderRequest){
+  Optional<Folder> parent = folderRepository.findById(deleteFolderRequest.getParentID());
+  Optional<Folder> child = folderRepository.findById(deleteFolderRequest.getFolderID());
+  if(parent.get().getChildren().remove(child.get())){
+    folderRepository.delete(child.get());
+    return "Folder successful deleted!";
+  };
+  return "Something went wrong, Folder couldn't be deleted";
 }
 public String renameFileElement(RenameFileRequest renameFileRequest) {
   System.out.println("\n\n\nrenameFileElement");

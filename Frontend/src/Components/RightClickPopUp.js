@@ -5,15 +5,16 @@ export const RightClickPopUp = ({dataFromRightClickPopUp,sendCurrentFolderToRigh
 const [isOpen, setIsOpen] = useState(true);
 const [isRenameButtonClicked, setIsRenameButtonClicked] = useState(false);
 const [rename, setRename] = useState('');
+const [isAdmin,setIsAdmin] = useState(false);
 const serverToken = Cookies.get('Token');
 
 console.error("hello from RightcliukcPopup top ")
-if(sendCurrentFolderToRightClickPopUp.memberGroupID){
-    console.error(sendCurrentFolderToRightClickPopUp)
-}else if(sendCurrentFolderToRightClickPopUp.id){
-    console.error(sendCurrentFolderToRightClickPopUp)
+// if(sendCurrentFolderToRightClickPopUp.isAdmin===""){
+//     console.error(sendCurrentFolderToRightClickPopUp)
+// }else if(sendCurrentFolderToRightClickPopUp.id){
+//     console.error(sendCurrentFolderToRightClickPopUp)
 
-}
+// }
 
 const handleOpenPopup = () => {
     setIsOpen(true);
@@ -24,7 +25,7 @@ const handleClosePopup = () => {
     dataFromRightClickPopUp.dataFromRightClickPopUp()
 };
 const handleDeleteFolder = async() => {
-    
+if(sendCurrentFolderToRightClickPopUp.memberGroupID){
     try{
         const renameRequest ={
             token:serverToken,
@@ -48,6 +49,31 @@ const handleDeleteFolder = async() => {
     setIsOpen(false);
     setIsOpen(false);
     dataFromRightClickPopUp.dataFromRightClickPopUp()
+}
+else{
+    try{
+        const renameRequest ={
+            token:serverToken,
+            parentID:sendCurrentFolderToRightClickPopUp.parent,
+            folderID:sendCurrentFolderToRightClickPopUp.id
+        }
+        const response = await fetch('http://localhost:8080/api/folder/file/delete/folder', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer '+serverToken
+            },
+            body: JSON.stringify(renameRequest)
+        })
+        const data = await response.json();
+        dataFromRightClickPopUp.dataFromRightClickPopUp();
+    }catch(error){
+        console.error('Error retrieving data:', error);
+    };
+    setIsRenameButtonClicked(false);
+    setIsOpen(false);
+}
+
 };
 const handleRenameFolder = () => {
     // setIsOpen(false);
