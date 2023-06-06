@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor()
 public class MemberGroup {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private Integer memberGroupID;
     private List<String> usernames;
     @OneToOne

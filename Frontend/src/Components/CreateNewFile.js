@@ -1,22 +1,26 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Cookies from 'js-cookie';
+import { getCurrentUrl} from "./GetCurrentURL"
 
-export const CreateNewFile = ({handleCreateFile, currentFolder,currentGroup }) => {
+export const CreateNewFile = ({dataFromCreateNewFile,currentGroup}) => {
+console.error("Hello From CreateNewFile")
+console.error(currentGroup)
 const { register, handleSubmit, getValues } = useForm();
 const [isOpen, setIsOpen] = useState(false);
+const [currentGroupInCreateNewFile, setCurrentGroupInCreateNewFile] = useState(currentGroup);
 const serverToken = Cookies.get('Token');
 const newFile = () => {setIsOpen(true);}
 const handleClose = () => {setIsOpen(false);};
-console.error("currentFolder-->")
-console.error(currentFolder.id)
 const onSubmit = () => {
     const filename = getValues('File');
     const newFileRequest = {
-        token: serverToken,
-        fileName: filename,
-        parentFolderID: currentFolder.id,
-        isShared:true
+        token:serverToken,
+        fileName:filename,
+        groupName:currentGroupInCreateNewFile.groupName,
+        groupID:currentGroupInCreateNewFile.memberGroupID,
+        parentFolderID:getCurrentUrl(),
+        isShared:true,
     }
     console.error("newFileRequest")
     console.error(newFileRequest)
@@ -28,14 +32,12 @@ const onSubmit = () => {
         },
         body: JSON.stringify(newFileRequest)
     }).then((response) => response.json()).then((data) => {
-        handleCreateFile.handleCreateFile(data);
+        dataFromCreateNewFile.dataFromCreateNewFile(data);
     }).catch((error) => {
         console.error('Error retrieving data:', error);
     });
     setIsOpen(false);
 }
-console.error("------------------------")
-
 return (
 <div className="flex w-full">
     <button onClick={newFile} className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">

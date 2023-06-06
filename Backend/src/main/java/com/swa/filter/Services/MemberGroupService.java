@@ -33,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional
 public class MemberGroupService{
-    private final FileElementService fileService;
+    private final FileElementService fileElementService;
     private final UserService userService;
     private final JwtService jwtService;
     private final UserRepository userRepository;
@@ -52,6 +52,7 @@ public class MemberGroupService{
         folderRepository.save(newShareFolder);
         memberGroupRepository.save(memberGroup);
         userRepository.save(user.get());
+        fileElementService.createMemberGroupFolder(createMemberGroupRequest.getGroupName(),memberGroup.getMemberGroupID());
         System.out.println("Member Group is created!");
         System.out.println(memberGroup);
         System.out.println("-----------------------------------------------------\n\n\n");

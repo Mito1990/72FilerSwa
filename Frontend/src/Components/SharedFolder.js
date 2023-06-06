@@ -8,12 +8,11 @@ import { CreateNewFile } from './CreateNewFile';
 import{OpenFile}from './OpenFile';
 import { DeleteUserFromGroup } from './DeleteUserFromGroup';
 import { MapItem } from './MapItem';
+import { getCurrentUrl} from "./GetCurrentURL"
 
 export const SharedFolder = () => {
-  const [currentGroup] = useState();
+  const [currentGroup,setCurrentGroup] = useState();
   const [parentFolder,setParentFolder] = useState();
-  const [sharedFolders] = useState([]);
-  const [parentID] = useState(0);
   const [URL, setURL] = useState("share");
   const [updateMapItem, setUpdateMapItem] = useState(0);
   const {register, handleSubmit} = useForm();
@@ -71,31 +70,16 @@ export const SharedFolder = () => {
     setUpdateMapItem(updateMapItem+1)
   };
 
-  const handleCreateFile = (data) =>{
-    console.error("handleCreateFile -> ")
+  const dataFromCreateNewFile = (data) =>{
+    console.error("hello from dataFromCreateNewFile")
     console.error(data)
-    const folderRequest ={
-      parent:parentID,
-      groupID:currentGroup.group_id,
-      token:serverToken
-    }
-    fetch('http://localhost:8080/api/groups/get/group/folder', {
-      method: 'POST',
-      headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer '+serverToken
-      },
-      body: JSON.stringify(folderRequest)
-  }).then((response) => response.json()).then((data) => {
-  }).catch((error) => {
-      console.error('Error retrieving data:', error);
-  });
+    setUpdateMapItem(updateMapItem+1)
   }
 
-const dataFromMapItem = async(currentURL,parentFolder) =>{
+const dataFromMapItem = async(currentURL,parentFolder,group) =>{
   setURL(currentURL)
   setParentFolder(parentFolder);
-
+  setCurrentGroup(group);
 }
   const homeFolder = () =>{
     navigate("/home");
@@ -114,7 +98,7 @@ const dataFromMapItem = async(currentURL,parentFolder) =>{
                           <div className=' flex flex-col justify-between bg-white w-52'>
                             <div className='w-52 p-2 bg-emerald-200 flex justify-center items-center'><AddUserToGroup currentGroup={currentGroup}></AddUserToGroup></div>
                             <div className='w-52 p-2 bg-emerald-200 flex justify-center items-center'><DeleteUserFromGroup currentGroup={currentGroup}></DeleteUserFromGroup></div>
-                            <div className='w-52 p-2 bg-emerald-200 flex justify-center items-center'><CreateNewFile handleCreateFile={{ handleCreateFile }} currentFolder={sharedFolders} currentGroup={currentGroup}></CreateNewFile></div>
+                            <div className='w-52 p-2 bg-emerald-200 flex justify-center items-center'><CreateNewFile dataFromCreateNewFile={{ dataFromCreateNewFile }} currentGroup={currentGroup} ></CreateNewFile></div>
                           </div>
                       </div>
                 )}
@@ -126,26 +110,7 @@ const dataFromMapItem = async(currentURL,parentFolder) =>{
   );
 }
 
-const getCurrentUrl = () => {
-  const path2 = window.location.pathname;
-  const folderId = path2.substring(path2.lastIndexOf('/') + 1);
-// Check if the string contains only numbers
-if (/^[0-9]+$/.test(folderId)) {
-  return parseInt(folderId);
-}
-// Check if the string contains only letters (case-insensitive)
-if (/^[a-zA-Z]+$/.test(folderId)) {
-  return(folderId);
-}
-// Check if the string contains both letters and numbers
-if (/^[a-zA-Z0-9]+$/.test(folderId)) {
-  return(folderId);
-}
-// Check if the string is a number
-if (!isNaN(folderId)) {
-  return parseInt(folderId);
-}
-};
+
 
 // return (
 //   <div className=' h-screen w-screen bg-slate-500 flex-row'>
