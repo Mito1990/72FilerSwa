@@ -3,23 +3,14 @@ package com.swa.filter.RestController;
 import com.swa.filter.ObjectModel.AddUserToMemberGroupRequest;
 import com.swa.filter.ObjectModel.CreateMemberGroupRequest;
 import com.swa.filter.ObjectModel.DeleteMemberFromGroupRequest;
-import com.swa.filter.ObjectModel.NewFolderGroupRequest;
+import com.swa.filter.ObjectModel.DeleteMemberGroupRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.swa.filter.ObjectModel.GetFolderRequest;
 import com.swa.filter.ObjectModel.GetListOfMemberGroupsRequest;
-import com.swa.filter.ObjectModel.GroupFolderRequest;
-import com.swa.filter.ObjectModel.GroupRequest;
 import com.swa.filter.Services.MemberGroupService;
-import com.swa.filter.mySQLTables.Folder;
-
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.data.repository.support.Repositories;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,8 +42,13 @@ public class MemberController{
     String jsonString = objectMapper.writeValueAsString(memberService.deleteMemberFromGroup(deleteMemberFromGroupRequest));
     return ResponseEntity.ok().body(jsonString);
   }
-
-
+  @PostMapping(path = "/deleteMemberGroup")
+  public ResponseEntity<?> deleteMemberFromGroup(@RequestBody  DeleteMemberGroupRequest  deleteMemberGroupRequest) throws JsonProcessingException{
+    ObjectMapper objectMapper = new ObjectMapper();
+    String jsonString = objectMapper.writeValueAsString(memberService.deleteMemberGroup(deleteMemberGroupRequest));
+    return ResponseEntity.ok().body(jsonString);
+  }
+ 
 
 
 

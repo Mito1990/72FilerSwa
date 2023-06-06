@@ -12,6 +12,7 @@ import com.swa.filter.ObjectModel.NewFolderGroupRequest;
 import com.swa.filter.ObjectModel.NewFolderRequest;
 import com.swa.filter.ObjectModel.CreateMemberGroupRequest;
 import com.swa.filter.ObjectModel.DeleteMemberFromGroupRequest;
+import com.swa.filter.ObjectModel.DeleteMemberGroupRequest;
 import com.swa.filter.mySQLTables.FileElement;
 import com.swa.filter.mySQLTables.Folder;
 import com.swa.filter.mySQLTables.MemberGroup;
@@ -77,5 +78,19 @@ public class MemberGroupService{
             return "User:{"+deleteMemberFromGroupRequest.getUser()+"} successful deleted from group: {"+memberGroup.get().getGroupName()+"}";
         }
         return "User:{"+deleteMemberFromGroupRequest.getUser()+"} not found in group: {"+memberGroup.get().getGroupName()+"}";
+    }
+    public String deleteMemberGroup(DeleteMemberGroupRequest deleteMemberGroupRequest){
+        System.out.println("\n\n\n\nHello From DeleteMemberGroup");
+        System.out.println(deleteMemberGroupRequest);
+        String owner = jwtService.extractUsername(deleteMemberGroupRequest.getToken());
+        Optional<User> user = userRepository.findUserByUsername(owner);
+        Optional<MemberGroup> deleteMemberGroup = memberGroupRepository.findById(deleteMemberGroupRequest.getMemberGroupID());
+        if(deleteMemberGroup.get().getAdmin().equalsIgnoreCase(owner)){
+            if(user.get().getMemberGroups().remove(deleteMemberGroup.get())){
+                memberGroupRepository.deleteById(deleteMemberGroupRequest.getMemberGroupID());
+                return "Group successful deleted!";
+            }
+        }
+        return "Only the Admin:{"+owner+"} has the right to delete the group!";
     }
 }

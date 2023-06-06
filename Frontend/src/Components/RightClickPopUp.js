@@ -23,7 +23,29 @@ const handleClosePopup = () => {
     setIsOpen(false);
     dataFromRightClickPopUp.dataFromRightClickPopUp()
 };
-const handleDeleteFolder = () => {
+const handleDeleteFolder = async() => {
+    
+    try{
+        const renameRequest ={
+            token:serverToken,
+            memberGroupID:sendCurrentFolderToRightClickPopUp.memberGroupID
+        }
+        const response = await fetch('http://localhost:8080/api/memberGroupController/deleteMemberGroup', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer '+serverToken
+            },
+            body: JSON.stringify(renameRequest)
+        })
+        const data = await response.json();
+        console.log(data);
+        dataFromRightClickPopUp.dataFromRightClickPopUp();
+    }catch(error){
+        console.error('Error retrieving data:', error);
+    };
+    setIsRenameButtonClicked(false);
+    setIsOpen(false);
     setIsOpen(false);
     dataFromRightClickPopUp.dataFromRightClickPopUp()
 };
