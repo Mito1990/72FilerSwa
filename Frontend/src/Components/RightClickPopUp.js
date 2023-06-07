@@ -7,15 +7,6 @@ const [isRenameButtonClicked, setIsRenameButtonClicked] = useState(false);
 const [rename, setRename] = useState('');
 const [isAdmin,setIsAdmin] = useState(false);
 const serverToken = Cookies.get('Token');
-
-console.error("hello from RightcliukcPopup top ")
-// if(sendCurrentFolderToRightClickPopUp.isAdmin===""){
-//     console.error(sendCurrentFolderToRightClickPopUp)
-// }else if(sendCurrentFolderToRightClickPopUp.id){
-//     console.error(sendCurrentFolderToRightClickPopUp)
-
-// }
-
 const handleOpenPopup = () => {
     setIsOpen(true);
 };
@@ -40,7 +31,6 @@ if(sendCurrentFolderToRightClickPopUp.memberGroupID){
             body: JSON.stringify(renameRequest)
         })
         const data = await response.json();
-        console.log(data);
         dataFromRightClickPopUp.dataFromRightClickPopUp();
     }catch(error){
         console.error('Error retrieving data:', error);
@@ -76,9 +66,7 @@ else{
 
 };
 const handleRenameFolder = () => {
-    // setIsOpen(false);
     setIsRenameButtonClicked(true)
-    // dataFromRightClickPopUp.dataFromRightClickPopUp()
 };
 const handleRename = (event) => {
     setRename(event.target.value);
@@ -86,8 +74,6 @@ const handleRename = (event) => {
 };
 
 const handleKeyDown = async (e) => {
-    console.error("hello from handleKeyDown")
-    console.error(rename);
     if (e.keyCode === 13) {
         if(sendCurrentFolderToRightClickPopUp.memberGroupID){
             try{

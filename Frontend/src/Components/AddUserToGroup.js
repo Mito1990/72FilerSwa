@@ -2,14 +2,16 @@ import { useState } from "react";
 import Cookies from 'js-cookie';
 
 
-export const AddUserToGroup = (group) =>{
+export const AddUserToGroup = ({group}) =>{
+    console.warn("AddUserToGroup")
+    console.warn(group)
     const[listOfUserNamesNotAddedToGroup,setListOfUsernamesNotAddedToGroup] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     const serverToken = Cookies.get('Token');
     const getListOfUsernamesNotAddedToGroup = () =>{
         const listOfUsernamesRequest ={
             token:serverToken,
-            memberGroupID:group.currentGroup.memberGroupID
+            memberGroupID:group.memberGroupID
         }
         setIsOpen(true);
         fetch('http://localhost:8080/api/users/get/ListOfUsernamesNotAddedToGroup', {
@@ -30,7 +32,7 @@ export const AddUserToGroup = (group) =>{
         const addUserToGroupRequest = {
             token:serverToken,
             user:user,
-            memberGroupID:group.currentGroup.memberGroupID
+            memberGroupID:group.memberGroupID
         }
         fetch('http://localhost:8080/api/memberGroupController/addUserToMemberGroup', {
             method: 'POST',
@@ -51,7 +53,7 @@ export const AddUserToGroup = (group) =>{
     };
     return (
     <div className="flex w-full">
-        <button onClick={getListOfUsernamesNotAddedToGroup} className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button onClick={getListOfUsernamesNotAddedToGroup} className="shadow-slate-800 mb-3  text text-xs shadow-sm w-full bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded">
         Add User
         </button>
         {isOpen && (

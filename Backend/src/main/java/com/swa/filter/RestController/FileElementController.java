@@ -12,6 +12,7 @@ import com.swa.filter.ObjectModel.CreateNewFolderRequest;
 import com.swa.filter.ObjectModel.DeleteFileRequest;
 import com.swa.filter.ObjectModel.DeleteFolderRequest;
 import com.swa.filter.ObjectModel.GetFolderRequest;
+import com.swa.filter.ObjectModel.GetHomeFolderRequest;
 import com.swa.filter.ObjectModel.ReadFileRequest;
 import com.swa.filter.ObjectModel.RenameFileRequest;
 import com.swa.filter.ObjectModel.RenameMemberGroupRequest;
@@ -40,7 +41,7 @@ public class FileElementController {
     @PostMapping("/createNewFile")
     public ResponseEntity<?> createNewFile(@RequestBody CreateNewFileRequest CreateNewFileRequest) throws JsonProcessingException{
         ObjectMapper objectMapper = new ObjectMapper();
-        String jsonString = objectMapper.writeValueAsString(ResponseEntity.ok().body(fileElementService.createNewFile(CreateNewFileRequest)));
+        String jsonString = objectMapper.writeValueAsString(fileElementService.createNewFile(CreateNewFileRequest));
         return ResponseEntity.ok().body(jsonString);
     }
     @PostMapping("/file/read")
@@ -55,28 +56,35 @@ public class FileElementController {
     @PostMapping("/file/delete")
     public ResponseEntity<?> deleteFile(@RequestBody DeleteFileRequest groupRequest) throws JsonProcessingException, java.io.IOException  {
       ObjectMapper objectMapper = new ObjectMapper();
-      String jsonString = objectMapper.writeValueAsString(ResponseEntity.ok().body(fileElementService.deleteFile(groupRequest)));
+      String jsonString = objectMapper.writeValueAsString(fileElementService.deleteFile(groupRequest));
       return ResponseEntity.ok().body(jsonString);
     }
     @PostMapping("/file/delete/folder")
     public ResponseEntity<?> deleteFolder(@RequestBody DeleteFolderRequest deleteFolderRequest) throws JsonProcessingException, java.io.IOException  {
       ObjectMapper objectMapper = new ObjectMapper();
-      String jsonString = objectMapper.writeValueAsString(ResponseEntity.ok().body(fileElementService.deleteFolder(deleteFolderRequest)));
+      String jsonString = objectMapper.writeValueAsString(fileElementService.deleteFolder(deleteFolderRequest));
       return ResponseEntity.ok().body(jsonString);
     }
     @PostMapping("/file/rename/fileElement")
     public ResponseEntity<?>renameFileElement(@RequestBody RenameFileRequest renameFileRequest) throws JsonProcessingException, java.io.IOException  {
       ObjectMapper objectMapper = new ObjectMapper();
-      String jsonString = objectMapper.writeValueAsString(ResponseEntity.ok().body(fileElementService.renameFileElement(renameFileRequest)));
+      String jsonString = objectMapper.writeValueAsString(fileElementService.renameFileElement(renameFileRequest));
       return ResponseEntity.ok().body(jsonString);
     }
     @PostMapping("/file/rename/group")
     public ResponseEntity<?>renameMemberGroup(@RequestBody RenameMemberGroupRequest renameMemberGroupRequest) throws JsonProcessingException, java.io.IOException  {
       System.out.println("\n\n\n\nhello from FileElementController -> renameMemberGroup\n\n\n\n");
       ObjectMapper objectMapper = new ObjectMapper();
-      String jsonString = objectMapper.writeValueAsString(ResponseEntity.ok().body(fileElementService.renameMemberGroup(renameMemberGroupRequest)));
+      String jsonString = objectMapper.writeValueAsString(fileElementService.renameMemberGroup(renameMemberGroupRequest));
       return ResponseEntity.ok().body(jsonString);
     }
+    @PostMapping("/get/home")
+    public ResponseEntity<?> getHomeFolder(@RequestBody GetHomeFolderRequest getHomeFolderRequest) throws JsonProcessingException, java.io.IOException  {
+      ObjectMapper objectMapper = new ObjectMapper();
+      String jsonString = objectMapper.writeValueAsString(fileElementService.getHomeFolder(getHomeFolderRequest));
+      return ResponseEntity.ok().body(jsonString);
+    }
+    
     // @PostMapping("/file/rename")
     // public ResponseEntity<?> renameFile(@RequestBody GroupRequest writeFileRequest) throws JsonProcessingException, java.io.IOException  {
     //     return ResponseEntity.ok().body(fileElementService.renameFile(writeFileRequest));

@@ -2,14 +2,14 @@ import { useState } from "react";
 import Cookies from 'js-cookie';
 
 
-export const DeleteUserFromGroup = (group) =>{
+export const DeleteUserFromGroup = ({group}) =>{
     const[listOfUsersInGroup,setListOfUsersInGroup] = useState([]);
     const[isOpen, setIsOpen] = useState(false);
     const serverToken = Cookies.get('Token');
     const getListOfUsernamesInGroup = () =>{
         const listOfUsernamesRequest ={
             token:serverToken,
-            memberGroupID:group.currentGroup.memberGroupID
+            memberGroupID:group.memberGroupID
         }
         setIsOpen(true);
         fetch('http://localhost:8080/api/users/get/ListOfUsernamesInGroup', {
@@ -30,7 +30,7 @@ export const DeleteUserFromGroup = (group) =>{
         const addUserToGroupRequest = {
             token:serverToken,
             user:user,
-            memberGroupID:group.currentGroup.memberGroupID
+            memberGroupID:group.memberGroupID
         }
         fetch('http://localhost:8080/api/memberGroupController/deleteMemberFromGroup', {
             method: 'POST',
@@ -51,7 +51,7 @@ export const DeleteUserFromGroup = (group) =>{
     };
     return (
     <div className="flex w-full">
-        <button onClick={getListOfUsernamesInGroup} className=" w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button onClick={getListOfUsernamesInGroup} className="shadow-slate-800 mb-3 shadow-sm w-full text-xs bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded">
         Delete User
         </button>
         {isOpen && (

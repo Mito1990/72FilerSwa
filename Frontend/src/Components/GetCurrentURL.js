@@ -18,3 +18,9 @@ export const getCurrentUrl = () => {
         return parseInt(folderId);
     }
 };
+export const checkPathForHomeOrShare =() =>{
+    const path = window.location.pathname;
+    const pathParts = path.split("/");
+    const Value = pathParts[1];
+    return Value
+};

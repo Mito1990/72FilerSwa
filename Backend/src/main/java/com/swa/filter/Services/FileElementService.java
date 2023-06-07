@@ -26,6 +26,7 @@ import com.swa.filter.mySQLTables.User;
 import jakarta.transaction.Transactional;
 import com.swa.filter.ObjectModel.GetFolderRequest;
 import com.swa.filter.ObjectModel.GetFolderResponse;
+import com.swa.filter.ObjectModel.GetHomeFolderRequest;
 import com.swa.filter.ObjectModel.GroupRequest;
 import com.swa.filter.ObjectModel.NewFolderGroupRequest;
 import com.swa.filter.ObjectModel.NewFolderRequest;
@@ -33,11 +34,11 @@ import com.swa.filter.ObjectModel.ReadFileRequest;
 import com.swa.filter.ObjectModel.RenameFileRequest;
 import com.swa.filter.ObjectModel.RenameMemberGroupRequest;
 import com.swa.filter.ObjectModel.WriteFileRequest;
+import com.swa.filter.Repository.FileElementRepository;
 import com.swa.filter.Repository.FolderRepository;
 import com.swa.filter.Repository.MemberGroupRepository;
 import com.swa.filter.Repository.MyFileRepository;
 import com.swa.filter.Repository.UserRepository;
-import com.swa.filter.RestController.FileElementRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -84,7 +85,11 @@ public class FileElementService {
     log.info("create member group folder: {}",groupPath);
     return "Something went wrong with creating a group path!";
   }
-
+ public Folder getHomeFolder(GetHomeFolderRequest getHomeFolderRequest){
+    String owner = jwtService.extractUsername(getHomeFolderRequest.getToken());
+    Optional<User> user = userRepository.findUserByUsername(owner);
+    return user.get().getHome();
+ }
   public Folder createNewFolder(CreateNewFolderRequest createNewFolderRequest){
     System.out.println("\n\n\nCreateNewFolderRequest");
     System.out.println("-----------------------------------------------------");
@@ -134,7 +139,7 @@ public class FileElementService {
     String filePath;
     String owner = jwtService.extractUsername(createNewFileRequest.getToken());
     if(createNewFileRequest.getIsShared()){
-      filePath = rootGroups+createNewFileRequest.getGroupID().toString()+"_"+createNewFileRequest.getGroupName()+"/"+fileID.toString()+"_"+createNewFileRequest.getFileName()+".txt";
+      filePath = rootGroups+fileID.toString()+"_"+createNewFileRequest.getFileName()+".txt";
     }else{
       filePath = rootUsers+owner+pathHome+fileID.toString()+"_"+createNewFileRequest.getFileName()+".txt";
     }

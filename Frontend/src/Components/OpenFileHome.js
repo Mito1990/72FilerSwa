@@ -2,8 +2,6 @@ import { useState } from "react";
 import Cookies from 'js-cookie';
 
 export const OpenFileHome = ({ update,currentFolder}) => {
-    console.error("OpenFileHome => item")
-    console.error(currentFolder)
     const [fileContent, setFileContent] = useState('');
     const [rename, setRename] = useState('');
     const [isClicked, setIsClicked] = useState(false);
@@ -17,7 +15,6 @@ export const OpenFileHome = ({ update,currentFolder}) => {
         shared:false,
         file:true
         }
-        console.log(folderRequest);
         fetch('http://localhost:8080/api/folder/file/read', {
             method: 'POST',
             headers: {
@@ -26,13 +23,11 @@ export const OpenFileHome = ({ update,currentFolder}) => {
             },
             body: JSON.stringify(folderRequest)
         }).then((response) => response.text()).then((data) => {
-            console.log(data);
             setFileContent(data);
             setIsOpen(true);
         }).catch((error) => {
             console.error('Error retrieving data:', error);
         });
-        console.log("-----------------------------------------------------")
     };
 
     const handleFileChange = (event) => {
@@ -48,8 +43,6 @@ export const OpenFileHome = ({ update,currentFolder}) => {
             shared:false,
             file:true
             }
-            console.log("---save---")
-            console.log(folderRequest);
             fetch('http://localhost:8080/api/folder/file/write', {
                 method: 'POST',
                 headers: {
@@ -58,14 +51,11 @@ export const OpenFileHome = ({ update,currentFolder}) => {
                 },
                 body: JSON.stringify(folderRequest)
             }).then((response) => response.text()).then((data) => {
-                console.log("sajdkhaskjdhaskjdhakj")
-                console.log(data);
                 setFileContent(data);
                 setIsOpen(false);
             }).catch((error) => {
                 console.error('Error retrieving data:', error);
             });
-            console.log("-----------------------------------------------------")
       // Logic to save the file content
       // You can make a separate API request to send the updated file content back to the server
       // Or implement the necessary logic to save the file on the server directly
@@ -83,8 +73,6 @@ export const OpenFileHome = ({ update,currentFolder}) => {
             shared:false,
             file:true
             }
-            console.log("---Delete---")
-            console.log(folderRequest);
                 try{
                 const response = await fetch('http://localhost:8080/api/folder/file/delete', {
                     method: 'POST',
@@ -99,7 +87,6 @@ export const OpenFileHome = ({ update,currentFolder}) => {
             }catch(error){
                 console.error('Error retrieving data:', error);
             };
-            console.log("-----------------------------------------------------")
     }
     const handleRenameFile = async(e)=>{
         setRename(e.target.value);
@@ -109,7 +96,6 @@ export const OpenFileHome = ({ update,currentFolder}) => {
         setIsClicked(true);
     }
     const handleKeyDown = async (e) => {
-        console.error("hello from handleKeyDown")
         if (e.keyCode === 13) {
             setIsClicked(false);
             const folderRequest ={
@@ -121,7 +107,6 @@ export const OpenFileHome = ({ update,currentFolder}) => {
                 shared:false,
                 file:true
             }
-            console.error("folderRequest")
             try{
                 const response = await fetch('http://localhost:8080/api/folder/file/rename', {
                     method: 'POST',
@@ -136,7 +121,6 @@ export const OpenFileHome = ({ update,currentFolder}) => {
             }catch(error){
                 console.error('Error retrieving data:', error);
             };
-            console.log("-----------------------------------------------------")
         }
     };
     return (
