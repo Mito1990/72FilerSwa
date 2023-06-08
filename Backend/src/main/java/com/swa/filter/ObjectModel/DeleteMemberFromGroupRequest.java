@@ -1,4 +1,3 @@
-
 package com.swa.filter.ObjectModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,11 +8,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddFolderToGroupRequest {
+public class DeleteMemberFromGroupRequest {
     String token;
-    int groupID;
-    int parentID;
-    String Path;
-    String name;
-    boolean shared;
+    String user;
+    Integer MemberGroupID;
 }
+
+

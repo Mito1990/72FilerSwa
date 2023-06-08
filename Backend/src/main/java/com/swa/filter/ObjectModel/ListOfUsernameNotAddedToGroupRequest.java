@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthenticationResponse {
-    private String message;
-    private Boolean userExists;
-    private Integer homeID;
+public class ListOfUsernameNotAddedToGroupRequest {
+    private String token;
+    private Integer memberGroupID;
 }

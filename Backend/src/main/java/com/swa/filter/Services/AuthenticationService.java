@@ -1,21 +1,16 @@
 package com.swa.filter.Services;
 
-import java.util.Date;
-import java.util.Optional;
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.swa.filter.ObjectModel.AuthenticationRequest;
 import com.swa.filter.ObjectModel.AuthenticationResponse;
 import com.swa.filter.ObjectModel.RegisterRequest;
 import com.swa.filter.ObjectModel.Role;
-import com.swa.filter.Repository.HomeDirRepository;
+import com.swa.filter.Repository.FolderRepository;
 import com.swa.filter.Repository.UserRepository;
-import com.swa.filter.mySQLTables.FolderDir;
-import com.swa.filter.mySQLTables.HomeDir;
+import com.swa.filter.mySQLTables.Folder;
 import com.swa.filter.mySQLTables.User;
 import lombok.RequiredArgsConstructor;
 
@@ -28,39 +23,32 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
-    private final HomeDirRepository homeDirRepository;
-    private final FileService fileService;
+    private final FileElementService fileElementService;
+    private final FolderRepository folderRepository;
     public AuthenticationResponse register(RegisterRequest registerRequest) {
         if(userService.checkIfUserExists(registerRequest.getUsername())){
-            return AuthenticationResponse.builder().message("User Exits already!").build();
-        }
-        else{
-            var homeS = HomeDir.builder()
-                .name("root")
-                .date(new Date())
-                .path(fileService.createUserFolder(registerRequest.getUsername()))
-                .build();
-            homeDirRepository.save(homeS);
+            return AuthenticationResponse.builder().message("User exists already!").userExists(true).build();
+        }else{
+            Folder home = new Folder("home", null, false, false);
+            folderRepository.save(home);
             var user = User.builder()
-                        .name(registerRequest.getName())
-                        .username(registerRequest.getUsername())
-                        .password(passwordEncoder.encode(registerRequest.getPassword()))
-                        .role(Role.USER)
-                        .home(homeS)
-                        .build();
+                .name(registerRequest.getName())
+                .username(registerRequest.getUsername())
+                .password(passwordEncoder.encode(registerRequest.getPassword()))
+                .role(Role.USER)
+                .home(home)
+                .memberGroups(null)
+                .build();
+            fileElementService.createUserFolder(registerRequest.getUsername());
             userRepository.save(user);
-            return AuthenticationResponse.builder().message("User succsesfull registered!").build();
-
+            return AuthenticationResponse.builder().message("User successful registered!").userExists(false).build();
         }
-
     }
-    
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
         var user = userRepository.findUserByUsername(authenticationRequest.getUsername()).orElseThrow();
         var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().message(jwtToken).build();
+        return AuthenticationResponse.builder().message(jwtToken).homeID(user.getHome().getId()).userExists(true).build();
     }
-    
 }

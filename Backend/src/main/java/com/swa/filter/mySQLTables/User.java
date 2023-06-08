@@ -23,7 +23,7 @@ import com.swa.filter.ObjectModel.Role;
 public class User implements UserDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.TABLE)
-  private Long user_id;
+  private Long userID;
   @NonNull
   private String name;
   @NonNull
@@ -33,14 +33,12 @@ public class User implements UserDetails {
   @Enumerated(EnumType.STRING)
   private Role role;
   @OneToOne
-  // @JoinColumn(name = "home_id")
-  HomeDir home;
+  Folder home;
   @OneToMany
-  private List<MyGroups>mygroups;
-
-  @Override 
+  List<MemberGroup>memberGroups;
+  @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-   return List.of(new SimpleGrantedAuthority(role.name()));
+    return List.of(new SimpleGrantedAuthority(role.name()));
   }
 
   @Override

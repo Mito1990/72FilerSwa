@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthenticationResponse {
-    private String message;
-    private Boolean userExists;
-    private Integer homeID;
+public class RenameFileRequest {
+    String token;
+    String rename;
+    Integer id;
 }

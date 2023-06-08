@@ -1,5 +1,4 @@
 package com.swa.filter.ObjectModel;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +8,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ListOfUserRequest {
-    private String token;
-    private int groupID;
+public class DeleteFolderRequest {
+    String token;
+    Integer parentID;
+    Integer folderID;
 }

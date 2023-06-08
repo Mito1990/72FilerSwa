@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor 
+@AllArgsConstructor
 public class GetFolderRequest {
-    int ParentID;
     String token;
+    Integer parentID;
 }

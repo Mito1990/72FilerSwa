@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WriteFileRequest {
-    Integer folderID;
-    Integer groupID;
+    Integer fileID;
     String content;
     String token;
 }

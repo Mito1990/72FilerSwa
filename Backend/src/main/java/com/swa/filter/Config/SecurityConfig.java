@@ -25,7 +25,7 @@ public class SecurityConfig {
             .and()
             .authorizeHttpRequests() 
             .requestMatchers("/api/login/**").permitAll()
-            .requestMatchers("/api/groups/**").hasAuthority("USER")
+            .requestMatchers("/api/share/**").hasAuthority("USER")
             .requestMatchers("/api/users/**").permitAll()
             .requestMatchers("/api/folder/**").hasAuthority("USER")
             .anyRequest().authenticated() 
