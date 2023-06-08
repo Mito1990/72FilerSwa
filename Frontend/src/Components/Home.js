@@ -1,78 +1,26 @@
 import { useState,useEffect } from 'react';
-import Cookies from 'js-cookie';
 import {useNavigate } from "react-router-dom"
-import {useForm} from "react-hook-form"
 import { CreateNewFile } from './CreateNewFile';
 import { MapItem } from './MapItem';
-import { getCurrentUrl,checkPathForHomeOrShare} from "./GetCurrentURL"
 import { CreateNewFolder} from "./CreateNewFolder"
+import { Logout } from './Logout';
+import { SvgGroups } from './svg/SvgGroups';
 
 export const Home= () => {
 const [currentFolder,setCurrentFolder] = useState();
 const [updateMapItem, setUpdateMapItem] = useState(0);
-const [URL,setURL] = useState(0);
 const navigate = useNavigate();
-const serverToken = Cookies.get('Token');
 useEffect(() => {
-		// const getFolderRequest = {
-		// 	token:serverToken,
-		// }
-		// fetch('http://localhost:8080/api/folder/get/home', {
-		// 	method: 'POST',
-		// 	headers: {
-		// 	'Content-Type': 'application/json',
-		// 		'Authorization': 'Bearer '+serverToken
-		// 	},
-		// 	body: JSON.stringify(getFolderRequest)
-		// 	}).then((response) => response.json()).then((homeFolder) => {
-		// 		setCurrentFolder(homeFolder)
-		// 		navigate(`/home/${homeFolder.id}`)
-		// 		setUpdateMapItem(updateMapItem+1)
-		// 	}).catch((error) => {
-		// 		console.error('Error retrieving shareFolder:', error);
-		// 	});
-
 	const handlePopstate = async () => {
-		let currentURL = getCurrentUrl();
-		if(currentURL==='undefined'){
-			navigate(URL)
-			setUpdateMapItem(updateMapItem+1)
-		}else if(currentURL === URL) {
-			setUpdateMapItem(updateMapItem+1)
-		}
-		else  {
-		}
-			setUpdateMapItem(updateMapItem+1)
-		};
-		window.addEventListener('popstate', handlePopstate);
-		return () => {
-		window.removeEventListener('popstate', handlePopstate);
+		setUpdateMapItem(updateMapItem+1)
+	};
+	window.addEventListener('popstate', handlePopstate);
+	return () => {
+	window.removeEventListener('popstate', handlePopstate);
 	};
 }, []);
 
-
-// const AddFolder = async (e) =>{
-// 	const createNewFolder = {
-// 		token:serverToken,
-// 		folderName:e.NewFolder,
-// 		parentFolderID:parentFolder.id,
-// 		isShared:true,
-// 	}
-// 	await fetch('http://localhost:8080/api/folder/createNewFolder', {
-// 		method: 'POST',
-// 		headers: {
-// 		'Content-Type': 'application/json',
-// 		'Authorization': 'Bearer '+serverToken
-// 	},
-// 	body: JSON.stringify(createNewFolder)
-// 	}).then((response) => response.json()).then((createNewFolderResponse) => {
-// 	setUpdateMapItem(updateMapItem+1)
-// 	}).catch((error) => {
-// 	console.error('Error retrieving data:', error);
-// 	});
-// }
 const dataFromCreateNewFile = (data) =>{
-	
 	setUpdateMapItem(updateMapItem+1)
 }
 const dataFromCreateNewFolder = () =>{
@@ -87,21 +35,23 @@ const homeFolder = () =>{
 	navigate("/share");
 }
 return (
-<div name="main" className='h-screen w-screen bg-slate-400 flex flex-row'>
-  <div name="Panel" className='bg-slate-500 mt-12 flex flex-row m-4 w-1/6 justify-center items-start h-5/6 rounded-md shadow-2xl'>
-    <div className='flex flex-col w-full'>
-      <div className='flex flex-col w-full justify-center items-center'>
-		  <CreateNewFolder dataFromCreateNewFolder={{ dataFromCreateNewFolder }} currentState={currentFolder}></CreateNewFolder>
-		  <CreateNewFile dataFromCreateNewFile={{ dataFromCreateNewFile }} currentState={currentFolder}></CreateNewFile>
-        <div className='bg-slate-400  rounded-md shadow-slate-800 shadow-sm m-2 w-3/4 px-6 py-3 flex flex-col justify-center items-center'>
-          <button className="shadow-slate-800 mb-3 shadow-sm w-full m-2 bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded" onClick={homeFolder}>Share</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div className='bg-slate-500 mt-12 flex flex-row h-5/6 w-1/4 m-4  items-start rounded-md shadow-2xl flex-grow flex-shrink flex-wrap'>
-    <MapItem dataFromMapItem={{ dataFromMapItem }} updateFromParent={{ updateMapItem }}></MapItem>
-  </div>
+<div name="main" className='h-screen w-screen bg-slate-400 flex flex-row relative p-4'>
+	<div className='absolute top-3 right-9'><Logout></Logout></div>
+	<div name="Panel" className='bg-slate-500 mt-12 flex flex-row m-4 w-1/6 justify-center items-start h-5/6 rounded-md shadow-2xl'>
+		<div className='flex flex-col w-full'>
+		<div className='flex flex-col w-full justify-center items-center'>
+			<CreateNewFolder dataFromCreateNewFolder={{ dataFromCreateNewFolder }} currentState={currentFolder}></CreateNewFolder>
+			<CreateNewFile dataFromCreateNewFile={{ dataFromCreateNewFile }} currentState={currentFolder}></CreateNewFile>
+			<div className='bg-slate-400 rounded-md shadow-slate-800 shadow-sm m-2 w-3/4 px-6 py-2 flex flex-col justify-center items-center'>
+			<button className='w-11/12' onClick={homeFolder}><SvgGroups></SvgGroups></button>
+			{/* <button className="shadow-slate-800 mb-3 shadow-sm w-full m-2 bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded" onClick={homeFolder}>Share</button> */}
+			</div>
+		</div>
+		</div>
+	</div>
+	<div className='bg-slate-500 mt-12 flex flex-row h-5/6 w-1/4 m-4  items-start rounded-md shadow-2xl flex-grow flex-shrink flex-wrap'>
+		<MapItem dataFromMapItem={{ dataFromMapItem }} updateFromParent={{ updateMapItem }}></MapItem>
+	</div>
 </div>
 );
 }

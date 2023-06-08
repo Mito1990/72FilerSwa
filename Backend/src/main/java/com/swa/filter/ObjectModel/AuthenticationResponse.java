@@ -8,8 +8,9 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor 
+@AllArgsConstructor
 public class AuthenticationResponse {
     private String message;
+    private Boolean userExists;
     private Integer homeID;
 }

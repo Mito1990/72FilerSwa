@@ -139,7 +139,7 @@ public class FileElementService {
     String filePath;
     String owner = jwtService.extractUsername(createNewFileRequest.getToken());
     if(createNewFileRequest.getIsShared()){
-      filePath = rootGroups+fileID.toString()+"_"+createNewFileRequest.getFileName()+".txt";
+      filePath = rootGroups+createNewFileRequest.getMemberGroupID()+"_"+createNewFileRequest.getGroupName()+"/"+fileID.toString()+"_"+createNewFileRequest.getFileName()+".txt";
     }else{
       filePath = rootUsers+owner+pathHome+fileID.toString()+"_"+createNewFileRequest.getFileName()+".txt";
     }
@@ -213,6 +213,7 @@ public String deleteFile(DeleteFileRequest deleteFileRequest){
   }
   Optional<Folder> parent = folderRepository.findById(deleteFile.get().getParent());
   if(parent.get().getChildren().remove(deleteFile.get())){
+    folderRepository.save(parent.get());
     System.out.println("test");
     myFileRepository.delete(deleteFile.get());
     System.out.println("test2");
@@ -221,6 +222,20 @@ public String deleteFile(DeleteFileRequest deleteFileRequest){
   }else{
     return "something went wrong while deleting!";
   }
+}
+public void deleteGroupRepository(MemberGroup memberGroup){
+  File file = new File(memberGroup.getPath());
+  if (file.exists()) {
+      boolean deleted = file.delete();
+      if (deleted) {
+          System.out.println("File deleted successfully.");
+      } else {
+          System.out.println("Failed to delete the file.");
+      }
+  } else {
+      System.out.println("File does not exist.");
+  }
+  
 }
 public String deleteFolder(DeleteFolderRequest deleteFolderRequest){
   Optional<Folder> parent = folderRepository.findById(deleteFolderRequest.getParentID());
@@ -296,22 +311,6 @@ public String renameMemberGroup(RenameMemberGroupRequest renameMemberGroupReques
   }else{
     return null;
   }
-  // public void createNewFolderInUserFolder(CreateNewFolderRequest createNewFolderRequest){
-  //   String owner = jwtService.extractUsername(createNewFolderRequest.getToken());
-  //   Path path;
-  //   if(createNewFolderRequest.getIsShared()){
-  //     path = Paths.get(rootPath+owner+pathShare+createNewFolderRequest.getFolderName());
-  //   }else{
-  //     path = Paths.get(rootPath+owner+pathShare+createNewFolderRequest.getFolderName());
-  //   }
-  //   try {
-  //     Files.createDirectories(path);
-  //     System.out.println("Directory is created!");
-  //   } catch (IOException e) {
-  //     System.err.println("Failed to create directory!" + e.getMessage());
-  //   }
-  //   log.info("userPathHome: {}",path);
-  // }
 }
 }
 

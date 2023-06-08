@@ -1,10 +1,9 @@
 import { useState } from "react";
 import Cookies from 'js-cookie';
+import { SvgAddUser } from './svg/SvgGroups';
 
 
 export const AddUserToGroup = ({group}) =>{
-    console.warn("AddUserToGroup")
-    console.warn(group)
     const[listOfUserNamesNotAddedToGroup,setListOfUsernamesNotAddedToGroup] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     const serverToken = Cookies.get('Token');
@@ -53,9 +52,8 @@ export const AddUserToGroup = ({group}) =>{
     };
     return (
     <div className="flex w-full">
-        <button onClick={getListOfUsernamesNotAddedToGroup} className="shadow-slate-800 mb-3  text text-xs shadow-sm w-full bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded">
-        Add User
-        </button>
+        <button className='flex w-full mb-2 justify-center'onClick={getListOfUsernamesNotAddedToGroup}><SvgAddUser></SvgAddUser></button>
+        {/* <button onClick={getListOfUsernamesNotAddedToGroup} className="shadow-slate-800 mb-3  text text-xs shadow-sm w-full bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded"> Add User</button> */}
         {isOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
             <div className="bg-white rounded p-4">

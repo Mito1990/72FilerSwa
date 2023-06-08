@@ -12,7 +12,7 @@ public class CreateNewFileRequest {
     String token;
     String fileName;
     String groupName;
-    Integer groupID;
+    Integer memberGroupID;
     Integer parentFolderID;
     Boolean isShared;
 }

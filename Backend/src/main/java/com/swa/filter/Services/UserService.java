@@ -66,7 +66,12 @@ public class UserService  {
 
     public boolean checkIfUserExists(String username) {
         Optional<User> user = userRepository.findUserByUsername(username);
-        if(user.isPresent())return true;
-        else return false;
+        if(user.isPresent()){
+            if(user.get().getUsername().equalsIgnoreCase(username)){
+                System.out.println("User:{"+username+"} exists already!");
+                return true;
+            }
+        }
+        return false;
     }
 }

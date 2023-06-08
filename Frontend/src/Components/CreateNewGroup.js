@@ -27,18 +27,19 @@ export const CreateNewGroup = (dataFromCreateNewGroup)=>{
             console.error('Error retrieving shareFolder:', error);
         });
     }
+    const handleEnter = (e) =>{
+        if (e.key === "Enter") {createGroup()}
+    }
     return (
     <div className=" flex w-full justify-center">
     <button className="shadow-slate-800 mb-3 shadow-sm w-full m-2 text-xs bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded" onClick={handleOpen}>New Group</button>
         {isOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
-            <div className="bg-white rounded p-4">
-            <button onClick={handleClose} className="text-gray-500 hover:text-gray-700  m-2">
-                X
-            </button>
-            <form className=" bg-orange-300 flex flex-col w-52 h-48 justify-center items-center rounded-md shadow-2xl" onSubmit={handleSubmit(createGroup)}>
-                <input className="mb-2" type="text" placeholder="Group name:" name="username" {...register('GroupName', { required: true })} />
-                <button className="hover:bg-sky-700 w-24 h-12 border-slate-950 border-2 rounded-xl" type="submit">Submit</button>
+            <div className="rounded p-4">
+            <form className=" bg-slate-400  w-52 h-52 rounded-md shadow-slate-800 shadow-md m-2 px-6 py-3 flex flex-col justify-center items-center relative" onSubmit={handleSubmit(createGroup)}>
+                <button onClick={handleClose} className="bg-slate-500 shadow-md rounded-full w-6 h-6  text-white hover:text-black absolute top-4 right-4"> X </button>
+                <input className="mb-2 mt-6 w-32 rounded-sm shadow-slate-800 shadow-sm" type="text" placeholder="Group name:" name="username"onKeyDown={handleEnter}  {...register('GroupName', { required: true })} />
+                <button className="shadow-slate-800 mb-3 shadow-sm w-32 m-2 bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded" type="submit">New Group</button>
             </form>
             </div>
         </div>

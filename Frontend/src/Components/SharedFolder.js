@@ -6,8 +6,10 @@ import {AddUserToGroup} from "./AddUserToGroup"
 import {DeleteUserFromGroup} from "./DeleteUserFromGroup"
 import { CreateNewFile } from './CreateNewFile';
 import { MapItem } from './MapItem';
-import { checkPathForHomeOrShare, getCurrentUrl} from "./GetCurrentURL"
+import { getCurrentUrl} from "./GetCurrentURL"
 import { CreateNewGroup } from './CreateNewGroup';
+import { Logout } from './Logout';
+
 
 export const SharedFolder = () => {
   const [currentState,setCurrentState] = useState();
@@ -47,7 +49,8 @@ const handleGroup = (group) =>{
   setCurrentGroup(group)
 }
   return (
-    <div name="main" className='h-screen w-screen bg-slate-400 flex flex-row'>
+<div name="main" className='h-screen w-screen bg-slate-400 flex flex-row relative p-4'>
+      <div className='absolute top-3 right-9'><Logout></Logout></div>
       {(getCurrentUrl()==="share") ? (
         <div name="Panel" className='mt-12 flex flex-row m-4 w-1/6 justify-center items-start h-5/6 rounded-md'>
           <div className='flex flex-col w-full h-full'>
@@ -68,7 +71,7 @@ const handleGroup = (group) =>{
             <div className='flex flex-col w-full'>
               <div className='flex flex-col w-full justify-center items-center'>
                 <CreateNewFolder dataFromCreateNewFolder={{ dataFromCreateNewFolder }} currentState={currentState}></CreateNewFolder>
-                <CreateNewFile dataFromCreateNewFile={{ dataFromCreateNewFile }} currentState={currentState}></CreateNewFile>
+                <CreateNewFile dataFromCreateNewFile={{ dataFromCreateNewFile }} currentGroup={currentGroup}></CreateNewFile>
                 <div className='bg-slate-400  rounded-md shadow-slate-800 shadow-sm m-2 w-3/4 px-6 py-3 flex flex-col justify-center items-center'>
                   <button className="shadow-slate-800 mb-3 shadow-sm w-full m-2 bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded" onClick={homeFolder}>Home</button>
                 </div>

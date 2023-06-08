@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Cookies from 'js-cookie';
-
+import { SvgRemoveUser } from './svg/SvgGroups';
 
 export const DeleteUserFromGroup = ({group}) =>{
     const[listOfUsersInGroup,setListOfUsersInGroup] = useState([]);
@@ -51,9 +51,8 @@ export const DeleteUserFromGroup = ({group}) =>{
     };
     return (
     <div className="flex w-full">
-        <button onClick={getListOfUsernamesInGroup} className="shadow-slate-800 mb-3 shadow-sm w-full text-xs bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded">
-        Delete User
-        </button>
+        <button className='flex w-full justify-center'onClick={getListOfUsernamesInGroup}><SvgRemoveUser></SvgRemoveUser></button>
+        {/* <button onClick={getListOfUsernamesInGroup} className="shadow-slate-800 mb-3 shadow-sm w-full text-xs bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded"> Delete User </button> */}
         {isOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
             <div className="bg-white rounded p-4">

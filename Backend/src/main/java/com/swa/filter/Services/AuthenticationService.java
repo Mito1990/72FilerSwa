@@ -27,7 +27,7 @@ public class AuthenticationService {
     private final FolderRepository folderRepository;
     public AuthenticationResponse register(RegisterRequest registerRequest) {
         if(userService.checkIfUserExists(registerRequest.getUsername())){
-            return AuthenticationResponse.builder().message("User Exits already!").build();
+            return AuthenticationResponse.builder().message("User exists already!").userExists(true).build();
         }else{
             Folder home = new Folder("home", null, false, false);
             folderRepository.save(home);
@@ -41,7 +41,7 @@ public class AuthenticationService {
                 .build();
             fileElementService.createUserFolder(registerRequest.getUsername());
             userRepository.save(user);
-            return AuthenticationResponse.builder().message("User successful registered!").build();
+            return AuthenticationResponse.builder().message("User successful registered!").userExists(false).build();
         }
     }
 

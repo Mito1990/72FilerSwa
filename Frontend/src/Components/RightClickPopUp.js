@@ -5,7 +5,6 @@ export const RightClickPopUp = ({dataFromRightClickPopUp,sendCurrentFolderToRigh
 const [isOpen, setIsOpen] = useState(true);
 const [isRenameButtonClicked, setIsRenameButtonClicked] = useState(false);
 const [rename, setRename] = useState('');
-const [isAdmin,setIsAdmin] = useState(false);
 const serverToken = Cookies.get('Token');
 const handleOpenPopup = () => {
     setIsOpen(true);

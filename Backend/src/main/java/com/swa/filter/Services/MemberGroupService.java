@@ -35,7 +35,6 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class MemberGroupService{
     private final FileElementService fileElementService;
-    private final UserService userService;
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final MemberGroupRepository memberGroupRepository;
@@ -96,6 +95,7 @@ public class MemberGroupService{
         if(deleteMemberGroup.get().getAdmin().equalsIgnoreCase(owner)){
             if(user.get().getMemberGroups().remove(deleteMemberGroup.get())){
                 memberGroupRepository.deleteById(deleteMemberGroupRequest.getMemberGroupID());
+                fileElementService.deleteGroupRepository(deleteMemberGroup.get());
                 return "Group successful deleted!";
             }
         }

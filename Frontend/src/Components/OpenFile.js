@@ -2,8 +2,6 @@ import { useState } from "react";
 import Cookies from 'js-cookie';
 
 export const OpenFile = ({   dataFromOpenFile, currentState }) => {
-    console.error("OpenFIle -> currentState")
-    console.error(currentState)
     const [fileContent, setFileContent] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [rename, setRename] = useState('');
@@ -14,7 +12,6 @@ export const OpenFile = ({   dataFromOpenFile, currentState }) => {
             token:serverToken,
             fileID:item.id
         }
-        console.warn("test")
         fetch('http://localhost:8080/api/folder/file/read', {
             method: 'POST',
             headers: {
@@ -86,7 +83,6 @@ export const OpenFile = ({   dataFromOpenFile, currentState }) => {
         setIsClicked(true);
     }
     const handleKeyDown = async (e) => {
-        console.error("hello from handleKeyDown")
         if (e.keyCode === 13) {
             setIsClicked(false);
             const folderRequest ={
@@ -114,8 +110,8 @@ export const OpenFile = ({   dataFromOpenFile, currentState }) => {
         <div className="">
         {!isOpen ? (
         <button className="flex flex-col justify-center item-center m-6"onClick={() => handleDownloadFile(currentState)}>
-            <svg className="h-9 w-9 "xmlns="http://www.w3.org/2000/svg"height="1em"viewBox="0 0 384 512"><path d="M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128z" /></svg>
-            <p className="pl-3 h-6 w-6 flex justify-center items-center text-center">{currentState.name}</p>
+            <svg className="h-9 w-9 fill-current text-white "xmlns="http://www.w3.org/2000/svg"height="1em"viewBox="0 0 384 512"><path d="M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128z" /></svg>
+            <p className="pl-3 h-6 w-6 flex justify-center items-center text-center text-white">{currentState.name}</p>
         </button>
         ) : (
         <div className="flex flex-col h-full">
