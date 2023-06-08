@@ -72,19 +72,19 @@ public class MemberGroupService{
         System.out.println(getListOfGroupsIncludeUser);
         return getListOfGroupsIncludeUser;
     }
-    public String addUserToMemberGroup(AddUserToMemberGroupRequest addUserToMemberGroupRequest){
+    public List<String> addUserToMemberGroup(AddUserToMemberGroupRequest addUserToMemberGroupRequest){
         Optional<MemberGroup> memberGroup = memberGroupRepository.findById(addUserToMemberGroupRequest.getMemberGroupID());
         memberGroup.get().getUsernames().add(addUserToMemberGroupRequest.getUser());
         memberGroupRepository.save(memberGroup.get());
-        return "User:{"+addUserToMemberGroupRequest.getUser()+"} successful added to group: {"+memberGroup.get().getGroupName()+"}";
+        return memberGroup.get().getUsernames();
     }
-    public String deleteMemberFromGroup(DeleteMemberFromGroupRequest deleteMemberFromGroupRequest){
+    public List<String> deleteMemberFromGroup(DeleteMemberFromGroupRequest deleteMemberFromGroupRequest){
         Optional<MemberGroup> memberGroup = memberGroupRepository.findById(deleteMemberFromGroupRequest.getMemberGroupID());
         if(memberGroup.get().getUsernames().remove(deleteMemberFromGroupRequest.getUser())){
             memberGroupRepository.save(memberGroup.get());
-            return "User:{"+deleteMemberFromGroupRequest.getUser()+"} successful deleted from group: {"+memberGroup.get().getGroupName()+"}";
+            return memberGroup.get().getUsernames();
         }
-        return "User:{"+deleteMemberFromGroupRequest.getUser()+"} not found in group: {"+memberGroup.get().getGroupName()+"}";
+        return null;
     }
     public String deleteMemberGroup(DeleteMemberGroupRequest deleteMemberGroupRequest){
         System.out.println("\n\n\n\nHello From DeleteMemberGroup");

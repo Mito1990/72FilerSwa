@@ -201,7 +201,14 @@ public String deleteFile(DeleteFileRequest deleteFileRequest){
   Optional<MyFile> deleteFile = myFileRepository.findById(deleteFileRequest.getFolderID());
   String filePath = deleteFile.get().getPath();
   File file = new File(filePath);
-  if (file.exists()) {
+  Optional<Folder> parent = folderRepository.findById(deleteFile.get().getParent());
+  if(parent.get().getChildren().remove(deleteFile.get())){
+    folderRepository.save(parent.get());
+    System.out.println("test");
+    myFileRepository.delete(deleteFile.get());
+    System.out.println("test2");
+    System.out.println(deleteFile.get().getName()+" has been successful updated!");
+    if (file.exists()) {
       boolean deleted = file.delete();
       if (deleted) {
           System.out.println("File deleted successfully.");
@@ -211,13 +218,6 @@ public String deleteFile(DeleteFileRequest deleteFileRequest){
   } else {
       System.out.println("File does not exist.");
   }
-  Optional<Folder> parent = folderRepository.findById(deleteFile.get().getParent());
-  if(parent.get().getChildren().remove(deleteFile.get())){
-    folderRepository.save(parent.get());
-    System.out.println("test");
-    myFileRepository.delete(deleteFile.get());
-    System.out.println("test2");
-    System.out.println(deleteFile.get().getName()+" has been successful updated!");
     return deleteFile.get().getName()+" has been successful updated!";
   }else{
     return "something went wrong while deleting!";

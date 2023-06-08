@@ -106,12 +106,13 @@ export const OpenFile = ({   dataFromOpenFile, currentState }) => {
             };
         }
     };
+
     return (
         <div className="">
         {!isOpen ? (
-        <button className="flex flex-col justify-center item-center m-6"onClick={() => handleDownloadFile(currentState)}>
-            <svg className="h-9 w-9 fill-current text-white "xmlns="http://www.w3.org/2000/svg"height="1em"viewBox="0 0 384 512"><path d="M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128z" /></svg>
-            <p className="pl-3 h-6 w-6 flex justify-center items-center text-center text-white">{currentState.name}</p>
+        <button className="flex flex-col justify-start items-center h-40 m-6 w-16 max-h-20 overflow-y-scroll"onClick={() => handleDownloadFile(currentState)}>
+            <svg className="flex-shrink-0 h-9 w-9 fill-current text-white "xmlns="http://www.w3.org/2000/svg"height="1em"viewBox="0 0 384 512"><path d="M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128z" /></svg>
+            <p className=" w-fit text-white text-xs break-all overflow-y-scroll mt-2 h-6 flex">{currentState.name}</p>
         </button>
         ) : (
         <div className="flex flex-col h-full">

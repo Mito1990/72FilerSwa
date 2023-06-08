@@ -49,6 +49,6 @@ public class AuthenticationService {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
         var user = userRepository.findUserByUsername(authenticationRequest.getUsername()).orElseThrow();
         var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().message(jwtToken).homeID(user.getHome().getId()).build();
+        return AuthenticationResponse.builder().message(jwtToken).homeID(user.getHome().getId()).userExists(true).build();
     }
 }

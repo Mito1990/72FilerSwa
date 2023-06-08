@@ -16,4 +16,5 @@ public class MyFile extends FileElement {
         super(null, name, parentFolderID, isShared, isFile,null);
         this.extension = ".txt";
     }
+
 }

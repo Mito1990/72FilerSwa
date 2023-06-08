@@ -16,10 +16,12 @@ export const Login = ({ setIsLoggedIn }) =>{
       try{
         const response = await fetch('http://localhost:8080/api/login/authenticate', requestOptions);
         const data = await response.json();
+        console.log(data);
         Cookies.set('Token', data.message,{expires: 1});
         Cookies.set('Home', data.homeID,{expires: 1});
         var date = new Date();
-        date.setTime(date.getTime() + (300 * 2000));
+        date.setTime(date.getTime() + (300 *2000)); //6 min
+        // date.setTime(date.getTime() + (300 *200)); //6 min
         Cookies.set('status', true,{expires: date});
         navigate(`/home/${data.homeID}`);
       }catch (error) {

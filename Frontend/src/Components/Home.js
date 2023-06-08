@@ -5,12 +5,19 @@ import { MapItem } from './MapItem';
 import { CreateNewFolder} from "./CreateNewFolder"
 import { Logout } from './Logout';
 import { SvgGroups } from './svg/SvgGroups';
+import Cookies from "js-cookie";
+import { SessionExpiredPopUp } from './SessionExpiredPopUp';
+
 
 export const Home= () => {
 const [currentFolder,setCurrentFolder] = useState();
 const [updateMapItem, setUpdateMapItem] = useState(0);
+const [sessionExpired,setSessionExpired] = useState(false);
 const navigate = useNavigate();
 useEffect(() => {
+	if(!Cookies.get('status')){
+		setSessionExpired(true);
+    }
 	const handlePopstate = async () => {
 		setUpdateMapItem(updateMapItem+1)
 	};
@@ -18,7 +25,7 @@ useEffect(() => {
 	return () => {
 	window.removeEventListener('popstate', handlePopstate);
 	};
-}, []);
+}, [!Cookies.get('status')]);
 
 const dataFromCreateNewFile = (data) =>{
 	setUpdateMapItem(updateMapItem+1)
@@ -35,24 +42,27 @@ const homeFolder = () =>{
 	navigate("/share");
 }
 return (
-<div name="main" className='h-screen w-screen bg-slate-400 flex flex-row relative p-4'>
-	<div className='absolute top-3 right-9'><Logout></Logout></div>
-	<div name="Panel" className='bg-slate-500 mt-12 flex flex-row m-4 w-1/6 justify-center items-start h-5/6 rounded-md shadow-2xl'>
-		<div className='flex flex-col w-full'>
-		<div className='flex flex-col w-full justify-center items-center'>
-			<CreateNewFolder dataFromCreateNewFolder={{ dataFromCreateNewFolder }} currentState={currentFolder}></CreateNewFolder>
-			<CreateNewFile dataFromCreateNewFile={{ dataFromCreateNewFile }} currentState={currentFolder}></CreateNewFile>
-			<div className='bg-slate-400 rounded-md shadow-slate-800 shadow-sm m-2 w-3/4 px-6 py-2 flex flex-col justify-center items-center'>
-			<button className='w-11/12' onClick={homeFolder}><SvgGroups></SvgGroups></button>
-			{/* <button className="shadow-slate-800 mb-3 shadow-sm w-full m-2 bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded" onClick={homeFolder}>Share</button> */}
+	<div>
+		{sessionExpired ? <SessionExpiredPopUp></SessionExpiredPopUp> :
+		<div name="main" className='h-screen w-screen bg-slate-400 flex flex-row relative p-4'>
+			<div className='absolute top-3 right-9'><Logout></Logout></div>
+			<div name="Panel" className='bg-slate-500 mt-12 flex flex-row m-4 w-1/6 justify-center items-start h-5/6 rounded-md shadow-2xl overflow-hidden'>
+				<div className='flex flex-col w-full'>
+				<div className='flex flex-col w-full justify-center items-center'>
+					<CreateNewFolder dataFromCreateNewFolder={{ dataFromCreateNewFolder }} currentState={currentFolder}></CreateNewFolder>
+					<CreateNewFile dataFromCreateNewFile={{ dataFromCreateNewFile }} currentState={currentFolder}></CreateNewFile>
+					<div className='bg-slate-400 rounded-md shadow-slate-800 shadow-sm m-2 w-3/4 px-6 py-2 flex flex-col justify-center items-center'>
+					<button className='w-11/12' onClick={homeFolder}><SvgGroups></SvgGroups></button>
+					{/* <button className="shadow-slate-800 mb-3 shadow-sm w-full m-2 bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded" onClick={homeFolder}>Share</button> */}
+					</div>
+				</div>
+				</div>
 			</div>
-		</div>
-		</div>
+			<div className='bg-slate-500 mt-12 flex flex-row h-5/6 w-1/4 m-4  items-start rounded-md shadow-2xl flex-grow flex-shrink flex-wrap'>
+				<MapItem dataFromMapItem={{ dataFromMapItem }} updateFromParent={{ updateMapItem }}></MapItem>
+			</div>
+		</div>}
 	</div>
-	<div className='bg-slate-500 mt-12 flex flex-row h-5/6 w-1/4 m-4  items-start rounded-md shadow-2xl flex-grow flex-shrink flex-wrap'>
-		<MapItem dataFromMapItem={{ dataFromMapItem }} updateFromParent={{ updateMapItem }}></MapItem>
-	</div>
-</div>
 );
 }
 
