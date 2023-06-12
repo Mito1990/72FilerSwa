@@ -7,23 +7,13 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.swa.filter.ObjectModel.MemberGroupRequest;
-import com.swa.filter.ObjectModel.NewFolderGroupRequest;
-import com.swa.filter.ObjectModel.NewFolderRequest;
 import com.swa.filter.ObjectModel.CreateMemberGroupRequest;
 import com.swa.filter.ObjectModel.DeleteMemberFromGroupRequest;
 import com.swa.filter.ObjectModel.DeleteMemberGroupRequest;
-import com.swa.filter.mySQLTables.FileElement;
 import com.swa.filter.mySQLTables.Folder;
 import com.swa.filter.mySQLTables.MemberGroup;
-import com.swa.filter.ObjectModel.Role;
-import com.swa.filter.ObjectModel.AddFolderResponse;
-import com.swa.filter.ObjectModel.AddMemberRequest;
 import com.swa.filter.ObjectModel.AddUserToMemberGroupRequest;
-import com.swa.filter.ObjectModel.GetFolderRequest;
 import com.swa.filter.ObjectModel.GetListOfMemberGroupsRequest;
-import com.swa.filter.ObjectModel.GroupFolderRequest;
-import com.swa.filter.ObjectModel.GroupRequest;
 import com.swa.filter.Repository.UserRepository;
 import com.swa.filter.mySQLTables.User;
 import com.swa.filter.Repository.FolderRepository;
@@ -39,7 +29,7 @@ public class MemberGroupService{
     private final UserRepository userRepository;
     private final MemberGroupRepository memberGroupRepository;
     private final FolderRepository folderRepository;
-    //Returns the folder of the MemeberGroup
+    //Returns the folder of the MemberGroup
     public String createMemberGroup(CreateMemberGroupRequest createMemberGroupRequest) {
         System.out.println("\n\n\ncreateMemberGroup");
         System.out.println("-----------------------------------------------------");
@@ -61,7 +51,6 @@ public class MemberGroupService{
     }
     public List<MemberGroup>getListOfGroupsIncludeUser(GetListOfMemberGroupsRequest getListOfMemberGroupsRequest){
         String owner = jwtService.extractUsername(getListOfMemberGroupsRequest.getToken());
-        Optional<User> user = userRepository.findUserByUsername(owner);
         List<MemberGroup>getListOfGroupsIncludeUser = new ArrayList<>();
         List<MemberGroup> allMemberGroups = memberGroupRepository.findAll();
         for(MemberGroup memberGroup : allMemberGroups){

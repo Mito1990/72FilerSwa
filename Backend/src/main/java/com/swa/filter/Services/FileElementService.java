@@ -2,19 +2,13 @@ package com.swa.filter.Services;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.Console;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Member;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +19,7 @@ import com.swa.filter.mySQLTables.MyFile;
 import com.swa.filter.mySQLTables.User;
 import jakarta.transaction.Transactional;
 import com.swa.filter.ObjectModel.GetFolderRequest;
-import com.swa.filter.ObjectModel.GetFolderResponse;
 import com.swa.filter.ObjectModel.GetHomeFolderRequest;
-import com.swa.filter.ObjectModel.GroupRequest;
-import com.swa.filter.ObjectModel.NewFolderGroupRequest;
-import com.swa.filter.ObjectModel.NewFolderRequest;
 import com.swa.filter.ObjectModel.ReadFileRequest;
 import com.swa.filter.ObjectModel.RenameFileRequest;
 import com.swa.filter.ObjectModel.RenameMemberGroupRequest;
@@ -126,11 +116,13 @@ public class FileElementService {
     Optional<Folder> parentFolder = folderRepository.findById(createNewFileRequest.getParentFolderID());
     MyFile newFile = new MyFile(createNewFileRequest.getFileName(),createNewFileRequest.getParentFolderID(),createNewFileRequest.getIsShared(),true);
     myFileRepository.save(newFile);
-    String filePath = createNewFileInUserFolder(createNewFileRequest,newFile.getId());
+    Integer fileId=newFile.getId();
+    String filePath = createNewFileInUserFolder(createNewFileRequest,fileId);
     newFile.setPath(filePath);
     myFileRepository.save(newFile);
     parentFolder.get().getChildren().add(newFile);
     folderRepository.save(parentFolder.get());
+    System.out.println("File created successfully.");
     System.out.println("----------------------------------------------\n\n\n");
     return parentFolder.get();
   }

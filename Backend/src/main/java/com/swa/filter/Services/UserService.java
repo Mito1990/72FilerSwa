@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service @RequiredArgsConstructor @Transactional @Slf4j
 public class UserService  {
     private final UserRepository userRepository;
-    private final JwtService jwtService;
     private final MemberGroupRepository memberGroupRepository;
     public Optional<User> getUser(String username) {
         log.info("Fetching user:{} from Database",username);
