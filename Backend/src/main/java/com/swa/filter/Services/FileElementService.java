@@ -215,17 +215,20 @@ public String deleteFile(DeleteFileRequest deleteFileRequest){
     return "something went wrong while deleting!";
   }
 }
-public void deleteGroupRepository(MemberGroup memberGroup){
+public boolean deleteGroupRepository(MemberGroup memberGroup){
   File file = new File(memberGroup.getPath());
   if (file.exists()) {
       boolean deleted = file.delete();
       if (deleted) {
           System.out.println("File deleted successfully.");
+          return true;
       } else {
           System.out.println("Failed to delete the file.");
+          return false;
       }
   } else {
       System.out.println("File does not exist.");
+      return true;
   }
   
 }
