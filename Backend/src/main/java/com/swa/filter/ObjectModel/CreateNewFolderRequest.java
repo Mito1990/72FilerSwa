@@ -1,5 +1,4 @@
 package com.swa.filter.ObjectModel;
-import com.swa.filter.mySQLTables.Folder;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
