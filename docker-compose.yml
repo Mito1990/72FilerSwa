@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  frontend:
+    container_name: frontend-filesharingsystem
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+
+  springboot-app:
+    container_name: backend-filesharingsystem
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/filesharing
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: root
+
+  db:
+    image: mysql:latest
+    container_name: my-mysql-container
+    restart: always
+    environment:
+      DATABASE_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: filesharing
+      MYSQL_USER: user
+      MYSQL_PASSWORD: root
+

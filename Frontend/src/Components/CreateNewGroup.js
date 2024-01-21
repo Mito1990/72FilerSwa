@@ -1,5 +1,5 @@
 import {useForm} from "react-hook-form"
-import { useState,useEffect } from 'react';
+import { useState } from 'react';
 import Cookies from 'js-cookie';
 
 export const CreateNewGroup = (dataFromCreateNewGroup)=>{
